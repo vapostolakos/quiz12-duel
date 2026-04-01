@@ -392,6 +392,8 @@
                     <input id="profile-last-name" type="text" placeholder="Επώνυμο">
                 </div>
                 <input id="profile-nickname" type="text" placeholder="Nickname για μονομαχίες">
+                <div class="avatar-choice-label">Διάλεξε ένα από τα default avatars ή ανέβασε δική σου φωτογραφία.</div>
+                <div id="default-avatar-picker" class="avatar-picker"></div>
                 <input id="profile-avatar-file" type="file" accept="image/*">
                 <button onclick="saveProfile()">Αποθήκευση Προφίλ</button>
                 <button class="secondary" id="btn-back-lobby" onclick="backToLobby()">Back to Lobby</button>
@@ -471,6 +473,28 @@
   const ROOM_COLLECTION = 'quiz12_duel_rooms';
   const MAX_ROOM_PLAYERS = 10;
   const QUESTIONS_PER_DUEL = 10;
+const DEFAULT_AVATAR_OPTIONS = [
+    { key: 'man-1', emoji: '👨', bg: '#1d4ed8' },
+    { key: 'man-2', emoji: '🧔', bg: '#0f766e' },
+    { key: 'man-3', emoji: '👨‍🦱', bg: '#7c3aed' },
+    { key: 'man-4', emoji: '👨‍💼', bg: '#b45309' },
+    { key: 'man-5', emoji: '👨‍🔬', bg: '#0369a1' },
+    { key: 'woman-1', emoji: '👩', bg: '#db2777' },
+    { key: 'woman-2', emoji: '👩‍🦰', bg: '#dc2626' },
+    { key: 'woman-3', emoji: '👩‍💼', bg: '#9333ea' },
+    { key: 'woman-4', emoji: '👩‍🔬', bg: '#0891b2' },
+    { key: 'woman-5', emoji: '👩‍🦱', bg: '#c2410c' },
+    { key: 'boy-1', emoji: '👦', bg: '#2563eb' },
+    { key: 'boy-2', emoji: '🧒', bg: '#0d9488' },
+    { key: 'boy-3', emoji: '👦🏽', bg: '#4f46e5' },
+    { key: 'boy-4', emoji: '🧑‍🚀', bg: '#7c2d12' },
+    { key: 'boy-5', emoji: '🧑‍💻', bg: '#166534' },
+    { key: 'girl-1', emoji: '👧', bg: '#ea580c' },
+    { key: 'girl-2', emoji: '👧🏽', bg: '#be185d' },
+    { key: 'girl-3', emoji: '🧒🏻', bg: '#7e22ce' },
+    { key: 'girl-4', emoji: '🧑‍🎨', bg: '#0f766e' },
+    { key: 'girl-5', emoji: '🧑‍🎓', bg: '#334155' }
+];
 const REACTION_OPTIONS = [
     { key: 'heart', emoji: '❤️' },
     { key: 'laugh', emoji: '😂' },
@@ -567,6 +591,34 @@ async function fileToAvatarDataUrl(file) {
     });
 }
 
+function makeDefaultAvatarUrl(option) {
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+            <rect width="160" height="160" rx="36" fill="${option.bg}"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-size="76">${option.emoji}</text>
+        </svg>
+    `.trim();
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function renderDefaultAvatarPicker() {
+    const mount = $('default-avatar-picker');
+    if (!mount) return;
+    mount.innerHTML = DEFAULT_AVATAR_OPTIONS.map(option => {
+        const active = avatarDataUrl === makeDefaultAvatarUrl(option) ? 'active' : '';
+        return `<button type="button" class="avatar-choice ${active}" onclick="selectDefaultAvatar('${option.key}')">${option.emoji}</button>`;
+    }).join('');
+}
+
+window.selectDefaultAvatar = function selectDefaultAvatar(key) {
+    const option = DEFAULT_AVATAR_OPTIONS.find(item => item.key === key);
+    if (!option) return;
+    avatarDataUrl = makeDefaultAvatarUrl(option);
+    $('profile-avatar-file').value = '';
+    renderAvatar($('profile-avatar-preview'), $('profile-avatar-fallback'), avatarDataUrl);
+    renderDefaultAvatarPicker();
+};
+
 async function fetchProfile(uid) {
     const snap = await firestoreApi.getDoc(firestoreApi.doc(firebaseDb, PROFILE_COLLECTION, uid));
     return snap.exists() ? snap.data() : null;
@@ -578,6 +630,7 @@ function fillProfileForm(profile) {
     $('profile-nickname').value = profile?.nickname || '';
     avatarDataUrl = profile?.photoUrl || '';
     renderAvatar($('profile-avatar-preview'), $('profile-avatar-fallback'), avatarDataUrl);
+    renderDefaultAvatarPicker();
 }
 
 function renderAuthState(message = '') {
@@ -710,6 +763,7 @@ window.saveProfile = async function saveProfile() {
     if (file) {
         avatarDataUrl = await fileToAvatarDataUrl(file);
         renderAvatar($('profile-avatar-preview'), $('profile-avatar-fallback'), avatarDataUrl);
+        renderDefaultAvatarPicker();
     }
 
     const profile = {
@@ -1139,6 +1193,7 @@ $('profile-avatar-file').addEventListener('change', async event => {
     if (!file) return;
     avatarDataUrl = await fileToAvatarDataUrl(file);
     renderAvatar($('profile-avatar-preview'), $('profile-avatar-fallback'), avatarDataUrl);
+    renderDefaultAvatarPicker();
 });
 
 $('chat-input').addEventListener('keydown', event => {
@@ -1149,6 +1204,7 @@ $('chat-input').addEventListener('keydown', event => {
 });
 
 start();
+renderDefaultAvatarPicker();
 </script>
 </body>
 </html>
