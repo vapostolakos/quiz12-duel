@@ -249,6 +249,30 @@
             border-radius: 14px;
             padding: 10px 12px;
         }
+        .reaction-picker,
+        .reaction-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .reaction-btn,
+        .reaction-chip {
+            width: auto;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+        .reaction-btn {
+            background: #253247;
+            color: #f8fafc;
+        }
+        .reaction-chip {
+            background: rgba(14, 165, 233, 0.14);
+            border: 1px solid rgba(14, 165, 233, 0.26);
+            color: #e0f2fe;
+        }
         .chat-name { color: var(--accent); font-weight: 700; margin-bottom: 4px; }
         .chat-time { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
         @media (max-width: 920px) {
@@ -367,6 +391,14 @@ const FIREBASE_SDK_VERSION = '12.7.0';
 const PROFILE_COLLECTION = 'quiz12_duel_profiles';
 const ROOM_COLLECTION = 'quiz12_duel_rooms';
 const QUESTIONS_PER_DUEL = 10;
+const REACTION_OPTIONS = [
+    { key: 'heart', emoji: '❤️' },
+    { key: 'laugh', emoji: '😂' },
+    { key: 'wow', emoji: '😮' },
+    { key: 'fire', emoji: '🔥' },
+    { key: 'clap', emoji: '👏' },
+    { key: 'thumbs', emoji: '👍' }
+];
 
 const QUESTION_POOL = Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : [];
 let firebaseDb = null;
@@ -406,6 +438,7 @@ async function initFirebase() {
     firebaseAuth = authMod.getAuth(firebaseApp);
     firestoreApi = dbMod;
     authApi = authMod;
+    await authMod.setPersistence(firebaseAuth, authMod.browserLocalPersistence);
     firebaseReady = true;
     return true;
 }
@@ -555,8 +588,16 @@ window.loginAccount = async function loginAccount() {
 window.loginWithGoogle = async function loginWithGoogle() {
     try {
         const provider = new authApi.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
         await authApi.signInWithPopup(firebaseAuth, provider);
     } catch (error) {
+        const code = error?.code || '';
+        if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+            const provider = new authApi.GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            await authApi.signInWithRedirect(firebaseAuth, provider);
+            return;
+        }
         renderAuthState(`Google login error: ${error.message}`);
     }
 };
@@ -769,6 +810,31 @@ function renderFinalBox() {
     $('duel-final-box').classList.remove('hidden');
 }
 
+function reactionCount(reactions, key) {
+    return Array.isArray(reactions?.[key]) ? reactions[key].length : 0;
+}
+
+function renderReactionSummary(item) {
+    const chips = REACTION_OPTIONS
+        .map(option => {
+            const count = reactionCount(item.reactions, option.key);
+            return count ? `<span class="reaction-chip">${option.emoji} ${count}</span>` : '';
+        })
+        .filter(Boolean)
+        .join('');
+    return chips ? `<div class="reaction-summary">${chips}</div>` : '';
+}
+
+function renderReactionPicker(itemId) {
+    return `
+        <div class="reaction-picker">
+            ${REACTION_OPTIONS.map(option => `
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+            `).join('')}
+        </div>
+    `;
+}
+
 function renderRoom() {
     if (!currentRoomData || !currentProfile) return;
     const status = currentRoomData.status || 'waiting';
@@ -881,6 +947,8 @@ function renderMessages(items) {
                 <div class="chat-name">${item.nickname}</div>
                 <div>${item.text}</div>
                 <div class="chat-time">${formatTime(item.createdAt)}</div>
+                ${renderReactionSummary(item)}
+                ${renderReactionPicker(item.id)}
             </div>
         </div>
     `).join('') : '<div class="small">Δεν υπάρχουν μηνύματα ακόμα.</div>';
@@ -894,9 +962,26 @@ function subscribeMessages(code) {
         firestoreApi.orderBy('createdAt', 'asc')
     );
     chatUnsub = firestoreApi.onSnapshot(messagesQuery, snap => {
-        renderMessages(snap.docs.map(doc => doc.data()));
+        renderMessages(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 }
+
+window.toggleReaction = async function toggleReaction(messageId, reactionKey) {
+    if (!currentRoomCode || !currentProfile) return;
+    const messageRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages', messageId);
+    const messageSnap = await firestoreApi.getDoc(messageRef);
+    if (!messageSnap.exists()) return;
+
+    const data = messageSnap.data();
+    const currentUsers = Array.isArray(data?.reactions?.[reactionKey]) ? data.reactions[reactionKey] : [];
+    const hasReacted = currentUsers.includes(currentProfile.id);
+
+    await firestoreApi.updateDoc(messageRef, {
+        [`reactions.${reactionKey}`]: hasReacted
+            ? firestoreApi.arrayRemove(currentProfile.id)
+            : firestoreApi.arrayUnion(currentProfile.id)
+    });
+};
 
 window.sendChatMessage = async function sendChatMessage() {
     if (!currentRoomCode || !currentProfile) return;
@@ -909,6 +994,7 @@ window.sendChatMessage = async function sendChatMessage() {
         fullName: `${currentProfile.firstName} ${currentProfile.lastName}`.trim(),
         photoUrl: currentProfile.photoUrl || '',
         text,
+        reactions: {},
         createdAt: firestoreApi.serverTimestamp()
     });
 
@@ -922,6 +1008,11 @@ async function start() {
     }
 
     await initFirebase();
+    try {
+        await authApi.getRedirectResult(firebaseAuth);
+    } catch (error) {
+        renderAuthState(`Google redirect error: ${error.message}`);
+    }
     authApi.onAuthStateChanged(firebaseAuth, async user => {
         try {
             await handleAuthUser(user);
