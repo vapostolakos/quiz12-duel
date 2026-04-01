@@ -82,6 +82,14 @@
         button:hover:not(:disabled) { transform: translateY(-1px); }
         button:disabled { opacity: 0.45; cursor: not-allowed; }
         .secondary { background: #475569; }
+        .salmon-btn {
+            background: #f59e8b;
+            color: #3f1d16;
+        }
+        .google-btn {
+            background: #dcfce7;
+            color: #14532d;
+        }
         .tip-box, .status-box, .winner-box {
             background: rgba(15, 23, 42, 0.88);
             border: 1px solid var(--border);
@@ -101,7 +109,12 @@
             display: grid;
             gap: 12px;
         }
-        .auth-actions, .lobby-actions, .duel-top, .chat-form {
+        .auth-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .lobby-actions, .duel-top, .chat-form {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
@@ -265,7 +278,8 @@
             </div>
             <div class="auth-actions">
                 <button onclick="registerAccount()">Δημιουργία Λογαριασμού</button>
-                <button class="secondary" onclick="loginAccount()">Login</button>
+                <button class="salmon-btn" onclick="loginAccount()">Login</button>
+                <button class="google-btn" onclick="loginWithGoogle()">Google Login</button>
             </div>
             <div id="auth-status" class="auth-note">Σύνδεσε πρώτα λογαριασμό και μετά αποθήκευσε το duel profile σου.</div>
         </div>
@@ -282,6 +296,7 @@
                 <input id="profile-nickname" type="text" placeholder="Nickname για μονομαχίες">
                 <input id="profile-avatar-file" type="file" accept="image/*">
                 <button onclick="saveProfile()">Αποθήκευση Προφίλ</button>
+                <button class="secondary" id="btn-back-lobby" onclick="backToLobby()">Back to Lobby</button>
             </div>
         </div>
     </div>
@@ -455,10 +470,11 @@ function fillProfileForm(profile) {
 function renderAuthState(message = '') {
     $('auth-status').textContent = message || (
         authUser
-            ? `Συνδεδεμένος λογαριασμός: ${authUser.email}`
+            ? 'Ο λογαριασμός σου είναι συνδεδεμένος.'
             : 'Σύνδεσε πρώτα λογαριασμό και μετά αποθήκευσε το duel profile σου.'
     );
     $('profile-setup').classList.toggle('hidden', !authUser);
+    $('btn-back-lobby').classList.toggle('hidden', !currentProfile);
 }
 
 function renderLobbyProfile() {
@@ -469,7 +485,6 @@ function renderLobbyProfile() {
             <div>
                 <div class="player-name">${profileLabel(currentProfile)}</div>
                 <div class="player-sub">${currentProfile.firstName} ${currentProfile.lastName}</div>
-                <div class="player-sub">${authUser.email}</div>
             </div>
         </div>
     `;
@@ -498,7 +513,7 @@ async function handleAuthUser(user) {
 
     currentProfile = await fetchProfile(authUser.uid);
     fillProfileForm(currentProfile);
-    renderAuthState(`Συνδεδεμένος λογαριασμός: ${authUser.email}`);
+    renderAuthState('Ο λογαριασμός σου είναι συνδεδεμένος.');
 
     if (currentProfile) {
         renderLobbyProfile();
@@ -517,7 +532,7 @@ window.registerAccount = async function registerAccount() {
     }
     try {
         await authApi.createUserWithEmailAndPassword(firebaseAuth, email, password);
-        renderAuthState(`Ο λογαριασμός ${email} δημιουργήθηκε. Συνέχισε με το duel profile σου.`);
+        renderAuthState('Ο λογαριασμός δημιουργήθηκε. Συνέχισε με το duel profile σου.');
     } catch (error) {
         renderAuthState(`Register error: ${error.message}`);
     }
@@ -534,6 +549,15 @@ window.loginAccount = async function loginAccount() {
         await authApi.signInWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error) {
         renderAuthState(`Login error: ${error.message}`);
+    }
+};
+
+window.loginWithGoogle = async function loginWithGoogle() {
+    try {
+        const provider = new authApi.GoogleAuthProvider();
+        await authApi.signInWithPopup(firebaseAuth, provider);
+    } catch (error) {
+        renderAuthState(`Google login error: ${error.message}`);
     }
 };
 
@@ -581,8 +605,14 @@ window.saveProfile = async function saveProfile() {
 
 window.goToProfile = function goToProfile() {
     fillProfileForm(currentProfile);
-    renderAuthState(`Συνδεδεμένος λογαριασμός: ${authUser?.email || ''}`);
+    renderAuthState('Ο λογαριασμός σου είναι συνδεδεμένος.');
     show('scr-auth');
+};
+
+window.backToLobby = function backToLobby() {
+    if (!currentProfile) return;
+    renderLobbyProfile();
+    show('scr-lobby');
 };
 
 async function ensureRoomCodeFree() {
