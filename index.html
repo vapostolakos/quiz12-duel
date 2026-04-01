@@ -130,6 +130,37 @@
             align-items: start;
             margin-top: 1rem;
         }
+        .avatar-choice-label {
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin-top: -2px;
+        }
+        .avatar-picker {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .avatar-choice {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #172234;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            cursor: pointer;
+            transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+        }
+        .avatar-choice:hover {
+            transform: translateY(-1px);
+            border-color: rgba(14, 165, 233, 0.45);
+        }
+        .avatar-choice.active {
+            border-color: rgba(14, 165, 233, 0.7);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2) inset;
+        }
         .avatar-preview, .avatar-fallback, .chat-avatar {
             width: 120px;
             height: 120px;
@@ -195,6 +226,46 @@
             align-items: center;
             margin-bottom: 12px;
             color: var(--muted);
+        }
+        .room-roster {
+            margin-bottom: 12px;
+            display: grid;
+            gap: 8px;
+        }
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .roster-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #172234;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 12px;
+        }
+        .roster-item img,
+        .roster-item .avatar-fallback {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            flex: 0 0 auto;
+        }
+        .roster-meta {
+            min-width: 0;
+        }
+        .roster-name {
+            font-weight: 700;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .roster-score {
+            color: var(--muted);
+            font-size: 0.84rem;
         }
         .code-pill {
             background: rgba(245, 158, 11, 0.12);
@@ -283,6 +354,9 @@
             .grid-2, .auth-actions, .lobby-actions, .duel-top, .join-row, .profile-box, .chat-form {
                 grid-template-columns: 1fr;
             }
+            .avatar-picker {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
         }
     </style>
 </head>
@@ -325,21 +399,22 @@
         </div>
     </div>
 
-    <div id="scr-lobby" class="card hidden">
-        <h1>Lobby Μονομαχίας</h1>
-        <p class="lead">Φτιάξε νέο room ή μπες σε room φίλου σου με τον κωδικό.</p>
-        <div id="lobby-profile-card" class="player-card"></div>
-        <div class="lobby-actions" style="margin-top:1rem;">
-            <button onclick="createRoom()">Δημιουργία Room</button>
-            <button class="secondary" onclick="goToProfile()">Επεξεργασία Προφίλ</button>
-            <button class="secondary" onclick="logoutAccount()">Logout</button>
+        <div id="scr-lobby" class="card hidden">
+            <h1>Lobby Μονομαχίας</h1>
+            <p class="lead">Φτιάξε νέο room ή μπες σε room φίλου σου με τον κωδικό.</p>
+            <div id="lobby-profile-card" class="player-card"></div>
+            <div class="lobby-actions" style="margin-top:1rem;">
+                <button onclick="createRoom()">Δημιουργία Room</button>
+                <button class="secondary" onclick="goToProfile()">Επεξεργασία Προφίλ</button>
+                <button class="secondary" onclick="logoutAccount()">Logout</button>
+                <button class="secondary" onclick="goToMainPage()">Back to Main Page</button>
+            </div>
+            <div class="join-row">
+                <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
+                <button style="width:auto; padding:12px 18px;" onclick="joinRoom()">Join</button>
+            </div>
+        <p class="small" style="margin-top:12px;">Τα rooms υποστηρίζουν μέχρι 10 παίκτες. Το ίδιο σετ ερωτήσεων μοιράζεται σε όλους και το σκορ ενημερώνεται live.</p>
         </div>
-        <div class="join-row">
-            <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
-            <button style="width:auto; padding:12px 18px;" onclick="joinRoom()">Join</button>
-        </div>
-        <p class="small" style="margin-top:12px;">Τα rooms είναι για 2 παίκτες. Μόλις μπει και ο δεύτερος, η μονομαχία ξεκινάει αυτόματα.</p>
-    </div>
 
     <div id="scr-room" class="hidden">
         <div class="duel-layout">
@@ -348,6 +423,10 @@
                     <span class="code-pill" id="room-code-pill">ROOM</span>
                     <span id="room-status-text">Αναμονή για αντίπαλο...</span>
                     <button class="secondary" style="width:auto; padding:8px 12px;" onclick="leaveRoom()">Έξοδος</button>
+                </div>
+                <div class="room-roster">
+                    <div class="small">Παίκτες room</div>
+                    <div id="room-roster" class="roster-grid"></div>
                 </div>
                 <div class="duel-top" style="margin-bottom:12px;">
                     <div id="you-card" class="player-card you"></div>
@@ -387,10 +466,11 @@
 <script src="./firebase-config.js"></script>
 <script src="./Quiz12-questions.js"></script>
 <script type="module">
-const FIREBASE_SDK_VERSION = '12.7.0';
-const PROFILE_COLLECTION = 'quiz12_duel_profiles';
-const ROOM_COLLECTION = 'quiz12_duel_rooms';
-const QUESTIONS_PER_DUEL = 10;
+  const FIREBASE_SDK_VERSION = '12.7.0';
+  const PROFILE_COLLECTION = 'quiz12_duel_profiles';
+  const ROOM_COLLECTION = 'quiz12_duel_rooms';
+  const MAX_ROOM_PLAYERS = 10;
+  const QUESTIONS_PER_DUEL = 10;
 const REACTION_OPTIONS = [
     { key: 'heart', emoji: '❤️' },
     { key: 'laugh', emoji: '😂' },
@@ -522,6 +602,10 @@ function renderLobbyProfile() {
         </div>
     `;
 }
+
+window.goToMainPage = function goToMainPage() {
+    window.location.href = 'https://vapostolakos.github.io/quiz12-general/';
+};
 
 function stopSubscriptions() {
     if (roomUnsub) roomUnsub();
@@ -678,6 +762,14 @@ function playerStateFromProfile(profile) {
     };
 }
 
+function getSortedPlayers(players = {}) {
+    return Object.values(players).sort((a, b) => {
+        if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+        if ((b.correct || 0) !== (a.correct || 0)) return (b.correct || 0) - (a.correct || 0);
+        return (a.nickname || '').localeCompare(b.nickname || '');
+    });
+}
+
 window.createRoom = async function createRoom() {
     if (!currentProfile) {
         alert('Φτιάξε πρώτα προφίλ.');
@@ -722,7 +814,7 @@ window.joinRoom = async function joinRoom() {
     const players = roomData.players || {};
     const ids = Object.keys(players);
 
-    if (!players[currentProfile.id] && ids.length >= 2) {
+    if (!players[currentProfile.id] && ids.length >= MAX_ROOM_PLAYERS) {
         alert('Το room είναι ήδη γεμάτο.');
         return;
     }
@@ -786,21 +878,24 @@ function renderPlayerCard(targetId, mountId, fallbackText) {
 
 function getOpponentId() {
     if (!currentRoomData?.players || !currentProfile) return null;
-    return Object.keys(currentRoomData.players).find(id => id !== currentProfile.id) || null;
+    const rankedOpponents = getSortedPlayers(currentRoomData.players).filter(player => player.id !== currentProfile.id);
+    return rankedOpponents[0]?.id || null;
 }
 
 function renderFinalBox() {
     const players = currentRoomData.players || {};
     const me = players[currentProfile.id];
-    const opponent = players[getOpponentId()];
+    const ranking = getSortedPlayers(players);
+    const winner = ranking[0];
     if (!me) return;
 
-    const bothFinished = Object.values(players).length === 2 && Object.values(players).every(player => player.finished);
-    let message = 'Περιμένεις να ολοκληρώσει και ο αντίπαλος.';
-    if (bothFinished && opponent) {
-        if (me.score > opponent.score) message = 'Κέρδισες τη μονομαχία!';
-        else if (me.score < opponent.score) message = 'Έχασες τη μονομαχία. Ο αντίπαλος πέρασε μπροστά.';
-        else message = 'Ισοπαλία. Ήσασταν ακριβώς στο ίδιο σκορ.';
+    const everyoneFinished = Object.values(players).length >= 2 && Object.values(players).every(player => player.finished);
+    let message = 'Περιμένεις να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
+    if (everyoneFinished && winner) {
+        const leaders = ranking.filter(player => (player.score || 0) === (winner.score || 0));
+        if (leaders.length > 1 && leaders.some(player => player.id === currentProfile.id)) message = 'Ισοπαλία στην κορυφή!';
+        else if (winner.id === currentProfile.id) message = 'Κέρδισες το room!';
+        else message = `Νικητής room: ${winner.nickname || winner.fullName}`;
     }
 
     $('duel-final-box').innerHTML = `
@@ -808,6 +903,20 @@ function renderFinalBox() {
         Δικό σου σκορ: ${me.score} | Σωστές: ${me.correct}/${currentRoomData.questions.length}
     `;
     $('duel-final-box').classList.remove('hidden');
+}
+
+function renderRoomRoster() {
+    if (!currentRoomData?.players) return;
+    const players = getSortedPlayers(currentRoomData.players);
+    $('room-roster').innerHTML = players.map((player, index) => `
+        <div class="roster-item">
+            ${player.photoUrl ? `<img src="${player.photoUrl}" alt="">` : `<div class="avatar-fallback" style="font-size:1.05rem;">👤</div>`}
+            <div class="roster-meta">
+                <div class="roster-name">${index + 1}. ${player.nickname || player.fullName}</div>
+                <div class="roster-score">Score: ${player.score || 0} · Correct: ${player.correct || 0}</div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function reactionCount(reactions, key) {
@@ -840,14 +949,16 @@ function renderRoom() {
     const status = currentRoomData.status || 'waiting';
     const players = currentRoomData.players || {};
     const opponentId = getOpponentId();
+    const playerCount = Object.keys(players).length;
 
     $('room-status-text').textContent =
-        status === 'waiting' ? 'Αναμονή για αντίπαλο...' :
-        status === 'active' ? 'Η μονομαχία είναι σε εξέλιξη' :
+        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${MAX_ROOM_PLAYERS})` :
+        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${MAX_ROOM_PLAYERS} παίκτες` :
         'Η μονομαχία ολοκληρώθηκε';
 
+    renderRoomRoster();
     renderPlayerCard(currentProfile.id, 'you-card', 'Εσύ');
-    renderPlayerCard(opponentId, 'opponent-card', 'Αντίπαλος');
+    renderPlayerCard(opponentId, 'opponent-card', playerCount > 2 ? 'Πρωτοπόρος room' : 'Αντίπαλος');
 
     if (status === 'waiting') {
         $('question-area-wait').classList.remove('hidden');
@@ -882,7 +993,7 @@ function renderRoom() {
 }
 
 async function maybeFinishRoom(updatedPlayers) {
-    const everyoneFinished = Object.values(updatedPlayers).length === 2 && Object.values(updatedPlayers).every(player => player.finished);
+    const everyoneFinished = Object.values(updatedPlayers).length >= 2 && Object.values(updatedPlayers).every(player => player.finished);
     if (!everyoneFinished) return;
     await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
         status: 'finished',
