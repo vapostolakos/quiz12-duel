@@ -182,6 +182,22 @@
             align-items: center;
             margin-top: 12px;
         }
+        .room-limit-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 140px;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+        }
+        .room-limit-row select {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #0b1220;
+            color: var(--text);
+            padding: 12px 14px;
+            font: inherit;
+        }
         .duel-layout {
             display: grid;
             grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
@@ -351,7 +367,7 @@
             .chat-card { min-height: auto; }
         }
         @media (max-width: 640px) {
-            .grid-2, .auth-actions, .lobby-actions, .duel-top, .join-row, .profile-box, .chat-form {
+            .grid-2, .auth-actions, .lobby-actions, .duel-top, .join-row, .profile-box, .chat-form, .room-limit-row {
                 grid-template-columns: 1fr;
             }
             .avatar-picker {
@@ -366,7 +382,7 @@
         <h1>Quiz Rooms</h1>
         <p class="lead">Κάνε register ή login και κράτα μόνιμα το profile σου με nickname, avatar και live rooms.</p>
         <div class="tip-box">
-            <strong>Πώς παίζεται:</strong> Κάθε room δίνει 10 τυχαίες ερωτήσεις από το κοινό pool. Και οι δύο παίκτες βλέπουν το ίδιο set, απαντούν με τον δικό τους ρυθμό και παρακολουθούν live score και chat.
+            <strong>Πώς παίζεται:</strong> Κάθε room δίνει 10 τυχαίες ερωτήσεις από το κοινό pool. Όλοι οι παίκτες βλέπουν το ίδιο set, απαντούν με τον δικό τους ρυθμό και παρακολουθούν live score και chat.
         </div>
         <div class="auth-box status-box">
             <h2>Λογαριασμός Παίκτη</h2>
@@ -411,11 +427,15 @@
                 <button class="secondary" onclick="logoutAccount()">Logout</button>
                 <button class="secondary" onclick="goToMainPage()">Back to Main Page</button>
             </div>
+            <div class="room-limit-row">
+                <div class="small">Μέγιστος αριθμός παικτών για νέο room</div>
+                <select id="room-player-limit"></select>
+            </div>
             <div class="join-row">
                 <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
                 <button style="width:auto; padding:12px 18px;" onclick="joinRoom()">Join</button>
             </div>
-        <p class="small" style="margin-top:12px;">Τα rooms υποστηρίζουν μέχρι 10 παίκτες. Το ίδιο σετ ερωτήσεων μοιράζεται σε όλους και το σκορ ενημερώνεται live.</p>
+        <p class="small" style="margin-top:12px;">Τα rooms υποστηρίζουν από 1 έως 20 παίκτες. Το ίδιο σετ ερωτήσεων μοιράζεται σε όλους και το σκορ ενημερώνεται live.</p>
         </div>
 
     <div id="scr-room" class="hidden">
@@ -471,7 +491,7 @@
   const FIREBASE_SDK_VERSION = '12.7.0';
   const PROFILE_COLLECTION = 'quiz12_duel_profiles';
   const ROOM_COLLECTION = 'quiz12_duel_rooms';
-  const MAX_ROOM_PLAYERS = 10;
+  const MAX_ROOM_PLAYERS = 20;
   const QUESTIONS_PER_DUEL = 10;
 const DEFAULT_AVATAR_OPTIONS = [
     { key: 'man-1', emoji: '👨', bg: '#1d4ed8' },
@@ -816,6 +836,15 @@ function playerStateFromProfile(profile) {
     };
 }
 
+function getRoomCapacity(roomData) {
+    const raw = Number(roomData?.maxPlayers || MAX_ROOM_PLAYERS);
+    return Math.max(1, Math.min(MAX_ROOM_PLAYERS, raw || MAX_ROOM_PLAYERS));
+}
+
+function getRequiredPlayersToStart(roomData) {
+    return Math.min(2, getRoomCapacity(roomData));
+}
+
 function getSortedPlayers(players = {}) {
     return Object.values(players).sort((a, b) => {
         if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
@@ -824,23 +853,35 @@ function getSortedPlayers(players = {}) {
     });
 }
 
+function populateRoomPlayerLimitOptions() {
+    const select = $('room-player-limit');
+    if (!select) return;
+    select.innerHTML = Array.from({ length: MAX_ROOM_PLAYERS }, (_, index) => {
+        const value = index + 1;
+        return `<option value="${value}" ${value === 10 ? 'selected' : ''}>${value}</option>`;
+    }).join('');
+}
+
 window.createRoom = async function createRoom() {
     if (!currentProfile) {
         alert('Φτιάξε πρώτα προφίλ.');
         return;
     }
 
+    const maxPlayers = Math.max(1, Math.min(MAX_ROOM_PLAYERS, Number($('room-player-limit')?.value || 10)));
     const code = await ensureRoomCodeFree();
     const questions = pickDuelQuestions();
     await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), {
         code,
         createdBy: currentProfile.id,
-        status: 'waiting',
+        maxPlayers,
+        status: maxPlayers === 1 ? 'active' : 'waiting',
         questions,
         players: {
             [currentProfile.id]: playerStateFromProfile(currentProfile)
         },
-        createdAt: firestoreApi.serverTimestamp()
+        createdAt: firestoreApi.serverTimestamp(),
+        startedAt: maxPlayers === 1 ? firestoreApi.serverTimestamp() : null
     });
     await openRoom(code);
 };
@@ -867,8 +908,9 @@ window.joinRoom = async function joinRoom() {
     const roomData = roomSnap.data();
     const players = roomData.players || {};
     const ids = Object.keys(players);
+    const roomCapacity = getRoomCapacity(roomData);
 
-    if (!players[currentProfile.id] && ids.length >= MAX_ROOM_PLAYERS) {
+    if (!players[currentProfile.id] && ids.length >= roomCapacity) {
         alert('Το room είναι ήδη γεμάτο.');
         return;
     }
@@ -876,7 +918,7 @@ window.joinRoom = async function joinRoom() {
     const updates = {
         [`players.${currentProfile.id}`]: players[currentProfile.id] || playerStateFromProfile(currentProfile)
     };
-    if (Object.keys({ ...players, [currentProfile.id]: true }).length >= 2) {
+    if (Object.keys({ ...players, [currentProfile.id]: true }).length >= getRequiredPlayersToStart(roomData)) {
         updates.status = 'active';
         if (!roomData.startedAt) updates.startedAt = firestoreApi.serverTimestamp();
     }
@@ -941,9 +983,10 @@ function renderFinalBox() {
     const me = players[currentProfile.id];
     const ranking = getSortedPlayers(players);
     const winner = ranking[0];
+    const requiredPlayers = getRequiredPlayersToStart(currentRoomData || {});
     if (!me) return;
 
-    const everyoneFinished = Object.values(players).length >= 2 && Object.values(players).every(player => player.finished);
+    const everyoneFinished = Object.values(players).length >= requiredPlayers && Object.values(players).every(player => player.finished);
     let message = 'Περιμένεις να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
     if (everyoneFinished && winner) {
         const leaders = ranking.filter(player => (player.score || 0) === (winner.score || 0));
@@ -1004,10 +1047,11 @@ function renderRoom() {
     const players = currentRoomData.players || {};
     const opponentId = getOpponentId();
     const playerCount = Object.keys(players).length;
+    const roomCapacity = getRoomCapacity(currentRoomData);
 
     $('room-status-text').textContent =
-        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${MAX_ROOM_PLAYERS})` :
-        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${MAX_ROOM_PLAYERS} παίκτες` :
+        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${roomCapacity})` :
+        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${roomCapacity} παίκτες` :
         'Η μονομαχία ολοκληρώθηκε';
 
     renderRoomRoster();
@@ -1047,7 +1091,8 @@ function renderRoom() {
 }
 
 async function maybeFinishRoom(updatedPlayers) {
-    const everyoneFinished = Object.values(updatedPlayers).length >= 2 && Object.values(updatedPlayers).every(player => player.finished);
+    const minPlayersNeeded = getRequiredPlayersToStart(currentRoomData || {});
+    const everyoneFinished = Object.values(updatedPlayers).length >= minPlayersNeeded && Object.values(updatedPlayers).every(player => player.finished);
     if (!everyoneFinished) return;
     await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
         status: 'finished',
@@ -1203,6 +1248,7 @@ $('chat-input').addEventListener('keydown', event => {
     }
 });
 
+populateRoomPlayerLimitOptions();
 start();
 renderDefaultAvatarPicker();
 </script>
