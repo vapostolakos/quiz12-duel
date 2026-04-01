@@ -8,7 +8,7 @@
         :root {
             --bg: #0f172a;
             --card: #1e293b;
-            --panel: #0f172a;
+            --panel: #0b1220;
             --primary: #0ea5e9;
             --accent: #f59e0b;
             --success: #10b981;
@@ -22,7 +22,7 @@
             font-family: "Segoe UI", system-ui, sans-serif;
             min-height: 100vh;
             background:
-                radial-gradient(circle at top, rgba(14,165,233,0.18), transparent 30%),
+                radial-gradient(circle at top, rgba(14, 165, 233, 0.18), transparent 30%),
                 linear-gradient(180deg, #020617 0%, #0f172a 60%, #111827 100%);
             color: var(--text);
             padding: 1rem;
@@ -38,7 +38,7 @@
             font-weight: 900;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: rgba(245, 158, 11, 0.18);
+            color: rgba(245, 158, 11, 0.16);
             pointer-events: none;
             z-index: 0;
         }
@@ -56,7 +56,7 @@
             box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
         }
         .hidden { display: none !important; }
-        h1, h2, h3 { color: var(--accent); margin-bottom: 0.7rem; }
+        h1, h2, h3 { color: var(--accent); margin-bottom: 0.75rem; }
         p { color: #cbd5e1; line-height: 1.6; }
         .lead { color: var(--muted); margin-bottom: 1rem; }
         input, button {
@@ -77,6 +77,7 @@
             padding: 12px 14px;
             font-weight: 700;
             cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease;
         }
         button:hover:not(:disabled) { transform: translateY(-1px); }
         button:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -95,11 +96,26 @@
             gap: 12px;
         }
         .stack { display: grid; gap: 12px; }
+        .auth-box {
+            margin: 1rem 0;
+            display: grid;
+            gap: 12px;
+        }
+        .auth-actions, .lobby-actions, .duel-top, .chat-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .auth-note {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
         .profile-box {
             display: grid;
             grid-template-columns: 120px 1fr;
             gap: 16px;
             align-items: start;
+            margin-top: 1rem;
         }
         .avatar-preview, .avatar-fallback, .chat-avatar {
             width: 120px;
@@ -114,11 +130,6 @@
             align-items: center;
             justify-content: center;
             font-size: 2.6rem;
-        }
-        .lobby-actions, .duel-top, .chat-form {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
         }
         .join-row {
             display: grid;
@@ -195,6 +206,11 @@
         }
         .options { display: grid; gap: 10px; }
         .option { background: #334155; text-align: left; }
+        .answer-status {
+            margin-top: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
         .chat-card {
             display: grid;
             grid-template-rows: auto 1fr auto;
@@ -227,7 +243,7 @@
             .chat-card { min-height: auto; }
         }
         @media (max-width: 640px) {
-            .grid-2, .lobby-actions, .duel-top, .join-row, .profile-box, .chat-form {
+            .grid-2, .auth-actions, .lobby-actions, .duel-top, .join-row, .profile-box, .chat-form {
                 grid-template-columns: 1fr;
             }
         }
@@ -235,14 +251,25 @@
 </head>
 <body>
 <div class="app">
-    <div id="scr-profile" class="card">
-        <h1>Quiz 12 Duel</h1>
-        <p class="lead">Δημιούργησε το προφίλ σου, βάλε φωτογραφία και μπες σε μονομαχία 1v1 με live score και chat.</p>
+    <div id="scr-auth" class="card">
+        <h1>Quiz Rooms</h1>
+        <p class="lead">Κάνε register ή login και κράτα μόνιμα το duel profile σου με nickname, avatar και live rooms.</p>
         <div class="tip-box">
-            <strong>Πώς παίζεται:</strong> Κάθε room δίνει 10 τυχαίες ερωτήσεις από το κοινό pool. Και οι δύο παίκτες
-            βλέπουν το ίδιο set, απαντούν με τον δικό τους ρυθμό και παρακολουθούν live το σκορ του αντιπάλου.
+            <strong>Πώς παίζεται:</strong> Κάθε room δίνει 10 τυχαίες ερωτήσεις από το κοινό pool. Και οι δύο παίκτες βλέπουν το ίδιο set, απαντούν με τον δικό τους ρυθμό και παρακολουθούν live score και chat.
         </div>
-        <div class="profile-box">
+        <div class="auth-box status-box">
+            <h2>Λογαριασμός Παίκτη</h2>
+            <div class="grid-2">
+                <input id="auth-email" type="email" placeholder="Email">
+                <input id="auth-password" type="password" placeholder="Password">
+            </div>
+            <div class="auth-actions">
+                <button onclick="registerAccount()">Δημιουργία Λογαριασμού</button>
+                <button class="secondary" onclick="loginAccount()">Login</button>
+            </div>
+            <div id="auth-status" class="auth-note">Σύνδεσε πρώτα λογαριασμό και μετά αποθήκευσε το duel profile σου.</div>
+        </div>
+        <div id="profile-setup" class="profile-box hidden">
             <div>
                 <img id="profile-avatar-preview" class="avatar-preview hidden" alt="">
                 <div id="profile-avatar-fallback" class="avatar-fallback">👤</div>
@@ -266,6 +293,7 @@
         <div class="lobby-actions" style="margin-top:1rem;">
             <button onclick="createRoom()">Δημιουργία Room</button>
             <button class="secondary" onclick="goToProfile()">Επεξεργασία Προφίλ</button>
+            <button class="secondary" onclick="logoutAccount()">Logout</button>
         </div>
         <div class="join-row">
             <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
@@ -282,32 +310,35 @@
                     <span id="room-status-text">Αναμονή για αντίπαλο...</span>
                     <button class="secondary" style="width:auto; padding:8px 12px;" onclick="leaveRoom()">Έξοδος</button>
                 </div>
-                <div class="duel-top" style="margin-bottom:14px;">
+                <div class="duel-top" style="margin-bottom:12px;">
                     <div id="you-card" class="player-card you"></div>
                     <div id="opponent-card" class="player-card"></div>
                 </div>
                 <div class="question-card">
-                    <div id="question-area-wait" class="status-box">Περίμενε να μπει και ο δεύτερος παίκτης για να ξεκινήσει η μονομαχία.</div>
+                    <div id="question-area-wait" class="status-box">
+                        Μόλις μπει και ο δεύτερος παίκτης, η μονομαχία θα ξεκινήσει αυτόματα.
+                    </div>
                     <div id="question-area-game" class="hidden">
-                        <div class="small" id="duel-progress-text"></div>
-                        <div class="hint" id="duel-hint"></div>
-                        <div class="question-text" id="duel-question-text"></div>
-                        <div class="options" id="duel-options"></div>
-                        <div class="status-box hidden" id="duel-answer-status" style="margin-top:14px;"></div>
-                        <div class="winner-box hidden" id="duel-final-box" style="margin-top:14px;"></div>
+                        <div class="room-meta" style="margin-bottom:10px;">
+                            <span id="duel-progress-text">Ερώτηση 1/10</span>
+                        </div>
+                        <div id="duel-hint" class="hint"></div>
+                        <div id="duel-question-text" class="question-text"></div>
+                        <div id="duel-options" class="options"></div>
+                        <div id="duel-answer-status" class="answer-status hidden"></div>
+                        <div id="duel-final-box" class="winner-box hidden" style="margin-top:14px;"></div>
                     </div>
                 </div>
             </div>
-
             <div class="chat-card">
                 <div>
                     <h2>Live Chat</h2>
-                    <p class="small">Αντάλλαξε μηνύματα με τον αντίπαλό σου όσο παίζετε.</p>
+                    <p class="small">Μπορείτε να μιλάτε μεταξύ σας όσο παίζετε.</p>
                 </div>
-                <div class="chat-list" id="chat-list"></div>
-                <div class="chat-form" style="margin-top:12px;">
-                    <input id="chat-input" type="text" placeholder="Γράψε μήνυμα..." maxlength="220">
-                    <button style="width:auto; padding:12px 18px;" onclick="sendChatMessage()">Αποστολή</button>
+                <div id="chat-list" class="chat-list"></div>
+                <div class="chat-form">
+                    <input id="chat-input" type="text" placeholder="Γράψε μήνυμα...">
+                    <button onclick="sendChatMessage()">Αποστολή</button>
                 </div>
             </div>
         </div>
@@ -321,12 +352,15 @@ const FIREBASE_SDK_VERSION = '12.7.0';
 const PROFILE_COLLECTION = 'quiz12_duel_profiles';
 const ROOM_COLLECTION = 'quiz12_duel_rooms';
 const QUESTIONS_PER_DUEL = 10;
-const LOCAL_PROFILE_KEY = 'quiz12_duel_profile';
 
 const QUESTION_POOL = Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : [];
 let firebaseDb = null;
-let firebaseApi = null;
+let firebaseAuth = null;
+let firebaseApp = null;
+let firestoreApi = null;
+let authApi = null;
 let firebaseReady = false;
+let authUser = null;
 let currentProfile = null;
 let currentRoomCode = null;
 let currentRoomData = null;
@@ -337,7 +371,7 @@ let avatarDataUrl = '';
 function $(id) { return document.getElementById(id); }
 
 function show(screenId) {
-    ['scr-profile', 'scr-lobby', 'scr-room'].forEach(id => {
+    ['scr-auth', 'scr-lobby', 'scr-room'].forEach(id => {
         $(id).classList.toggle('hidden', id !== screenId);
     });
 }
@@ -351,19 +385,14 @@ async function initFirebase() {
     if (!hasFirebaseConfig()) return false;
     const appMod = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js`);
     const dbMod = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-firestore.js`);
-    const app = appMod.initializeApp(window.FIREBASE_CONFIG);
-    firebaseDb = dbMod.getFirestore(app);
-    firebaseApi = dbMod;
+    const authMod = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-auth.js`);
+    firebaseApp = appMod.initializeApp(window.FIREBASE_CONFIG);
+    firebaseDb = dbMod.getFirestore(firebaseApp);
+    firebaseAuth = authMod.getAuth(firebaseApp);
+    firestoreApi = dbMod;
+    authApi = authMod;
     firebaseReady = true;
     return true;
-}
-
-function createId() {
-    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-function makeRoomCode() {
-    return Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
 function shuffleArray(items) {
@@ -376,22 +405,7 @@ function shuffleArray(items) {
 }
 
 function pickDuelQuestions() {
-    return shuffleArray(QUESTION_POOL)
-        .slice(0, Math.min(QUESTIONS_PER_DUEL, QUESTION_POOL.length))
-        .map(item => ({ q: item.q, o: item.o, a: item.a, h: item.h || '', r: item.r || '' }));
-}
-
-function getStoredProfile() {
-    try {
-        const raw = JSON.parse(localStorage.getItem(LOCAL_PROFILE_KEY) || 'null');
-        return raw && raw.id ? raw : null;
-    } catch {
-        return null;
-    }
-}
-
-function storeProfile(profile) {
-    localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(profile));
+    return shuffleArray(QUESTION_POOL).slice(0, QUESTIONS_PER_DUEL);
 }
 
 function renderAvatar(imgEl, fallbackEl, photoUrl) {
@@ -400,6 +414,7 @@ function renderAvatar(imgEl, fallbackEl, photoUrl) {
         imgEl.classList.remove('hidden');
         fallbackEl.classList.add('hidden');
     } else {
+        imgEl.removeAttribute('src');
         imgEl.classList.add('hidden');
         fallbackEl.classList.remove('hidden');
     }
@@ -409,40 +424,24 @@ function profileLabel(profile) {
     return profile.nickname || `${profile.firstName} ${profile.lastName}`.trim();
 }
 
-function formatTime(ts) {
-    if (!ts) return '';
-    const date = ts.toDate ? ts.toDate() : new Date(ts);
-    return date.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' });
+function formatTime(timestamp) {
+    if (!timestamp) return 'τώρα';
+    const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+    return Number.isNaN(date.getTime()) ? 'τώρα' : date.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' });
 }
 
 async function fileToAvatarDataUrl(file) {
-    const rawDataUrl = await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(file);
     });
+}
 
-    return await new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const size = 180;
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, size, size);
-            const scale = Math.max(size / img.width, size / img.height);
-            const w = img.width * scale;
-            const h = img.height * scale;
-            const x = (size - w) / 2;
-            const y = (size - h) / 2;
-            ctx.drawImage(img, x, y, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.82));
-        };
-        img.src = rawDataUrl;
-    });
+async function fetchProfile(uid) {
+    const snap = await firestoreApi.getDoc(firestoreApi.doc(firebaseDb, PROFILE_COLLECTION, uid));
+    return snap.exists() ? snap.data() : null;
 }
 
 function fillProfileForm(profile) {
@@ -453,22 +452,99 @@ function fillProfileForm(profile) {
     renderAvatar($('profile-avatar-preview'), $('profile-avatar-fallback'), avatarDataUrl);
 }
 
+function renderAuthState(message = '') {
+    $('auth-status').textContent = message || (
+        authUser
+            ? `Συνδεδεμένος λογαριασμός: ${authUser.email}`
+            : 'Σύνδεσε πρώτα λογαριασμό και μετά αποθήκευσε το duel profile σου.'
+    );
+    $('profile-setup').classList.toggle('hidden', !authUser);
+}
+
 function renderLobbyProfile() {
-    if (!currentProfile) return;
+    if (!currentProfile || !authUser) return;
     $('lobby-profile-card').innerHTML = `
         <div class="player-head">
             ${currentProfile.photoUrl ? `<img src="${currentProfile.photoUrl}" alt="">` : `<div class="avatar-fallback" style="width:54px;height:54px;border-radius:14px;font-size:1.5rem;">👤</div>`}
             <div>
                 <div class="player-name">${profileLabel(currentProfile)}</div>
                 <div class="player-sub">${currentProfile.firstName} ${currentProfile.lastName}</div>
+                <div class="player-sub">${authUser.email}</div>
             </div>
         </div>
     `;
 }
 
+function stopSubscriptions() {
+    if (roomUnsub) roomUnsub();
+    if (chatUnsub) chatUnsub();
+    roomUnsub = null;
+    chatUnsub = null;
+}
+
+async function handleAuthUser(user) {
+    authUser = user;
+    stopSubscriptions();
+    currentRoomCode = null;
+    currentRoomData = null;
+
+    if (!authUser) {
+        currentProfile = null;
+        fillProfileForm(null);
+        renderAuthState();
+        show('scr-auth');
+        return;
+    }
+
+    currentProfile = await fetchProfile(authUser.uid);
+    fillProfileForm(currentProfile);
+    renderAuthState(`Συνδεδεμένος λογαριασμός: ${authUser.email}`);
+
+    if (currentProfile) {
+        renderLobbyProfile();
+        show('scr-lobby');
+    } else {
+        show('scr-auth');
+    }
+}
+
+window.registerAccount = async function registerAccount() {
+    const email = $('auth-email').value.trim();
+    const password = $('auth-password').value;
+    if (!email || !password) {
+        renderAuthState('Συμπλήρωσε email και password για register.');
+        return;
+    }
+    try {
+        await authApi.createUserWithEmailAndPassword(firebaseAuth, email, password);
+        renderAuthState(`Ο λογαριασμός ${email} δημιουργήθηκε. Συνέχισε με το duel profile σου.`);
+    } catch (error) {
+        renderAuthState(`Register error: ${error.message}`);
+    }
+};
+
+window.loginAccount = async function loginAccount() {
+    const email = $('auth-email').value.trim();
+    const password = $('auth-password').value;
+    if (!email || !password) {
+        renderAuthState('Συμπλήρωσε email και password για login.');
+        return;
+    }
+    try {
+        await authApi.signInWithEmailAndPassword(firebaseAuth, email, password);
+    } catch (error) {
+        renderAuthState(`Login error: ${error.message}`);
+    }
+};
+
+window.logoutAccount = async function logoutAccount() {
+    stopSubscriptions();
+    await authApi.signOut(firebaseAuth);
+};
+
 window.saveProfile = async function saveProfile() {
-    if (!firebaseReady) {
-        alert('Το Firebase δεν είναι διαθέσιμο.');
+    if (!firebaseReady || !authUser) {
+        renderAuthState('Πρέπει πρώτα να κάνεις login.');
         return;
     }
 
@@ -477,8 +553,8 @@ window.saveProfile = async function saveProfile() {
     const nickname = $('profile-nickname').value.trim();
     const file = $('profile-avatar-file').files[0];
 
-    if (firstName.length < 2 || lastName.length < 2 || nickname.length < 2) {
-        alert('Συμπλήρωσε σωστά όνομα, επώνυμο και nickname.');
+    if (!firstName || !lastName || !nickname) {
+        renderAuthState('Συμπλήρωσε όνομα, επώνυμο και nickname.');
         return;
     }
 
@@ -488,7 +564,8 @@ window.saveProfile = async function saveProfile() {
     }
 
     const profile = {
-        id: currentProfile?.id || createId(),
+        id: authUser.uid,
+        email: authUser.email,
         firstName,
         lastName,
         nickname,
@@ -496,22 +573,22 @@ window.saveProfile = async function saveProfile() {
         updatedAt: new Date().toISOString()
     };
 
-    await firebaseApi.setDoc(firebaseApi.doc(firebaseDb, PROFILE_COLLECTION, profile.id), profile, { merge: true });
+    await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, PROFILE_COLLECTION, authUser.uid), profile, { merge: true });
     currentProfile = profile;
-    storeProfile(profile);
     renderLobbyProfile();
     show('scr-lobby');
 };
 
 window.goToProfile = function goToProfile() {
     fillProfileForm(currentProfile);
-    show('scr-profile');
+    renderAuthState(`Συνδεδεμένος λογαριασμός: ${authUser?.email || ''}`);
+    show('scr-auth');
 };
 
 async function ensureRoomCodeFree() {
     for (let i = 0; i < 10; i++) {
-        const code = makeRoomCode();
-        const snap = await firebaseApi.getDoc(firebaseApi.doc(firebaseDb, ROOM_COLLECTION, code));
+        const code = Math.random().toString(36).slice(2, 8).toUpperCase();
+        const snap = await firestoreApi.getDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code));
         if (!snap.exists()) return code;
     }
     throw new Error('Δεν βρέθηκε διαθέσιμο room code.');
@@ -535,14 +612,10 @@ window.createRoom = async function createRoom() {
         alert('Φτιάξε πρώτα προφίλ.');
         return;
     }
-    if (QUESTION_POOL.length < QUESTIONS_PER_DUEL) {
-        alert('Χρειάζονται τουλάχιστον 10 ερωτήσεις στο pool.');
-        return;
-    }
 
     const code = await ensureRoomCodeFree();
     const questions = pickDuelQuestions();
-    await firebaseApi.setDoc(firebaseApi.doc(firebaseDb, ROOM_COLLECTION, code), {
+    await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), {
         code,
         createdBy: currentProfile.id,
         status: 'waiting',
@@ -550,9 +623,7 @@ window.createRoom = async function createRoom() {
         players: {
             [currentProfile.id]: playerStateFromProfile(currentProfile)
         },
-        createdAt: firebaseApi.serverTimestamp(),
-        startedAt: null,
-        finishedAt: null
+        createdAt: firestoreApi.serverTimestamp()
     });
     await openRoom(code);
 };
@@ -562,14 +633,15 @@ window.joinRoom = async function joinRoom() {
         alert('Φτιάξε πρώτα προφίλ.');
         return;
     }
+
     const code = $('join-room-code').value.trim().toUpperCase();
     if (code.length < 4) {
         alert('Βάλε έγκυρο κωδικό room.');
         return;
     }
 
-    const roomRef = firebaseApi.doc(firebaseDb, ROOM_COLLECTION, code);
-    const roomSnap = await firebaseApi.getDoc(roomRef);
+    const roomRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code);
+    const roomSnap = await firestoreApi.getDoc(roomRef);
     if (!roomSnap.exists()) {
         alert('Το room δεν βρέθηκε.');
         return;
@@ -578,6 +650,7 @@ window.joinRoom = async function joinRoom() {
     const roomData = roomSnap.data();
     const players = roomData.players || {};
     const ids = Object.keys(players);
+
     if (!players[currentProfile.id] && ids.length >= 2) {
         alert('Το room είναι ήδη γεμάτο.');
         return;
@@ -588,9 +661,10 @@ window.joinRoom = async function joinRoom() {
     };
     if (Object.keys({ ...players, [currentProfile.id]: true }).length >= 2) {
         updates.status = 'active';
-        if (!roomData.startedAt) updates.startedAt = firebaseApi.serverTimestamp();
+        if (!roomData.startedAt) updates.startedAt = firestoreApi.serverTimestamp();
     }
-    await firebaseApi.updateDoc(roomRef, updates);
+
+    await firestoreApi.updateDoc(roomRef, updates);
     await openRoom(code);
 };
 
@@ -600,13 +674,6 @@ async function openRoom(code) {
     show('scr-room');
     subscribeRoom(code);
     subscribeMessages(code);
-}
-
-function stopSubscriptions() {
-    if (roomUnsub) roomUnsub();
-    if (chatUnsub) chatUnsub();
-    roomUnsub = null;
-    chatUnsub = null;
 }
 
 window.leaveRoom = function leaveRoom() {
@@ -625,7 +692,7 @@ function renderPlayerCard(targetId, mountId, fallbackText) {
                 <div class="avatar-fallback" style="width:54px;height:54px;border-radius:14px;font-size:1.5rem;">👤</div>
                 <div>
                     <div class="player-name">${fallbackText}</div>
-                    <div class="player-sub">Περιμένει σύνδεση</div>
+                    <div class="player-sub">Δεν έχει μπει ακόμα</div>
                 </div>
             </div>
         `;
@@ -661,9 +728,10 @@ function renderFinalBox() {
     let message = 'Περιμένεις να ολοκληρώσει και ο αντίπαλος.';
     if (bothFinished && opponent) {
         if (me.score > opponent.score) message = 'Κέρδισες τη μονομαχία!';
-        else if (me.score < opponent.score) message = 'Έχασε τη μονομαχία. Ο αντίπαλος πέρασε μπροστά.';
+        else if (me.score < opponent.score) message = 'Έχασες τη μονομαχία. Ο αντίπαλος πέρασε μπροστά.';
         else message = 'Ισοπαλία. Ήσασταν ακριβώς στο ίδιο σκορ.';
     }
+
     $('duel-final-box').innerHTML = `
         <strong>${message}</strong><br>
         Δικό σου σκορ: ${me.score} | Σωστές: ${me.correct}/${currentRoomData.questions.length}
@@ -720,9 +788,9 @@ function renderRoom() {
 async function maybeFinishRoom(updatedPlayers) {
     const everyoneFinished = Object.values(updatedPlayers).length === 2 && Object.values(updatedPlayers).every(player => player.finished);
     if (!everyoneFinished) return;
-    await firebaseApi.updateDoc(firebaseApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
+    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
         status: 'finished',
-        finishedAt: firebaseApi.serverTimestamp()
+        finishedAt: firestoreApi.serverTimestamp()
     });
 }
 
@@ -747,7 +815,7 @@ window.answerDuelQuestion = async function answerDuelQuestion(index) {
         : `Λάθος. Η σωστή απάντηση ήταν: ${question.o[question.a]}`;
     $('duel-answer-status').classList.remove('hidden');
 
-    await firebaseApi.updateDoc(firebaseApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), updates);
+    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), updates);
 
     const latestPlayers = {
         ...currentRoomData.players,
@@ -764,7 +832,7 @@ window.answerDuelQuestion = async function answerDuelQuestion(index) {
 
 function subscribeRoom(code) {
     if (roomUnsub) roomUnsub();
-    roomUnsub = firebaseApi.onSnapshot(firebaseApi.doc(firebaseDb, ROOM_COLLECTION, code), snap => {
+    roomUnsub = firestoreApi.onSnapshot(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), snap => {
         if (!snap.exists()) {
             alert('Το room διαγράφηκε.');
             leaveRoom();
@@ -785,17 +853,17 @@ function renderMessages(items) {
                 <div class="chat-time">${formatTime(item.createdAt)}</div>
             </div>
         </div>
-    `).join('') : '<div class="small">Δεν υπάρχουν μηνύματα ακόμη.</div>';
+    `).join('') : '<div class="small">Δεν υπάρχουν μηνύματα ακόμα.</div>';
     $('chat-list').scrollTop = $('chat-list').scrollHeight;
 }
 
 function subscribeMessages(code) {
     if (chatUnsub) chatUnsub();
-    const messagesQuery = firebaseApi.query(
-        firebaseApi.collection(firebaseDb, ROOM_COLLECTION, code, 'messages'),
-        firebaseApi.orderBy('createdAt', 'asc')
+    const messagesQuery = firestoreApi.query(
+        firestoreApi.collection(firebaseDb, ROOM_COLLECTION, code, 'messages'),
+        firestoreApi.orderBy('createdAt', 'asc')
     );
-    chatUnsub = firebaseApi.onSnapshot(messagesQuery, snap => {
+    chatUnsub = firestoreApi.onSnapshot(messagesQuery, snap => {
         renderMessages(snap.docs.map(doc => doc.data()));
     });
 }
@@ -805,37 +873,33 @@ window.sendChatMessage = async function sendChatMessage() {
     const text = $('chat-input').value.trim();
     if (!text) return;
 
-    await firebaseApi.addDoc(firebaseApi.collection(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages'), {
+    await firestoreApi.addDoc(firestoreApi.collection(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages'), {
         senderId: currentProfile.id,
         nickname: currentProfile.nickname,
         fullName: `${currentProfile.firstName} ${currentProfile.lastName}`.trim(),
         photoUrl: currentProfile.photoUrl || '',
         text,
-        createdAt: firebaseApi.serverTimestamp()
+        createdAt: firestoreApi.serverTimestamp()
     });
 
     $('chat-input').value = '';
 };
-
-function bootstrapProfile() {
-    currentProfile = getStoredProfile();
-    if (currentProfile) {
-        fillProfileForm(currentProfile);
-        renderLobbyProfile();
-        show('scr-lobby');
-    } else {
-        fillProfileForm(null);
-        show('scr-profile');
-    }
-}
 
 async function start() {
     if (!hasFirebaseConfig()) {
         alert('Λείπει το Firebase config.');
         return;
     }
+
     await initFirebase();
-    bootstrapProfile();
+    authApi.onAuthStateChanged(firebaseAuth, async user => {
+        try {
+            await handleAuthUser(user);
+        } catch (error) {
+            renderAuthState(`Auth error: ${error.message}`);
+            show('scr-auth');
+        }
+    });
 }
 
 $('profile-avatar-file').addEventListener('change', async event => {
