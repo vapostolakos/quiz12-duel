@@ -1775,12 +1775,12 @@ function attachSwipeReplyHandlers() {
 function renderEmojiReactionPicker(itemId) {
     return `
         <div class="reaction-picker">
-            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">\\u2764\\uFE0F</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">\\uD83D\\uDE02</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">\\uD83D\\uDE2E</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">\\uD83D\\uDD25</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">\\uD83D\\uDC4F</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">\\uD83D\\uDC4D</button>
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">&#10084;&#65039;</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">&#128514;</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">&#128558;</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">&#128293;</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">&#128079;</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">&#128077;</button>
             <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}-plus')">+</button>
         </div>
         <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
@@ -1793,7 +1793,7 @@ function renderEmojiReactionPicker(itemId) {
                 <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
             `).join('')}
         </div>
-    `.replace(/\\\\u([0-9A-Fa-f]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+    `;
 }
 
 async function start() {
