@@ -1003,7 +1003,7 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
     const yourAnswer = selectedIndex === null || timedOut
         ? '<div style="margin-top:8px;">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
-        : `<div style="margin-top:8px;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
+        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
@@ -1014,7 +1014,7 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     return `
     <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
     ${yourAnswer}
-    <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+    <div style="margin-top:8px; color:#00ffff;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
     ${explanation}
 	`;
 }
