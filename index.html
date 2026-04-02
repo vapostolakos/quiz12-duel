@@ -587,6 +587,10 @@
                 <div class="small">Μέγιστος αριθμός παικτών για νέο room</div>
                 <select id="room-player-limit"></select>
             </div>
+            <div class="room-limit-row">
+                <div class="small">Πλήθος ερωτήσεων για νέο room</div>
+                <select id="room-question-count"></select>
+            </div>
             <div class="join-row">
                 <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
                 <button style="width:auto; padding:12px 18px;" onclick="joinRoom()">Join</button>
@@ -729,6 +733,29 @@ const CHAT_REACTION_OPTIONS = [
     { key: 'clap', emoji: '👏' },
     { key: 'thumbs', emoji: '👍' }
 ];
+const EXTRA_REACTION_OPTIONS = [
+    { key: 'grin', emoji: '😁' },
+    { key: 'cry', emoji: '😭' },
+    { key: 'angry', emoji: '😡' },
+    { key: 'party', emoji: '🥳' },
+    { key: 'mindblown', emoji: '🤯' },
+    { key: 'star', emoji: '🌟' },
+    { key: 'rocket', emoji: '🚀' },
+    { key: 'trophy', emoji: '🏆' },
+    { key: 'eyes', emoji: '👀' },
+    { key: 'ok-hand', emoji: '👌' },
+    { key: 'muscle', emoji: '💪' },
+    { key: 'check', emoji: '✅' },
+    { key: 'cross', emoji: '❌' },
+    { key: 'brain', emoji: '🧠' },
+    { key: 'wave', emoji: '👋' },
+    { key: 'crown', emoji: '👑' },
+    { key: 'lightning', emoji: '⚡' },
+    { key: 'skull', emoji: '💀' },
+    { key: '100', emoji: '💯' },
+    { key: 'star-eyes', emoji: '🤩' }
+];
+const ALL_REACTION_OPTIONS = [...CHAT_REACTION_OPTIONS, ...EXTRA_REACTION_OPTIONS];
 
 function $(id) { return document.getElementById(id); }
 
@@ -767,8 +794,8 @@ function shuffleArray(items) {
     return copy;
 }
 
-function pickDuelQuestions() {
-    return shuffleArray(QUESTION_POOL).slice(0, QUESTIONS_PER_DUEL);
+function pickDuelQuestions(count = QUESTIONS_PER_DUEL) {
+    return shuffleArray(QUESTION_POOL).slice(0, Math.max(1, Math.min(QUESTION_POOL.length, count)));
 }
 
 function renderAvatar(imgEl, fallbackEl, photoUrl) {
@@ -1252,6 +1279,17 @@ function populateRoomPlayerLimitOptions() {
     }).join('');
 }
 
+function populateRoomQuestionCountOptions() {
+    const select = $('room-question-count');
+    if (!select) return;
+    const maxQuestions = Math.max(10, Math.min(QUESTION_POOL.length || QUESTIONS_PER_DUEL, 50));
+    select.innerHTML = Array.from({ length: maxQuestions }, (_, index) => {
+        const value = index + 1;
+        const selected = value === QUESTIONS_PER_DUEL ? 'selected' : '';
+        return `<option value="${value}" ${selected}>${value}</option>`;
+    }).join('');
+}
+
 window.createRoom = async function createRoom() {
     if (!currentProfile) {
         alert('Φτιάξε πρώτα προφίλ.');
@@ -1259,12 +1297,14 @@ window.createRoom = async function createRoom() {
     }
 
     const maxPlayers = Math.max(1, Math.min(MAX_ROOM_PLAYERS, Number($('room-player-limit')?.value || 10)));
+    const questionCount = Math.max(1, Math.min(QUESTION_POOL.length || QUESTIONS_PER_DUEL, Number($('room-question-count')?.value || QUESTIONS_PER_DUEL)));
     const code = await ensureRoomCodeFree();
-    const questions = pickDuelQuestions();
+    const questions = pickDuelQuestions(questionCount);
     await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), {
         code,
         createdBy: currentProfile.id,
         maxPlayers,
+        questionCount,
         status: maxPlayers === 1 ? 'active' : 'waiting',
         questions,
         players: {
@@ -1414,7 +1454,7 @@ function reactionCount(reactions, key) {
 }
 
 function renderReactionSummary(item) {
-    const chips = CHAT_REACTION_OPTIONS
+    const chips = ALL_REACTION_OPTIONS
         .map(option => {
             const count = reactionCount(item.reactions, option.key);
             return count ? `<span class="reaction-chip">${option.emoji} ${count}</span>` : '';
@@ -1442,6 +1482,30 @@ function renderReactionPicker(itemId) {
     `;
 }
 
+function renderEnhancedReactionPicker(itemId) {
+    return `
+        <div class="reaction-picker">
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">❤️</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">😂</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">😮</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">🔥</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">👏</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">👍</button>
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}-plus')">+</button>
+        </div>
+        <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
+            ${HEART_REACTION_OPTIONS.map(option => `
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+            `).join('')}
+        </div>
+        <div class="reaction-palette ${openReactionPaletteFor === `${itemId}-plus` ? '' : 'hidden'}" data-message-id="${itemId}-plus">
+            ${EXTRA_REACTION_OPTIONS.map(option => `
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+            `).join('')}
+        </div>
+    `;
+}
+
 function renderRoom() {
     if (!currentRoomData || !currentProfile) return;
     const status = currentRoomData.status || 'waiting';
@@ -1450,10 +1514,11 @@ function renderRoom() {
     const playerCount = Object.keys(players).length;
     const roomCapacity = getRoomCapacity(currentRoomData);
 
+    const totalQuestions = currentRoomData.questionCount || currentRoomData.questions?.length || QUESTIONS_PER_DUEL;
     $('room-status-text').textContent =
-        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${roomCapacity})` :
-        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${roomCapacity} παίκτες` :
-        'Η μονομαχία ολοκληρώθηκε';
+        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${roomCapacity}) · ${totalQuestions} ερωτήσεις` :
+        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${roomCapacity} παίκτες · ${totalQuestions} ερωτήσεις` :
+        `Η μονομαχία ολοκληρώθηκε · ${totalQuestions} ερωτήσεις`;
 
     renderRoomRoster();
     renderPlayerCard(currentProfile.id, 'you-card', 'Εσύ');
@@ -1579,7 +1644,7 @@ function renderMessages(items) {
                         <div class="chat-gesture-hint">${isMine ? 'Σύρε δεξιά προς αριστερά για reply' : 'Σύρε αριστερά προς δεξιά για reply'}</div>
                     </div>
                     ${renderReactionSummary(item)}
-                    ${renderReactionPicker(item.id)}
+                    ${renderEmojiReactionPicker(item.id)}
                     <div class="chat-actions">
                         <button class="chat-action-btn" onclick="beginReplyToMessage('${item.id}')">Απάντηση</button>
                         ${isMine && !isDeleted ? `<button class="chat-action-btn" onclick="beginEditMessage('${item.id}')">Επεξεργασία</button>` : ''}
@@ -1707,6 +1772,30 @@ function attachSwipeReplyHandlers() {
     });
 }
 
+function renderEmojiReactionPicker(itemId) {
+    return `
+        <div class="reaction-picker">
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">\\u2764\\uFE0F</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">\\uD83D\\uDE02</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">\\uD83D\\uDE2E</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">\\uD83D\\uDD25</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">\\uD83D\\uDC4F</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">\\uD83D\\uDC4D</button>
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}-plus')">+</button>
+        </div>
+        <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
+            ${HEART_REACTION_OPTIONS.map(option => `
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+            `).join('')}
+        </div>
+        <div class="reaction-palette ${openReactionPaletteFor === `${itemId}-plus` ? '' : 'hidden'}" data-message-id="${itemId}-plus">
+            ${EXTRA_REACTION_OPTIONS.map(option => `
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+            `).join('')}
+        </div>
+    `.replace(/\\\\u([0-9A-Fa-f]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
 async function start() {
     if (!hasFirebaseConfig()) {
         alert('Λείπει το Firebase config.');
@@ -1745,6 +1834,7 @@ $('chat-input').addEventListener('keydown', event => {
 });
 
 populateRoomPlayerLimitOptions();
+populateRoomQuestionCountOptions();
 start();
 renderDefaultAvatarPicker();
 </script>
