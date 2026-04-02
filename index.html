@@ -123,6 +123,14 @@
             color: var(--muted);
             font-size: 0.92rem;
         }
+        .profile-password-box {
+            display: grid;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.82);
+        }
         .profile-box {
             display: grid;
             grid-template-columns: 120px 1fr;
@@ -362,6 +370,149 @@
         }
         .chat-name { color: var(--accent); font-weight: 700; margin-bottom: 4px; }
         .chat-time { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
+        .chat-item {
+            touch-action: pan-y;
+            transition: transform 0.14s ease;
+        }
+        .chat-item.mine .chat-bubble {
+            border-color: rgba(14, 165, 233, 0.25);
+        }
+        .chat-reply-preview {
+            padding: 8px 10px;
+            border-left: 3px solid var(--accent);
+            background: rgba(245, 158, 11, 0.08);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+        }
+        .chat-message-text.deleted {
+            color: var(--muted);
+            font-style: italic;
+        }
+        .chat-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .chat-action-btn {
+            width: auto;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            line-height: 1;
+        }
+        .chat-action-btn.danger {
+            background: rgba(185, 28, 28, 0.9);
+            color: #fff;
+        }
+        .chat-reply-composer {
+            margin-bottom: 8px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            color: #e2e8f0;
+        }
+        .chat-reply-composer.hidden {
+            display: none !important;
+        }
+        .reply-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .reply-close-btn {
+            width: auto;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #334155;
+            font-size: 0.72rem;
+        }
+        .reply-snippet {
+            color: #cbd5e1;
+            font-size: 0.84rem;
+            line-height: 1.4;
+        }
+        .chat-tools {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .mention-btn {
+            width: auto;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: #1d4ed8;
+        }
+        .mention-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .mention-menu.hidden {
+            display: none !important;
+        }
+        .mention-chip {
+            width: auto;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+        }
+        .reaction-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .reaction-palette.hidden {
+            display: none !important;
+        }
+        .chat-item.swiping {
+            transition: none;
+        }
+        .chat-item.reply-ready .chat-bubble {
+            border-color: rgba(245, 158, 11, 0.55);
+            box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.18) inset;
+        }
+        .chat-message-text {
+            color: #f8fafc;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+        .mention-token {
+            color: #7dd3fc;
+            font-weight: 700;
+        }
+        .edited-mark {
+            color: var(--muted);
+            font-size: 0.76rem;
+            margin-left: 6px;
+        }
+        .chat-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+        .chat-gesture-hint {
+            color: var(--muted);
+            font-size: 0.76rem;
+            margin-top: 4px;
+        }
         @media (max-width: 920px) {
             .duel-layout { grid-template-columns: 1fr; }
             .chat-card { min-height: auto; }
@@ -411,6 +562,11 @@
                 <div class="avatar-choice-label">Διάλεξε ένα από τα default avatars ή ανέβασε δική σου φωτογραφία.</div>
                 <div id="default-avatar-picker" class="avatar-picker"></div>
                 <input id="profile-avatar-file" type="file" accept="image/*">
+                <div class="profile-password-box">
+                    <div class="small">Αλλαγή κωδικού</div>
+                    <input id="profile-new-password" type="password" placeholder="Νέος κωδικός">
+                    <button class="secondary" onclick="changeAccountPassword()">Αλλαγή Κωδικού</button>
+                </div>
                 <button onclick="saveProfile()">Αποθήκευση Προφίλ</button>
                 <button class="secondary" id="btn-back-lobby" onclick="backToLobby()">Back to Lobby</button>
             </div>
@@ -476,8 +632,19 @@
                     <p class="small">Μπορείτε να μιλάτε μεταξύ σας όσο παίζετε.</p>
                 </div>
                 <div id="chat-list" class="chat-list"></div>
+                <div id="chat-reply-box" class="chat-reply-composer hidden">
+                    <div class="reply-head">
+                        <span id="chat-reply-title">Απάντηση</span>
+                        <button class="reply-close-btn" onclick="clearReplyTarget()">Κλείσιμο</button>
+                    </div>
+                    <div id="chat-reply-snippet" class="reply-snippet"></div>
+                </div>
+                <div id="mention-menu" class="mention-menu hidden"></div>
                 <div class="chat-form">
-                    <input id="chat-input" type="text" placeholder="Γράψε μήνυμα...">
+                    <div class="chat-tools">
+                        <button class="mention-btn" style="width:auto;" onclick="toggleMentionMenu()">@</button>
+                        <input id="chat-input" type="text" placeholder="Γράψε μήνυμα...">
+                    </div>
                     <button onclick="sendChatMessage()">Αποστολή</button>
                 </div>
             </div>
@@ -538,6 +705,30 @@ let currentRoomData = null;
 let roomUnsub = null;
 let chatUnsub = null;
 let avatarDataUrl = '';
+let replyTarget = null;
+let editingMessageId = null;
+let seenMessageIds = new Set();
+let chatAudioContext = null;
+let lastChatCount = 0;
+let swipeState = { activeId: null, startX: 0, currentX: 0 };
+let openReactionPaletteFor = null;
+const HEART_REACTION_OPTIONS = [
+    { key: 'heart-red', emoji: '❤️' },
+    { key: 'heart-pink', emoji: '🩷' },
+    { key: 'heart-orange', emoji: '🧡' },
+    { key: 'heart-yellow', emoji: '💛' },
+    { key: 'heart-green', emoji: '💚' },
+    { key: 'heart-blue', emoji: '🩵' },
+    { key: 'heart-purple', emoji: '💜' }
+];
+const CHAT_REACTION_OPTIONS = [
+    ...HEART_REACTION_OPTIONS,
+    { key: 'laugh', emoji: '😂' },
+    { key: 'wow', emoji: '😮' },
+    { key: 'fire', emoji: '🔥' },
+    { key: 'clap', emoji: '👏' },
+    { key: 'thumbs', emoji: '👍' }
+];
 
 function $(id) { return document.getElementById(id); }
 
@@ -595,6 +786,182 @@ function renderAvatar(imgEl, fallbackEl, photoUrl) {
 function profileLabel(profile) {
     return profile.nickname || `${profile.firstName} ${profile.lastName}`.trim();
 }
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function highlightMentions(text) {
+    return escapeHtml(text).replace(/(^|\s)(@all|@[A-Za-zΑ-Ωα-ω0-9_.-]+)/g, (match, prefix, token) => {
+        return `${prefix}<span class="mention-token">${token}</span>`;
+    });
+}
+
+function formatReplySnippet(text) {
+    const clean = String(text || '').trim();
+    if (!clean) return 'Χωρίς κείμενο';
+    return clean.length > 90 ? `${clean.slice(0, 87)}...` : clean;
+}
+
+async function ensureChatAudio() {
+    if (chatAudioContext) {
+        if (chatAudioContext.state === 'suspended') await chatAudioContext.resume();
+        return chatAudioContext;
+    }
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    chatAudioContext = new AudioCtx();
+    if (chatAudioContext.state === 'suspended') await chatAudioContext.resume();
+    return chatAudioContext;
+}
+
+function playChatTone(ctx, frequency, startAt, duration, type = 'triangle', gainValue = 0.03) {
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, startAt);
+    gain.gain.setValueAtTime(0.0001, startAt);
+    gain.gain.exponentialRampToValueAtTime(gainValue, startAt + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+    oscillator.connect(gain).connect(ctx.destination);
+    oscillator.start(startAt);
+    oscillator.stop(startAt + duration + 0.03);
+}
+
+async function playIncomingMessageSound() {
+    const ctx = await ensureChatAudio();
+    if (!ctx) return;
+    const now = ctx.currentTime + 0.01;
+    playChatTone(ctx, 659.25, now, 0.12, 'triangle', 0.03);
+    playChatTone(ctx, 880, now + 0.1, 0.16, 'triangle', 0.028);
+}
+
+function maybeNotifyNewMessage(item) {
+    if (!item || !currentProfile || item.senderId === currentProfile.id) return;
+    playIncomingMessageSound();
+    if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+            new Notification(`Νέο μήνυμα από ${item.nickname || 'Παίκτη'}`, {
+                body: item.text || 'Σου έστειλε μήνυμα στο room',
+                icon: item.photoUrl || undefined
+            });
+        } else if (Notification.permission === 'default') {
+            Notification.requestPermission().catch(() => {});
+        }
+    }
+}
+
+function buildMentionMenu() {
+    const mount = $('mention-menu');
+    if (!mount || !currentRoomData?.players) return;
+    const players = getSortedPlayers(currentRoomData.players);
+    const options = [
+        { label: '@all', value: '@all ' },
+        ...players.map(player => ({ label: `@${player.nickname}`, value: `@${player.nickname} ` }))
+    ];
+    mount.innerHTML = options.map(option => `
+        <button class="mention-chip" onclick="insertMention('${option.value.replace(/'/g, "\\'")}')">${option.label}</button>
+    `).join('');
+}
+
+window.toggleMentionMenu = function toggleMentionMenu() {
+    const menu = $('mention-menu');
+    if (!menu) return;
+    buildMentionMenu();
+    menu.classList.toggle('hidden');
+};
+
+window.insertMention = function insertMention(token) {
+    const input = $('chat-input');
+    if (!input) return;
+    input.value = `${input.value}${input.value && !input.value.endsWith(' ') ? ' ' : ''}${token}`;
+    input.focus();
+    $('mention-menu').classList.add('hidden');
+};
+
+window.toggleReactionPalette = function toggleReactionPalette(messageId) {
+    openReactionPaletteFor = openReactionPaletteFor === messageId ? null : messageId;
+    const palettes = Array.from(document.querySelectorAll('.reaction-palette[data-message-id]'));
+    palettes.forEach(node => {
+        node.classList.toggle('hidden', node.dataset.messageId !== openReactionPaletteFor);
+    });
+};
+
+function renderReplyComposer() {
+    const box = $('chat-reply-box');
+    if (!box) return;
+    if (!replyTarget) {
+        box.classList.add('hidden');
+        $('chat-reply-title').textContent = 'Απάντηση';
+        $('chat-reply-snippet').textContent = '';
+        return;
+    }
+    box.classList.remove('hidden');
+    $('chat-reply-title').textContent = editingMessageId ? 'Επεξεργασία μηνύματος' : `Απάντηση σε ${replyTarget.nickname}`;
+    $('chat-reply-snippet').textContent = replyTarget.text || 'Χωρίς κείμενο';
+}
+
+window.clearReplyTarget = function clearReplyTarget() {
+    replyTarget = null;
+    editingMessageId = null;
+    $('chat-input').value = '';
+    renderReplyComposer();
+};
+
+window.beginReplyToMessage = function beginReplyToMessage(messageId) {
+    const item = document.querySelector(`.chat-item[data-message-id="${messageId}"]`);
+    if (!item) return;
+    replyTarget = {
+        id: messageId,
+        nickname: item.dataset.nickname || 'Παίκτης',
+        text: item.dataset.text || ''
+    };
+    editingMessageId = null;
+    renderReplyComposer();
+    $('chat-input').focus();
+};
+
+window.beginEditMessage = async function beginEditMessage(messageId) {
+    if (!currentRoomCode || !currentProfile) return;
+    const messageRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages', messageId);
+    const messageSnap = await firestoreApi.getDoc(messageRef);
+    if (!messageSnap.exists()) return;
+    const data = messageSnap.data();
+    if (data.senderId !== currentProfile.id || data.deletedAt) return;
+    editingMessageId = messageId;
+    replyTarget = {
+        id: messageId,
+        nickname: data.nickname || currentProfile.nickname,
+        text: data.text || ''
+    };
+    $('chat-input').value = data.text || '';
+    renderReplyComposer();
+    $('chat-input').focus();
+};
+
+window.deleteMessage = async function deleteMessage(messageId) {
+    if (!currentRoomCode || !currentProfile) return;
+    const messageRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages', messageId);
+    const messageSnap = await firestoreApi.getDoc(messageRef);
+    if (!messageSnap.exists()) return;
+    const data = messageSnap.data();
+    if (data.senderId !== currentProfile.id) return;
+    await firestoreApi.updateDoc(messageRef, {
+        text: '',
+        mentions: [],
+        replyTo: firestoreApi.deleteField(),
+        deletedAt: firestoreApi.serverTimestamp(),
+        editedAt: firestoreApi.serverTimestamp()
+    });
+    if (editingMessageId === messageId) {
+        window.clearReplyTarget();
+    }
+};
 
 function formatTime(timestamp) {
     if (!timestamp) return 'τώρα';
@@ -802,6 +1169,29 @@ window.saveProfile = async function saveProfile() {
     show('scr-lobby');
 };
 
+window.changeAccountPassword = async function changeAccountPassword() {
+    if (!authUser || !authApi) {
+        renderAuthState('Πρέπει πρώτα να κάνεις login.');
+        return;
+    }
+    const newPassword = $('profile-new-password').value.trim();
+    if (newPassword.length < 6) {
+        renderAuthState('Ο νέος κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.');
+        return;
+    }
+    try {
+        await authApi.updatePassword(authUser, newPassword);
+        $('profile-new-password').value = '';
+        renderAuthState('Ο κωδικός άλλαξε επιτυχώς.');
+    } catch (error) {
+        if (error?.code === 'auth/requires-recent-login') {
+            renderAuthState('Για αλλαγή κωδικού χρειάζεται να κάνεις ξανά login.');
+            return;
+        }
+        renderAuthState(`Password error: ${error.message}`);
+    }
+};
+
 window.goToProfile = function goToProfile() {
     fillProfileForm(currentProfile);
     renderAuthState('Ο λογαριασμός σου είναι συνδεδεμένος.');
@@ -939,6 +1329,9 @@ window.leaveRoom = function leaveRoom() {
     stopSubscriptions();
     currentRoomCode = null;
     currentRoomData = null;
+    seenMessageIds = new Set();
+    openReactionPaletteFor = null;
+    window.clearReplyTarget();
     $('chat-list').innerHTML = '';
     show('scr-lobby');
 };
@@ -1021,7 +1414,7 @@ function reactionCount(reactions, key) {
 }
 
 function renderReactionSummary(item) {
-    const chips = REACTION_OPTIONS
+    const chips = CHAT_REACTION_OPTIONS
         .map(option => {
             const count = reactionCount(item.reactions, option.key);
             return count ? `<span class="reaction-chip">${option.emoji} ${count}</span>` : '';
@@ -1034,7 +1427,15 @@ function renderReactionSummary(item) {
 function renderReactionPicker(itemId) {
     return `
         <div class="reaction-picker">
-            ${REACTION_OPTIONS.map(option => `
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">❤️</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">😂</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">😮</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">🔥</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">👏</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">👍</button>
+        </div>
+        <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
+            ${HEART_REACTION_OPTIONS.map(option => `
                 <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
             `).join('')}
         </div>
@@ -1150,29 +1551,68 @@ function subscribeRoom(code) {
 }
 
 function renderMessages(items) {
-    $('chat-list').innerHTML = items.length ? items.map(item => `
-        <div class="chat-item">
-            ${item.photoUrl ? `<img class="chat-avatar" src="${item.photoUrl}" alt="">` : `<div class="avatar-fallback chat-avatar" style="font-size:1.3rem;">👤</div>`}
-            <div class="chat-bubble">
-                <div class="chat-name">${item.nickname}</div>
-                <div>${item.text}</div>
-                <div class="chat-time">${formatTime(item.createdAt)}</div>
-                ${renderReactionSummary(item)}
-                ${renderReactionPicker(item.id)}
+    const chatList = $('chat-list');
+    chatList.innerHTML = items.length ? items.map(item => {
+        const isMine = item.senderId === currentProfile?.id;
+        const isDeleted = !!item.deletedAt;
+        const textHtml = isDeleted
+            ? '<div class="chat-message-text deleted">Το μήνυμα διαγράφηκε.</div>'
+            : `<div class="chat-message-text">${highlightMentions(item.text || '')}</div>`;
+        const replyPreview = item.replyTo ? `
+            <div class="chat-reply-preview">
+                <strong>${escapeHtml(item.replyTo.nickname || 'Παίκτης')}</strong><br>
+                ${escapeHtml(formatReplySnippet(item.replyTo.text))}
             </div>
-        </div>
-    `).join('') : '<div class="small">Δεν υπάρχουν μηνύματα ακόμα.</div>';
-    $('chat-list').scrollTop = $('chat-list').scrollHeight;
+        ` : '';
+        return `
+            <div class="chat-item ${isMine ? 'mine' : ''}" data-message-id="${item.id}" data-sender-id="${escapeHtml(item.senderId || '')}" data-nickname="${escapeHtml(item.nickname || 'Παίκτης')}" data-text="${escapeHtml(item.text || '')}">
+                ${item.photoUrl ? `<img class="chat-avatar" src="${item.photoUrl}" alt="">` : `<div class="avatar-fallback chat-avatar" style="font-size:1.3rem;">👤</div>`}
+                <div class="chat-bubble">
+                    ${replyPreview}
+                    <div class="chat-name">${escapeHtml(item.nickname || 'Παίκτης')}</div>
+                    ${textHtml}
+                    <div class="chat-meta-row">
+                        <div class="chat-time">
+                            ${formatTime(item.createdAt)}
+                            ${item.editedAt ? '<span class="edited-mark">(edited)</span>' : ''}
+                        </div>
+                        <div class="chat-gesture-hint">${isMine ? 'Σύρε δεξιά προς αριστερά για reply' : 'Σύρε αριστερά προς δεξιά για reply'}</div>
+                    </div>
+                    ${renderReactionSummary(item)}
+                    ${renderReactionPicker(item.id)}
+                    <div class="chat-actions">
+                        <button class="chat-action-btn" onclick="beginReplyToMessage('${item.id}')">Απάντηση</button>
+                        ${isMine && !isDeleted ? `<button class="chat-action-btn" onclick="beginEditMessage('${item.id}')">Επεξεργασία</button>` : ''}
+                        ${isMine && !isDeleted ? `<button class="chat-action-btn danger" onclick="deleteMessage('${item.id}')">Διαγραφή</button>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('') : '<div class="small">Δεν υπάρχουν μηνύματα ακόμα.</div>';
+    attachSwipeReplyHandlers();
+    chatList.scrollTop = chatList.scrollHeight;
 }
 
 function subscribeMessages(code) {
     if (chatUnsub) chatUnsub();
+    seenMessageIds = new Set();
+    openReactionPaletteFor = null;
+    window.clearReplyTarget();
     const messagesQuery = firestoreApi.query(
         firestoreApi.collection(firebaseDb, ROOM_COLLECTION, code, 'messages'),
         firestoreApi.orderBy('createdAt', 'asc')
     );
     chatUnsub = firestoreApi.onSnapshot(messagesQuery, snap => {
-        renderMessages(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (seenMessageIds.size === 0) {
+            seenMessageIds = new Set(items.map(item => item.id));
+        } else {
+            const newcomers = items.filter(item => !seenMessageIds.has(item.id));
+            newcomers.forEach(maybeNotifyNewMessage);
+            seenMessageIds = new Set(items.map(item => item.id));
+        }
+        lastChatCount = items.length;
+        renderMessages(items);
     });
 }
 
@@ -1195,21 +1635,77 @@ window.toggleReaction = async function toggleReaction(messageId, reactionKey) {
 
 window.sendChatMessage = async function sendChatMessage() {
     if (!currentRoomCode || !currentProfile) return;
+    await ensureChatAudio();
     const text = $('chat-input').value.trim();
     if (!text) return;
 
-    await firestoreApi.addDoc(firestoreApi.collection(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages'), {
-        senderId: currentProfile.id,
-        nickname: currentProfile.nickname,
-        fullName: `${currentProfile.firstName} ${currentProfile.lastName}`.trim(),
-        photoUrl: currentProfile.photoUrl || '',
-        text,
-        reactions: {},
-        createdAt: firestoreApi.serverTimestamp()
-    });
+    const mentions = Array.from(new Set((text.match(/@all|@[A-Za-zΑ-Ωα-ω0-9_.-]+/g) || [])));
 
-    $('chat-input').value = '';
+    if (editingMessageId) {
+        const messageRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages', editingMessageId);
+        await firestoreApi.updateDoc(messageRef, {
+            text,
+            mentions,
+            editedAt: firestoreApi.serverTimestamp()
+        });
+    } else {
+        await firestoreApi.addDoc(firestoreApi.collection(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages'), {
+            senderId: currentProfile.id,
+            nickname: currentProfile.nickname,
+            fullName: `${currentProfile.firstName} ${currentProfile.lastName}`.trim(),
+            photoUrl: currentProfile.photoUrl || '',
+            text,
+            mentions,
+            replyTo: replyTarget && !editingMessageId ? {
+                id: replyTarget.id,
+                nickname: replyTarget.nickname,
+                text: replyTarget.text
+            } : null,
+            reactions: {},
+            createdAt: firestoreApi.serverTimestamp()
+        });
+    }
+
+    window.clearReplyTarget();
 };
+
+function attachSwipeReplyHandlers() {
+    const items = Array.from(document.querySelectorAll('.chat-item[data-message-id]'));
+    items.forEach(item => {
+        if (item.dataset.swipeBound === 'true') return;
+        item.dataset.swipeBound = 'true';
+        item.addEventListener('pointerdown', event => {
+            swipeState.activeId = item.dataset.messageId;
+            swipeState.startX = event.clientX;
+            swipeState.currentX = event.clientX;
+            item.classList.add('swiping');
+        });
+        item.addEventListener('pointermove', event => {
+            if (swipeState.activeId !== item.dataset.messageId) return;
+            swipeState.currentX = event.clientX;
+            const delta = Math.max(-120, Math.min(120, event.clientX - swipeState.startX));
+            item.style.transform = `translateX(${delta}px)`;
+            const mine = item.dataset.senderId === currentProfile?.id;
+            const ready = (!mine && delta > 70) || (mine && delta < -70);
+            item.classList.toggle('reply-ready', ready);
+        });
+        const finishSwipe = () => {
+            if (swipeState.activeId !== item.dataset.messageId) return;
+            const delta = swipeState.currentX - swipeState.startX;
+            const mine = item.dataset.senderId === currentProfile?.id;
+            const shouldReply = (!mine && delta > 70) || (mine && delta < -70);
+            item.style.transform = '';
+            item.classList.remove('swiping', 'reply-ready');
+            swipeState = { activeId: null, startX: 0, currentX: 0 };
+            if (shouldReply) {
+                window.beginReplyToMessage(item.dataset.messageId);
+            }
+        };
+        item.addEventListener('pointerup', finishSwipe);
+        item.addEventListener('pointercancel', finishSwipe);
+        item.addEventListener('pointerleave', finishSwipe);
+    });
+}
 
 async function start() {
     if (!hasFirebaseConfig()) {
