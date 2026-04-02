@@ -1002,7 +1002,7 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     const correctAnswer = question.o?.[question.a] || '';
     const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
     const yourAnswer = selectedIndex === null || timedOut
-        ? '<div style="margin-top:8px;">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
+        ? '<div style="margin-top:8px; color:#f59e0b">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
         : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
     if (isCorrect) {
         return `
