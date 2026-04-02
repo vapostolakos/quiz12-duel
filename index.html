@@ -630,6 +630,7 @@
                     <div id="question-area-game" class="hidden">
                         <div class="room-meta" style="margin-bottom:10px;">
                             <span id="duel-progress-text">Ερώτηση 1/10</span>
+                            <span id="duel-timer-text">30s</span>
                         </div>
                         <div id="duel-hint" class="hint"></div>
                         <div id="duel-question-text" class="question-text"></div>
@@ -725,6 +726,11 @@ let chatAudioContext = null;
 let lastChatCount = 0;
 let swipeState = { activeId: null, startX: 0, currentX: 0 };
 let openReactionPaletteFor = null;
+let duelTimerInterval = null;
+let duelTimerDeadline = 0;
+let duelRenderedQuestionKey = '';
+let duelAnswerLocked = false;
+let duelAdvanceTimeout = null;
 const HEART_REACTION_OPTIONS = [
     { key: 'heart-red', emoji: '❤️' },
     { key: 'heart-pink', emoji: '🩷' },
@@ -887,6 +893,124 @@ function formatReplySnippet(text) {
     const clean = String(text || '').trim();
     if (!clean) return 'Χωρίς κείμενο';
     return clean.length > 90 ? `${clean.slice(0, 87)}...` : clean;
+}
+
+function clearDuelAdvanceTimeout() {
+    if (duelAdvanceTimeout) {
+        clearTimeout(duelAdvanceTimeout);
+        duelAdvanceTimeout = null;
+    }
+}
+
+function stopDuelTimer() {
+    if (duelTimerInterval) {
+        clearInterval(duelTimerInterval);
+        duelTimerInterval = null;
+    }
+    duelTimerDeadline = 0;
+    updateDuelTimerLabel();
+}
+
+function updateDuelTimerLabel() {
+    const mount = $('duel-timer-text');
+    if (!mount) return;
+    if (!duelTimerDeadline) {
+        mount.textContent = '30s';
+        return;
+    }
+    const remainingMs = Math.max(0, duelTimerDeadline - Date.now());
+    const remainingSec = Math.ceil(remainingMs / 1000);
+    mount.textContent = `${remainingSec}s`;
+    mount.style.color = remainingSec <= 5 ? '#ef4444' : '#f59e0b';
+}
+
+function lockDuelOptions() {
+    Array.from(document.querySelectorAll('#duel-options .option')).forEach(button => {
+        button.disabled = true;
+    });
+}
+
+function scheduleDuelAdvance(callback, delay = 2600) {
+    clearDuelAdvanceTimeout();
+    duelAdvanceTimeout = setTimeout(async () => {
+        duelAdvanceTimeout = null;
+        await callback();
+    }, delay);
+}
+
+function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = false) {
+    const correctAnswer = question.o?.[question.a] || '';
+    const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
+    const yourAnswer = selectedIndex === null || timedOut
+        ? '<div style="margin-top:8px;">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
+        : `<div style="margin-top:8px;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
+    if (isCorrect) {
+        return `
+            <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
+            <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+            ${question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : ''}
+        `;
+    }
+    return `
+        <div style="color:#f59e0b;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
+        ${yourAnswer}
+        <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+        ${explanation}
+    `;
+}
+
+async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
+    if (!currentRoomData || !currentProfile) return;
+    const me = currentRoomData.players?.[currentProfile.id];
+    if (!me || me.finished || duelAnswerLocked) return;
+    const question = currentRoomData.questions[me.currentIndex];
+    if (!question) return;
+
+    duelAnswerLocked = true;
+    stopDuelTimer();
+    lockDuelOptions();
+
+    const isCorrect = !timedOut && selectedIndex === question.a;
+    const nextIndex = me.currentIndex + 1;
+    $('duel-answer-status').innerHTML = formatDuelResult(question, isCorrect, selectedIndex, timedOut);
+    $('duel-answer-status').classList.remove('hidden');
+
+    const updates = {
+        [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
+        [`players.${currentProfile.id}.correct`]: (me.correct || 0) + (isCorrect ? 1 : 0),
+        [`players.${currentProfile.id}.currentIndex`]: nextIndex,
+        [`players.${currentProfile.id}.finished`]: nextIndex >= currentRoomData.questions.length
+    };
+
+    const latestPlayers = {
+        ...currentRoomData.players,
+        [currentProfile.id]: {
+            ...me,
+            score: (me.score || 0) + (isCorrect ? 100 : 0),
+            correct: (me.correct || 0) + (isCorrect ? 1 : 0),
+            currentIndex: nextIndex,
+            finished: nextIndex >= currentRoomData.questions.length
+        }
+    };
+
+    scheduleDuelAdvance(async () => {
+        await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), updates);
+        await maybeFinishRoom(latestPlayers);
+    });
+}
+
+function startDuelTimer(questionKey) {
+    stopDuelTimer();
+    duelTimerDeadline = Date.now() + 30000;
+    updateDuelTimerLabel();
+    duelTimerInterval = setInterval(() => {
+        updateDuelTimerLabel();
+        if (Date.now() >= duelTimerDeadline) {
+            stopDuelTimer();
+            commitDuelAnswer(null, true);
+        }
+    }, 250);
+    duelRenderedQuestionKey = questionKey;
 }
 
 function renderReactionGlyph(option) {
@@ -1426,6 +1550,10 @@ async function openRoom(code) {
 
 window.leaveRoom = function leaveRoom() {
     stopSubscriptions();
+    stopDuelTimer();
+    clearDuelAdvanceTimeout();
+    duelRenderedQuestionKey = '';
+    duelAnswerLocked = false;
     currentRoomCode = null;
     currentRoomData = null;
     seenMessageIds = new Set();
@@ -1584,6 +1712,10 @@ function renderRoom() {
     renderPlayerCard(opponentId, 'opponent-card', playerCount > 2 ? 'Πρωτοπόρος room' : 'Αντίπαλος');
 
     if (status === 'waiting') {
+        stopDuelTimer();
+        clearDuelAdvanceTimeout();
+        duelRenderedQuestionKey = '';
+        duelAnswerLocked = false;
         $('question-area-wait').classList.remove('hidden');
         $('question-area-game').classList.add('hidden');
         return;
@@ -1597,6 +1729,10 @@ function renderRoom() {
     $('duel-progress-text').textContent = `Ερώτηση ${Math.min((me?.currentIndex || 0) + 1, total)}/${total}`;
 
     if (!me || me.finished || me.currentIndex >= total) {
+        stopDuelTimer();
+        clearDuelAdvanceTimeout();
+        duelRenderedQuestionKey = '';
+        duelAnswerLocked = false;
         $('duel-hint').textContent = '';
         $('duel-question-text').textContent = 'Ολοκλήρωσες τις ερωτήσεις σου.';
         $('duel-options').innerHTML = '';
@@ -1606,6 +1742,7 @@ function renderRoom() {
     }
 
     const question = currentRoomData.questions[me.currentIndex];
+    const questionKey = `${currentProfile.id}:${me.currentIndex}`;
     $('duel-hint').textContent = question.h ? `💡 Υπόδειξη: ${question.h}` : '';
     $('duel-question-text').textContent = question.q;
     $('duel-answer-status').classList.add('hidden');
@@ -1613,6 +1750,13 @@ function renderRoom() {
     $('duel-options').innerHTML = question.o.map((option, index) => `
         <button class="option" onclick="answerDuelQuestion(${index})">${option}</button>
     `).join('');
+    if (duelRenderedQuestionKey !== questionKey) {
+        duelAnswerLocked = false;
+        clearDuelAdvanceTimeout();
+        startDuelTimer(questionKey);
+    } else if (duelTimerDeadline) {
+        updateDuelTimerLabel();
+    }
 }
 
 async function maybeFinishRoom(updatedPlayers) {
@@ -1626,39 +1770,7 @@ async function maybeFinishRoom(updatedPlayers) {
 }
 
 window.answerDuelQuestion = async function answerDuelQuestion(index) {
-    if (!currentRoomData || !currentProfile) return;
-    const me = currentRoomData.players?.[currentProfile.id];
-    if (!me || me.finished) return;
-    const question = currentRoomData.questions[me.currentIndex];
-    if (!question) return;
-
-    const isCorrect = index === question.a;
-    const nextIndex = me.currentIndex + 1;
-    const updates = {
-        [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
-        [`players.${currentProfile.id}.correct`]: (me.correct || 0) + (isCorrect ? 1 : 0),
-        [`players.${currentProfile.id}.currentIndex`]: nextIndex,
-        [`players.${currentProfile.id}.finished`]: nextIndex >= currentRoomData.questions.length
-    };
-
-    $('duel-answer-status').textContent = isCorrect
-        ? 'Σωστό! Κέρδισες 100 πόντους.'
-        : `Λάθος. Η σωστή απάντηση ήταν: ${question.o[question.a]}`;
-    $('duel-answer-status').classList.remove('hidden');
-
-    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), updates);
-
-    const latestPlayers = {
-        ...currentRoomData.players,
-        [currentProfile.id]: {
-            ...me,
-            score: (me.score || 0) + (isCorrect ? 100 : 0),
-            correct: (me.correct || 0) + (isCorrect ? 1 : 0),
-            currentIndex: nextIndex,
-            finished: nextIndex >= currentRoomData.questions.length
-        }
-    };
-    await maybeFinishRoom(latestPlayers);
+    await commitDuelAnswer(index, false);
 };
 
 function subscribeRoom(code) {
