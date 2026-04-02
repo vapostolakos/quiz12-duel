@@ -314,38 +314,10 @@
         }
         .options { display: grid; gap: 10px; }
         .option { background: #334155; text-align: left; }
-        .option.correct-choice,
-        .option.reveal-correct {
-            background: linear-gradient(135deg, #15803d, #22c55e);
-            color: #f8fafc;
-            box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.28) inset;
-        }
-        .option.wrong-choice {
-            background: linear-gradient(135deg, #991b1b, #ef4444);
-            color: #fff7f7;
-            box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.28) inset;
-        }
         .answer-status {
             margin-top: 12px;
             font-weight: 700;
             color: var(--accent);
-        }
-        .answer-status.success-result { color: #4ade80; }
-        .answer-status.error-result { color: #f87171; }
-        .duel-timer-track {
-            width: 100%;
-            height: 10px;
-            background: #334155;
-            border-radius: 999px;
-            overflow: hidden;
-            margin: 8px 0 12px;
-        }
-        .duel-timer-fill {
-            width: 100%;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 35%, #84cc16 70%, #22c55e 100%);
-            transition: width 0.3s linear, filter 0.2s ease;
         }
         .chat-card {
             display: grid;
@@ -660,9 +632,6 @@
                             <span id="duel-progress-text">Ερώτηση 1/10</span>
                             <span id="duel-timer-text">30s</span>
                         </div>
-                        <div class="duel-timer-track">
-                            <div id="duel-timer-fill" class="duel-timer-fill"></div>
-                        </div>
                         <div id="duel-hint" class="hint"></div>
                         <div id="duel-question-text" class="question-text"></div>
                         <div id="duel-options" class="options"></div>
@@ -812,16 +781,6 @@ HEART_REACTION_OPTIONS.splice(0, HEART_REACTION_OPTIONS.length,
     { key: 'heart-purple', emoji: '♥', color: '#a855f7' }
 );
 
-HEART_REACTION_OPTIONS.splice(0, HEART_REACTION_OPTIONS.length,
-    { key: 'heart-red', emoji: '&hearts;', color: '#ef4444' },
-    { key: 'heart-pink', emoji: '&hearts;', color: '#ec4899' },
-    { key: 'heart-orange', emoji: '&hearts;', color: '#f97316' },
-    { key: 'heart-yellow', emoji: '&hearts;', color: '#facc15' },
-    { key: 'heart-green', emoji: '&hearts;', color: '#22c55e' },
-    { key: 'heart-blue', emoji: '&hearts;', color: '#38bdf8' },
-    { key: 'heart-purple', emoji: '&hearts;', color: '#a855f7' }
-);
-
 function $(id) { return document.getElementById(id); }
 
 function show(screenId) {
@@ -936,32 +895,6 @@ function formatReplySnippet(text) {
     return clean.length > 90 ? `${clean.slice(0, 87)}...` : clean;
 }
 
-function highlightMentions(text) {
-    const source = String(text ?? '');
-    const tokens = getKnownMentionTokens().sort((a, b) => b.length - a.length);
-    if (!tokens.length) return escapeHtml(source);
-
-    let result = '';
-    let cursor = 0;
-    while (cursor < source.length) {
-        let matchedToken = '';
-        for (const token of tokens) {
-            if (source.slice(cursor, cursor + token.length) === token) {
-                matchedToken = token;
-                break;
-            }
-        }
-        if (matchedToken) {
-            result += `<span class="mention-token">${escapeHtml(matchedToken)}</span>`;
-            cursor += matchedToken.length;
-        } else {
-            result += escapeHtml(source[cursor]);
-            cursor += 1;
-        }
-    }
-    return result;
-}
-
 function clearDuelAdvanceTimeout() {
     if (duelAdvanceTimeout) {
         clearTimeout(duelAdvanceTimeout);
@@ -980,47 +913,20 @@ function stopDuelTimer() {
 
 function updateDuelTimerLabel() {
     const mount = $('duel-timer-text');
-    const fill = $('duel-timer-fill');
     if (!mount) return;
     if (!duelTimerDeadline) {
         mount.textContent = '30s';
-        mount.style.color = '#f59e0b';
-        if (fill) {
-            fill.style.width = '100%';
-            fill.style.filter = 'none';
-        }
         return;
     }
     const remainingMs = Math.max(0, duelTimerDeadline - Date.now());
     const remainingSec = Math.ceil(remainingMs / 1000);
     mount.textContent = `${remainingSec}s`;
     mount.style.color = remainingSec <= 5 ? '#ef4444' : '#f59e0b';
-    if (fill) {
-        fill.style.width = `${Math.max(0, Math.min(100, (remainingMs / 30000) * 100))}%`;
-        fill.style.filter = remainingSec <= 5 ? 'saturate(1.25) brightness(1.05)' : 'none';
-    }
 }
 
 function lockDuelOptions() {
     Array.from(document.querySelectorAll('#duel-options .option')).forEach(button => {
         button.disabled = true;
-    });
-}
-
-function markDuelOptionResults(question, selectedIndex = null, timedOut = false) {
-    Array.from(document.querySelectorAll('#duel-options .option')).forEach((button, index) => {
-        button.classList.remove('correct-choice', 'wrong-choice', 'reveal-correct');
-        if (timedOut) {
-            if (index === question.a) button.classList.add('reveal-correct');
-            return;
-        }
-        if (selectedIndex === index && index === question.a) {
-            button.classList.add('correct-choice');
-        } else if (selectedIndex === index) {
-            button.classList.add('wrong-choice');
-        } else if (index === question.a) {
-            button.classList.add('reveal-correct');
-        }
     });
 }
 
@@ -1068,69 +974,6 @@ async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
     const nextIndex = me.currentIndex + 1;
     $('duel-answer-status').innerHTML = formatDuelResult(question, isCorrect, selectedIndex, timedOut);
     $('duel-answer-status').classList.remove('hidden');
-
-    const updates = {
-        [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
-        [`players.${currentProfile.id}.correct`]: (me.correct || 0) + (isCorrect ? 1 : 0),
-        [`players.${currentProfile.id}.currentIndex`]: nextIndex,
-        [`players.${currentProfile.id}.finished`]: nextIndex >= currentRoomData.questions.length
-    };
-
-    const latestPlayers = {
-        ...currentRoomData.players,
-        [currentProfile.id]: {
-            ...me,
-            score: (me.score || 0) + (isCorrect ? 100 : 0),
-            correct: (me.correct || 0) + (isCorrect ? 1 : 0),
-            currentIndex: nextIndex,
-            finished: nextIndex >= currentRoomData.questions.length
-        }
-    };
-
-    scheduleDuelAdvance(async () => {
-        await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), updates);
-        await maybeFinishRoom(latestPlayers);
-    });
-}
-
-function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = false) {
-    const correctAnswer = question.o?.[question.a] || '';
-    const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
-    const yourAnswerText = selectedIndex === null || timedOut
-        ? 'Δεν απάντησες έγκαιρα.'
-        : `Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}`;
-    if (isCorrect) {
-        return `
-            <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
-            <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
-            ${explanation}
-        `;
-    }
-    return `
-        <div style="color:#f87171;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
-        <div style="margin-top:8px; color:#fca5a5;">${yourAnswerText}</div>
-        <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
-        ${explanation}
-    `;
-}
-
-async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
-    if (!currentRoomData || !currentProfile) return;
-    const me = currentRoomData.players?.[currentProfile.id];
-    if (!me || me.finished || duelAnswerLocked) return;
-    const question = currentRoomData.questions[me.currentIndex];
-    if (!question) return;
-
-    duelAnswerLocked = true;
-    stopDuelTimer();
-    lockDuelOptions();
-    markDuelOptionResults(question, selectedIndex, timedOut);
-
-    const isCorrect = !timedOut && selectedIndex === question.a;
-    const nextIndex = me.currentIndex + 1;
-    $('duel-answer-status').innerHTML = formatDuelResult(question, isCorrect, selectedIndex, timedOut);
-    $('duel-answer-status').classList.remove('hidden', 'success-result', 'error-result');
-    $('duel-answer-status').classList.add(isCorrect ? 'success-result' : 'error-result');
 
     const updates = {
         [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
@@ -1378,22 +1221,6 @@ async function fetchProfile(uid) {
     return snap.exists() ? snap.data() : null;
 }
 
-function deriveProfileFromAuth(userAccount) {
-    const display = String(userAccount?.displayName || '').trim();
-    const emailName = String(userAccount?.email || 'player').split('@')[0];
-    const parts = display ? display.split(/\s+/) : [emailName];
-    const firstName = parts[0] || 'Player';
-    const lastName = parts.slice(1).join(' ') || 'Quiz';
-    return {
-        id: userAccount?.uid || '',
-        email: userAccount?.email || '',
-        firstName,
-        lastName,
-        nickname: display || emailName,
-        photoUrl: userAccount?.photoURL || ''
-    };
-}
-
 function fillProfileForm(profile) {
     $('profile-first-name').value = profile?.firstName || '';
     $('profile-last-name').value = profile?.lastName || '';
@@ -1452,14 +1279,15 @@ async function handleAuthUser(user) {
     }
 
     currentProfile = await fetchProfile(authUser.uid);
-    if (!currentProfile) {
-        currentProfile = deriveProfileFromAuth(authUser);
-    }
     fillProfileForm(currentProfile);
     renderAuthState('Ο λογαριασμός σου είναι συνδεδεμένος.');
 
-    renderLobbyProfile();
-    show('scr-lobby');
+    if (currentProfile) {
+        renderLobbyProfile();
+        show('scr-lobby');
+    } else {
+        show('scr-auth');
+    }
 }
 
 window.registerAccount = async function registerAccount() {
@@ -1918,7 +1746,6 @@ function renderRoom() {
     $('duel-hint').textContent = question.h ? `💡 Υπόδειξη: ${question.h}` : '';
     $('duel-question-text').textContent = question.q;
     $('duel-answer-status').classList.add('hidden');
-    $('duel-answer-status').classList.remove('success-result', 'error-result');
     $('duel-final-box').classList.add('hidden');
     $('duel-options').innerHTML = question.o.map((option, index) => `
         <button class="option" onclick="answerDuelQuestion(${index})">${option}</button>
@@ -2118,36 +1945,6 @@ function attachSwipeReplyHandlers() {
 
 function renderEmojiReactionPicker(itemId) {
     const heartButton = renderReactionGlyph({ emoji: '♥', color: '#ef4444' });
-    const laughButton = renderReactionGlyph({ emoji: '😂' });
-    const wowButton = renderReactionGlyph({ emoji: '😮' });
-    const fireButton = renderReactionGlyph({ emoji: '🔥' });
-    const clapButton = renderReactionGlyph({ emoji: '👏' });
-    const thumbsButton = renderReactionGlyph({ emoji: '👍' });
-    return `
-        <div class="reaction-picker">
-            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">${heartButton}</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">${laughButton}</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">${wowButton}</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">${fireButton}</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">${clapButton}</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">${thumbsButton}</button>
-            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}-plus')">+</button>
-        </div>
-        <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
-            ${HEART_REACTION_OPTIONS.map(option => `
-                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${renderReactionGlyph(option)}</button>
-            `).join('')}
-        </div>
-        <div class="reaction-palette ${openReactionPaletteFor === `${itemId}-plus` ? '' : 'hidden'}" data-message-id="${itemId}-plus">
-            ${EXTRA_REACTION_OPTIONS.map(option => `
-                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${renderReactionGlyph(option)}</button>
-            `).join('')}
-        </div>
-    `;
-}
-
-function renderEmojiReactionPicker(itemId) {
-    const heartButton = renderReactionGlyph({ emoji: '&hearts;', color: '#ef4444' });
     const laughButton = renderReactionGlyph({ emoji: '😂' });
     const wowButton = renderReactionGlyph({ emoji: '😮' });
     const fireButton = renderReactionGlyph({ emoji: '🔥' });
