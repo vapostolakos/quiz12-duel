@@ -670,7 +670,7 @@ function renderLobbyProfile() {
             ${currentProfile.photoUrl ? `<img src="${currentProfile.photoUrl}" alt="">` : `<div class="avatar-fallback" style="width:54px;height:54px;border-radius:14px;font-size:1.5rem;">👤</div>`}
             <div>
                 <div class="player-name">${profileLabel(currentProfile)}</div>
-                <div class="player-sub">${currentProfile.firstName} ${currentProfile.lastName}</div>
+                <div class="player-sub">Παίζεις ως</div>
             </div>
         </div>
     `;
@@ -963,7 +963,7 @@ function renderPlayerCard(targetId, mountId, fallbackText) {
             ${player.photoUrl ? `<img src="${player.photoUrl}" alt="">` : `<div class="avatar-fallback" style="width:54px;height:54px;border-radius:14px;font-size:1.5rem;">👤</div>`}
             <div>
                 <div class="player-name">${player.nickname}</div>
-                <div class="player-sub">${player.fullName}</div>
+                <div class="player-sub">Παίκτης room</div>
             </div>
         </div>
         <div class="scoreline"><span>Σκορ</span><strong>${player.score}</strong></div>
