@@ -313,11 +313,48 @@
             text-align: center;
         }
         .options { display: grid; gap: 10px; }
-        .option { background: #334155; text-align: left; }
+        .option {
+            background: #334155;
+            text-align: left;
+            border: 1px solid transparent;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .option:hover:not(:disabled) {
+            transform: translateY(-1px);
+            border-color: rgba(255,255,255,0.14);
+        }
+        .option.correct-choice,
+        .option.reveal-correct {
+            background: rgba(16, 185, 129, 0.24) !important;
+            border-color: rgba(16, 185, 129, 0.95) !important;
+            color: #d1fae5 !important;
+        }
+        .option.wrong-choice {
+            background: rgba(239, 68, 68, 0.22) !important;
+            border-color: rgba(239, 68, 68, 0.95) !important;
+            color: #fee2e2 !important;
+        }
         .answer-status {
             margin-top: 12px;
             font-weight: 700;
             color: var(--accent);
+        }
+        .answer-status.success-result { color: #10b981; }
+        .answer-status.error-result { color: #ff5a5f; }
+        .duel-timer-track {
+            margin: 8px 0 14px;
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .duel-timer-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 35%, #10b981 100%);
+            transform-origin: left center;
+            transition: width 0.2s linear;
         }
         .chat-card {
             display: grid;
@@ -632,6 +669,9 @@
                             <span id="duel-progress-text">Ερώτηση 1/10</span>
                             <span id="duel-timer-text">30s</span>
                         </div>
+                        <div class="duel-timer-track">
+                            <div id="duel-timer-fill" class="duel-timer-fill"></div>
+                        </div>
                         <div id="duel-hint" class="hint"></div>
                         <div id="duel-question-text" class="question-text"></div>
                         <div id="duel-options" class="options"></div>
@@ -913,20 +953,38 @@ function stopDuelTimer() {
 
 function updateDuelTimerLabel() {
     const mount = $('duel-timer-text');
+    const fill = $('duel-timer-fill');
     if (!mount) return;
     if (!duelTimerDeadline) {
         mount.textContent = '30s';
+        mount.style.color = '#f59e0b';
+        if (fill) fill.style.width = '100%';
         return;
     }
     const remainingMs = Math.max(0, duelTimerDeadline - Date.now());
     const remainingSec = Math.ceil(remainingMs / 1000);
+    const ratio = Math.max(0, Math.min(1, remainingMs / 30000));
     mount.textContent = `${remainingSec}s`;
     mount.style.color = remainingSec <= 5 ? '#ef4444' : '#f59e0b';
+    if (fill) fill.style.width = `${ratio * 100}%`;
 }
 
 function lockDuelOptions() {
     Array.from(document.querySelectorAll('#duel-options .option')).forEach(button => {
         button.disabled = true;
+    });
+}
+
+function markDuelOptionResults(question, selectedIndex = null, timedOut = false) {
+    const optionButtons = Array.from(document.querySelectorAll('#duel-options .option'));
+    optionButtons.forEach((button, index) => {
+        button.classList.remove('correct-choice', 'wrong-choice', 'reveal-correct');
+        if (index === question.a) {
+            button.classList.add(selectedIndex === question.a && !timedOut ? 'correct-choice' : 'reveal-correct');
+        }
+        if (!timedOut && selectedIndex !== null && index === selectedIndex && selectedIndex !== question.a) {
+            button.classList.add('wrong-choice');
+        }
     });
 }
 
@@ -947,14 +1005,14 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
-            <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+            <div style="margin-top:8px; color:#10b981;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
             ${question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : ''}
         `;
     }
     return `
         <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
         ${yourAnswer}
-        <div style="margin-top:8px; color:#00ffff;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+        <div style="margin-top:8px; color:#ff5a5f;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
 		${explanation}
     `;
 }
@@ -969,11 +1027,13 @@ async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
     duelAnswerLocked = true;
     stopDuelTimer();
     lockDuelOptions();
+    markDuelOptionResults(question, selectedIndex, timedOut);
 
     const isCorrect = !timedOut && selectedIndex === question.a;
     const nextIndex = me.currentIndex + 1;
     $('duel-answer-status').innerHTML = formatDuelResult(question, isCorrect, selectedIndex, timedOut);
-    $('duel-answer-status').classList.remove('hidden');
+    $('duel-answer-status').classList.remove('hidden', 'success-result', 'error-result');
+    $('duel-answer-status').classList.add(isCorrect ? 'success-result' : 'error-result');
 
     const updates = {
         [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
@@ -1746,6 +1806,7 @@ function renderRoom() {
     $('duel-hint').textContent = question.h ? `💡 Υπόδειξη: ${question.h}` : '';
     $('duel-question-text').textContent = question.q;
     $('duel-answer-status').classList.add('hidden');
+    $('duel-answer-status').classList.remove('success-result', 'error-result');
     $('duel-final-box').classList.add('hidden');
     $('duel-options').innerHTML = question.o.map((option, index) => `
         <button class="option" onclick="answerDuelQuestion(${index})">${option}</button>
