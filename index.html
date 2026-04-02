@@ -664,7 +664,7 @@
                 </div>
                 <div class="question-card">
                     <div id="question-area-wait" class="status-box">
-                        Μόλις μπουν και οι υπόλοιποι παίκτες, η μονομαχία θα ξεκινήσει αυτόματα.
+                        Μόλις μπει και ο δεύτερος παίκτης, η μονομαχία θα ξεκινήσει αυτόματα.
                     </div>
                     <div id="question-area-game" class="hidden">
                         <div class="room-meta" style="margin-bottom:10px;">
@@ -860,8 +860,23 @@ function shuffleArray(items) {
     return copy;
 }
 
+function shuffleQuestionOptions(question) {
+    if (!question || !Array.isArray(question.o) || question.o.length < 2) {
+        return question;
+    }
+    const optionEntries = question.o.map((option, index) => ({ option, originalIndex: index }));
+    const shuffledEntries = shuffleArray(optionEntries);
+    return {
+        ...question,
+        o: shuffledEntries.map(entry => entry.option),
+        a: shuffledEntries.findIndex(entry => entry.originalIndex === question.a)
+    };
+}
+
 function pickDuelQuestions(count = QUESTIONS_PER_DUEL) {
-    return shuffleArray(QUESTION_POOL).slice(0, Math.max(1, Math.min(QUESTION_POOL.length, count)));
+    return shuffleArray(QUESTION_POOL)
+        .slice(0, Math.max(1, Math.min(QUESTION_POOL.length, count)))
+        .map(shuffleQuestionOptions);
 }
 
 function renderAvatar(imgEl, fallbackEl, photoUrl) {
@@ -1002,21 +1017,21 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     const correctAnswer = question.o?.[question.a] || '';
     const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
     const yourAnswer = selectedIndex === null || timedOut
-        ? '<div style="margin-top:8px; color:#f59e0b">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
-        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
+        ? '<div style="margin-top:8px;">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
+        : `<div style="margin-top:8px;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
-            <div style="margin-top:8px; color:#f59e0b;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+            <div style="margin-top:8px; color:#10b981;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
             ${question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : ''}
         `;
     }
     return `
-    <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
-    ${yourAnswer}
-    <div style="margin-top:8px; color:#00ffff;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
-    ${explanation}
-	`;
+        <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
+        ${yourAnswer}
+        <div style="margin-top:8px; color:#ff5a5f;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+		${explanation}
+    `;
 }
 
 async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
@@ -1242,12 +1257,32 @@ function formatTime(timestamp) {
 }
 
 async function fileToAvatarDataUrl(file) {
-    return await new Promise((resolve, reject) => {
+    const originalDataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(file);
     });
+    const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = originalDataUrl;
+    });
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return originalDataUrl;
+
+    const maxSide = Math.max(image.width, image.height) || 1;
+    const scale = Math.min(1, 512 / maxSide);
+    const targetWidth = Math.max(1, Math.round(image.width * scale));
+    const targetHeight = Math.max(1, Math.round(image.height * scale));
+
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+    return canvas.toDataURL('image/jpeg', 0.82);
 }
 
 function makeDefaultAvatarUrl(option) {
@@ -1669,7 +1704,7 @@ function renderFinalBox() {
     if (!me) return;
 
     const everyoneFinished = Object.values(players).length >= requiredPlayers && Object.values(players).every(player => player.finished);
-    let message = 'Περιμένετε να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
+    let message = 'Περιμένεις να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
     if (everyoneFinished && winner) {
         const leaders = ranking.filter(player => (player.score || 0) === (winner.score || 0));
         if (leaders.length > 1 && leaders.some(player => player.id === currentProfile.id)) message = 'Ισοπαλία στην κορυφή!';
@@ -1875,7 +1910,7 @@ function renderMessages(items) {
                             ${formatTime(item.createdAt)}
                             ${item.editedAt ? '<span class="edited-mark">(edited)</span>' : ''}
                         </div>
-                        <div class="chat-gesture-hint">${isMine ? 'Σύρετε αριστερά για reply' : 'Σύρετε δεξιά για reply'}</div>
+                        <div class="chat-gesture-hint">${isMine ? 'Σύρε δεξιά προς αριστερά για reply' : 'Σύρε αριστερά προς δεξιά για reply'}</div>
                     </div>
                     ${renderReactionSummary(item)}
                     ${renderEmojiReactionPicker(item.id)}
