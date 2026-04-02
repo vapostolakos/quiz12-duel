@@ -494,6 +494,7 @@
         .mention-token {
             color: #7dd3fc;
             font-weight: 700;
+            white-space: nowrap;
         }
         .edited-mark {
             color: var(--muted);
@@ -512,6 +513,14 @@
             color: var(--muted);
             font-size: 0.76rem;
             margin-top: 4px;
+        }
+        .reaction-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1em;
+            line-height: 1;
+            font-weight: 800;
         }
         @media (max-width: 920px) {
             .duel-layout { grid-template-columns: 1fr; }
@@ -756,6 +765,15 @@ const EXTRA_REACTION_OPTIONS = [
     { key: 'star-eyes', emoji: '🤩' }
 ];
 const ALL_REACTION_OPTIONS = [...CHAT_REACTION_OPTIONS, ...EXTRA_REACTION_OPTIONS];
+HEART_REACTION_OPTIONS.splice(0, HEART_REACTION_OPTIONS.length,
+    { key: 'heart-red', emoji: '♥', color: '#ef4444' },
+    { key: 'heart-pink', emoji: '♥', color: '#ec4899' },
+    { key: 'heart-orange', emoji: '♥', color: '#f97316' },
+    { key: 'heart-yellow', emoji: '♥', color: '#facc15' },
+    { key: 'heart-green', emoji: '♥', color: '#22c55e' },
+    { key: 'heart-blue', emoji: '♥', color: '#38bdf8' },
+    { key: 'heart-purple', emoji: '♥', color: '#a855f7' }
+);
 
 function $(id) { return document.getElementById(id); }
 
@@ -823,16 +841,57 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
+function getKnownMentionTokens() {
+    const nicknames = currentRoomData?.players
+        ? Object.values(currentRoomData.players)
+            .map(player => player?.nickname)
+            .filter(Boolean)
+            .sort((a, b) => b.length - a.length)
+        : [];
+    return ['@all', ...nicknames.map(nickname => `@${nickname}`)];
+}
+
 function highlightMentions(text) {
-    return escapeHtml(text).replace(/(^|\s)(@all|@[A-Za-zΑ-Ωα-ω0-9_.-]+)/g, (match, prefix, token) => {
-        return `${prefix}<span class="mention-token">${token}</span>`;
-    });
+    const source = String(text ?? '');
+    const tokens = getKnownMentionTokens();
+    if (!tokens.length) return escapeHtml(source);
+
+    let result = '';
+    let cursor = 0;
+    while (cursor < source.length) {
+        let matchedToken = '';
+        for (const token of tokens) {
+            if (source.slice(cursor, cursor + token.length) === token) {
+                const prevChar = cursor === 0 ? '' : source[cursor - 1];
+                const nextChar = source[cursor + token.length] || '';
+                const prevOk = cursor === 0 || /\s|[([{"'“]/.test(prevChar);
+                const nextOk = !nextChar || /\s|[)\]}",.!?:;'"”]/.test(nextChar);
+                if (prevOk && nextOk) {
+                    matchedToken = token;
+                    break;
+                }
+            }
+        }
+        if (matchedToken) {
+            result += `<span class="mention-token">${escapeHtml(matchedToken)}</span>`;
+            cursor += matchedToken.length;
+        } else {
+            result += escapeHtml(source[cursor]);
+            cursor += 1;
+        }
+    }
+    return result;
 }
 
 function formatReplySnippet(text) {
     const clean = String(text || '').trim();
     if (!clean) return 'Χωρίς κείμενο';
     return clean.length > 90 ? `${clean.slice(0, 87)}...` : clean;
+}
+
+function renderReactionGlyph(option) {
+    const style = option?.color ? ` style="color:${option.color}"` : '';
+    return `<span class="reaction-icon"${style}>${option?.emoji || ''}</span>`;
 }
 
 async function ensureChatAudio() {
@@ -1457,7 +1516,7 @@ function renderReactionSummary(item) {
     const chips = ALL_REACTION_OPTIONS
         .map(option => {
             const count = reactionCount(item.reactions, option.key);
-            return count ? `<span class="reaction-chip">${option.emoji} ${count}</span>` : '';
+            return count ? `<span class="reaction-chip">${renderReactionGlyph(option)} ${count}</span>` : '';
         })
         .filter(Boolean)
         .join('');
@@ -1704,7 +1763,7 @@ window.sendChatMessage = async function sendChatMessage() {
     const text = $('chat-input').value.trim();
     if (!text) return;
 
-    const mentions = Array.from(new Set((text.match(/@all|@[A-Za-zΑ-Ωα-ω0-9_.-]+/g) || [])));
+    const mentions = Array.from(new Set(getKnownMentionTokens().filter(token => text.includes(token))));
 
     if (editingMessageId) {
         const messageRef = firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode, 'messages', editingMessageId);
@@ -1773,24 +1832,30 @@ function attachSwipeReplyHandlers() {
 }
 
 function renderEmojiReactionPicker(itemId) {
+    const heartButton = renderReactionGlyph({ emoji: '♥', color: '#ef4444' });
+    const laughButton = renderReactionGlyph({ emoji: '😂' });
+    const wowButton = renderReactionGlyph({ emoji: '😮' });
+    const fireButton = renderReactionGlyph({ emoji: '🔥' });
+    const clapButton = renderReactionGlyph({ emoji: '👏' });
+    const thumbsButton = renderReactionGlyph({ emoji: '👍' });
     return `
         <div class="reaction-picker">
-            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">&#10084;&#65039;</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">&#128514;</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">&#128558;</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">&#128293;</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">&#128079;</button>
-            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">&#128077;</button>
+            <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}')">${heartButton}</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'laugh')">${laughButton}</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'wow')">${wowButton}</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'fire')">${fireButton}</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'clap')">${clapButton}</button>
+            <button class="reaction-btn" onclick="toggleReaction('${itemId}', 'thumbs')">${thumbsButton}</button>
             <button class="reaction-btn" onclick="toggleReactionPalette('${itemId}-plus')">+</button>
         </div>
         <div class="reaction-palette ${openReactionPaletteFor === itemId ? '' : 'hidden'}" data-message-id="${itemId}">
             ${HEART_REACTION_OPTIONS.map(option => `
-                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${renderReactionGlyph(option)}</button>
             `).join('')}
         </div>
         <div class="reaction-palette ${openReactionPaletteFor === `${itemId}-plus` ? '' : 'hidden'}" data-message-id="${itemId}-plus">
             ${EXTRA_REACTION_OPTIONS.map(option => `
-                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${option.emoji}</button>
+                <button class="reaction-btn" onclick="toggleReaction('${itemId}', '${option.key}')">${renderReactionGlyph(option)}</button>
             `).join('')}
         </div>
     `;
