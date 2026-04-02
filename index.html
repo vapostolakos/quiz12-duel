@@ -1014,7 +1014,7 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     return `
         <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
         ${yourAnswer}
-        <div style="margin-top:8px; color:#ff5a5f;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+        <div style="margin-top:8px; color:#00ffff;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
 		${explanation}
     `;
 }
