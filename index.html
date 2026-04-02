@@ -1007,7 +1007,7 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
-            <div style="margin-top:8px; color:#10b981;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+            <div style="margin-top:8px; color:#f59e0b;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
             ${question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : ''}
         `;
     }
