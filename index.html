@@ -1378,6 +1378,22 @@ async function fetchProfile(uid) {
     return snap.exists() ? snap.data() : null;
 }
 
+function deriveProfileFromAuth(userAccount) {
+    const display = String(userAccount?.displayName || '').trim();
+    const emailName = String(userAccount?.email || 'player').split('@')[0];
+    const parts = display ? display.split(/\s+/) : [emailName];
+    const firstName = parts[0] || 'Player';
+    const lastName = parts.slice(1).join(' ') || 'Quiz';
+    return {
+        id: userAccount?.uid || '',
+        email: userAccount?.email || '',
+        firstName,
+        lastName,
+        nickname: display || emailName,
+        photoUrl: userAccount?.photoURL || ''
+    };
+}
+
 function fillProfileForm(profile) {
     $('profile-first-name').value = profile?.firstName || '';
     $('profile-last-name').value = profile?.lastName || '';
@@ -1436,15 +1452,14 @@ async function handleAuthUser(user) {
     }
 
     currentProfile = await fetchProfile(authUser.uid);
+    if (!currentProfile) {
+        currentProfile = deriveProfileFromAuth(authUser);
+    }
     fillProfileForm(currentProfile);
     renderAuthState('Ο λογαριασμός σου είναι συνδεδεμένος.');
 
-    if (currentProfile) {
-        renderLobbyProfile();
-        show('scr-lobby');
-    } else {
-        show('scr-auth');
-    }
+    renderLobbyProfile();
+    show('scr-lobby');
 }
 
 window.registerAccount = async function registerAccount() {
