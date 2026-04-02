@@ -1012,11 +1012,11 @@ function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = 
         `;
     }
     return `
-        <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
-        ${yourAnswer}
-        <div style="margin-top:8px; color:#00ffff;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
-		${explanation}
-    `;
+    <div style="color:#ff2c2c;">${timedOut ? 'Ο χρόνος τελείωσε.' : 'Λάθος απάντηση.'}</div>
+    ${yourAnswer}
+    <div style="margin-top:8px;">Σωστή απάντηση: ${escapeHtml(correctAnswer)}</div>
+    ${explanation}
+	`;
 }
 
 async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
