@@ -664,7 +664,7 @@
                 </div>
                 <div class="question-card">
                     <div id="question-area-wait" class="status-box">
-                        Μόλις μπει και ο δεύτερος παίκτης, η μονομαχία θα ξεκινήσει αυτόματα.
+                        Μόλις μπουν και οι υπόλοιποι παίκτες, η μονομαχία θα ξεκινήσει αυτόματα.
                     </div>
                     <div id="question-area-game" class="hidden">
                         <div class="room-meta" style="margin-bottom:10px;">
@@ -1669,7 +1669,7 @@ function renderFinalBox() {
     if (!me) return;
 
     const everyoneFinished = Object.values(players).length >= requiredPlayers && Object.values(players).every(player => player.finished);
-    let message = 'Περιμένεις να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
+    let message = 'Περιμένετε να ολοκληρώσουν και οι υπόλοιποι παίκτες.';
     if (everyoneFinished && winner) {
         const leaders = ranking.filter(player => (player.score || 0) === (winner.score || 0));
         if (leaders.length > 1 && leaders.some(player => player.id === currentProfile.id)) message = 'Ισοπαλία στην κορυφή!';
@@ -1875,7 +1875,7 @@ function renderMessages(items) {
                             ${formatTime(item.createdAt)}
                             ${item.editedAt ? '<span class="edited-mark">(edited)</span>' : ''}
                         </div>
-                        <div class="chat-gesture-hint">${isMine ? 'Σύρε δεξιά προς αριστερά για reply' : 'Σύρε αριστερά προς δεξιά για reply'}</div>
+                        <div class="chat-gesture-hint">${isMine ? 'Σύρετε αριστερά για reply' : 'Σύρετε δεξιά για reply'}</div>
                     </div>
                     ${renderReactionSummary(item)}
                     ${renderEmojiReactionPicker(item.id)}
