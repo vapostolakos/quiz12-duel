@@ -1283,8 +1283,56 @@ const DUEL_IMAGE_OPTION_TRANSLATIONS = {
     "McDonald's": "McDonald's"
 };
 
+const KEEP_DUEL_IMAGE_OPTION_NAMES_IN_ENGLISH = new Set([
+    'Bugs Bunny',
+    'Tom',
+    'Jerry',
+    'Scooby-Doo',
+    'Donald Duck',
+    'Patrick Star',
+    'Mickey Mouse',
+    'Shrek',
+    'Pikachu',
+    'Sonic',
+    'SpongeBob SquarePants',
+    'Captain America',
+    'Batman',
+    'Thor',
+    'Loki',
+    'Hercules',
+    'Odin',
+    'Green Lantern',
+    'Doctor Strange',
+    'Iron Fist',
+    'Vision',
+    'Iron Man',
+    'Superman',
+    'Wonder Woman',
+    'Flash',
+    'Hulk',
+    'Wolverine',
+    'Spider-Man',
+    'Apple',
+    'Samsung',
+    'Sony',
+    'Toyota',
+    'Spotify',
+    'Amazon',
+    'Shell',
+    'BMW',
+    'Adidas',
+    'Audi',
+    'Mercedes-Benz',
+    'Netflix',
+    'Instagram',
+    'Pepsi',
+    'YouTube',
+    "McDonald's"
+]);
+
 function localizeDuelOptionText(question, optionText) {
     if (!question?.img) return optionText;
+    if (KEEP_DUEL_IMAGE_OPTION_NAMES_IN_ENGLISH.has(optionText)) return optionText;
     return DUEL_IMAGE_OPTION_TRANSLATIONS[optionText] || optionText;
 }
 
