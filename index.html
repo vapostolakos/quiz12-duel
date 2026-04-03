@@ -783,6 +783,7 @@
   const DUEL_FIFTY_FIFTY_PENALTY = 0.5;
   const DUEL_AUDIENCE_PENALTY = 0.75;
   const DUEL_SWAP_PENALTY = 0.25;
+  const DUEL_AUDIENCE_PATTERN_KEY = 'quiz12_duel_audience_pattern_count';
 const DEFAULT_AVATAR_OPTIONS = [
     { key: 'man-1', emoji: '👨', bg: '#1d4ed8' },
     { key: 'man-2', emoji: '🧔', bg: '#0f766e' },
@@ -972,23 +973,59 @@ function buildDuelOptionMarkup(question, optionIndex, effectState = {}) {
     `;
 }
 
+function getDuelAudiencePatternCount() {
+    return Number(localStorage.getItem(DUEL_AUDIENCE_PATTERN_KEY) || '0');
+}
+
+function bumpDuelAudiencePatternCount() {
+    const next = getDuelAudiencePatternCount() + 1;
+    localStorage.setItem(DUEL_AUDIENCE_PATTERN_KEY, String(next));
+    return next;
+}
+
 function buildDuelAudiencePercents(question, hiddenOptions = []) {
     const totalOptions = Array.isArray(question?.o) ? question.o.length : 0;
     if (!totalOptions) return [];
     const hiddenSet = new Set(hiddenOptions);
     const visibleIndices = Array.from({ length: totalOptions }, (_, index) => index).filter(index => !hiddenSet.has(index));
     const wrongVisible = visibleIndices.filter(index => index !== question.a);
-    const correctPct = Math.floor(Math.random() * 16) + 52;
-    let remaining = 100 - correctPct;
     const percents = Array(totalOptions).fill(null);
+    if (!visibleIndices.length) return percents;
+    if (!wrongVisible.length) {
+        percents[question.a] = 100;
+        return percents;
+    }
+
+    const audienceCount = bumpDuelAudiencePatternCount();
+    const shouldMislead = audienceCount % 3 === 0;
+    const rivalLeader = wrongVisible[Math.floor(Math.random() * wrongVisible.length)];
+
+    if (visibleIndices.length === 2) {
+        const leaderPct = Math.floor(Math.random() * 5) + 51;
+        const runnerPct = 100 - leaderPct;
+        percents[shouldMislead ? rivalLeader : question.a] = leaderPct;
+        percents[shouldMislead ? question.a : rivalLeader] = runnerPct;
+        return percents;
+    }
+
+    let leaderPct = Math.floor(Math.random() * 5) + 34;
+    let runnerPct = leaderPct - (Math.floor(Math.random() * 3) + 1);
+    if (runnerPct < 30) runnerPct = 30;
+
+    const correctPct = shouldMislead ? runnerPct : leaderPct;
+    const rivalPct = shouldMislead ? leaderPct : runnerPct;
     percents[question.a] = correctPct;
-    wrongVisible.forEach((index, position) => {
-        const slotsLeft = wrongVisible.length - position;
-        const maxForThis = Math.max(6, remaining - (slotsLeft - 1) * 6);
-        const minForThis = 6;
-        const value = slotsLeft === 1 ? remaining : Math.floor(Math.random() * (maxForThis - minForThis + 1)) + minForThis;
+    percents[rivalLeader] = rivalPct;
+
+    let leftover = 100 - correctPct - rivalPct;
+    const remainingRivals = wrongVisible.filter(index => index !== rivalLeader);
+    remainingRivals.forEach((index, position) => {
+        const slotsLeft = remainingRivals.length - position;
+        const minShare = 6;
+        const maxShare = Math.max(minShare, leftover - (slotsLeft - 1) * minShare);
+        const value = slotsLeft === 1 ? leftover : Math.floor(Math.random() * (maxShare - minShare + 1)) + minShare;
         percents[index] = value;
-        remaining -= value;
+        leftover -= value;
     });
     return percents;
 }
