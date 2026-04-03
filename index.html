@@ -1215,8 +1215,73 @@ function resolveDuelQuestionImagePath(imgPath) {
     return QUESTION_IMAGE_ALIASES[imgPath] || imgPath;
 }
 
+const DUEL_IMAGE_OPTION_TRANSLATIONS = {
+    'Argentina': 'Αργεντινή',
+    'Australia': 'Αυστραλία',
+    'Brazil': 'Βραζιλία',
+    'France': 'Γαλλία',
+    'Germany': 'Γερμανία',
+    'Greece': 'Ελλάδα',
+    'India': 'Ινδία',
+    'Italy': 'Ιταλία',
+    'Japan': 'Ιαπωνία',
+    'Madagascar': 'Μαδαγασκάρη',
+    'Norway': 'Νορβηγία',
+    'South Africa': 'Νότια Αφρική',
+    'United Kingdom': 'Ηνωμένο Βασίλειο',
+    'Bugs Bunny': 'Μπαγκς Μπάνι',
+    'Tom': 'Τομ',
+    'Jerry': 'Τζέρι',
+    'Scooby-Doo': 'Σκούμπι-Ντου',
+    'Donald Duck': 'Ντόναλντ Ντακ',
+    'Patrick Star': 'Πάτρικ Σταρ',
+    'Mickey Mouse': 'Μίκυ Μάους',
+    'Shrek': 'Σρεκ',
+    'Pikachu': 'Πίκατσου',
+    'Sonic': 'Σόνικ',
+    'SpongeBob SquarePants': 'Μπομπ Σφουγγαράκης',
+    'Captain America': 'Κάπτεν Αμέρικα',
+    'Batman': 'Μπάτμαν',
+    'Thor': 'Θορ',
+    'Loki': 'Λόκι',
+    'Hercules': 'Ηρακλής',
+    'Odin': 'Όντιν',
+    'Green Lantern': 'Πράσινος Φανός',
+    'Doctor Strange': 'Ντόκτορ Στρέιντζ',
+    'Iron Fist': 'Άιρον Φιστ',
+    'Vision': 'Βίζιον',
+    'Iron Man': 'Άιρον Μαν',
+    'Superman': 'Σούπερμαν',
+    'Wonder Woman': 'Γουόντερ Γούμαν',
+    'Flash': 'Φλας',
+    'Hulk': 'Χαλκ',
+    'Wolverine': 'Γούλβεριν',
+    'Spider-Man': 'Σπάιντερ-Μαν',
+    'Apple': 'Άπλ',
+    'Samsung': 'Σάμσουνγκ',
+    'Sony': 'Σόνι',
+    'Toyota': 'Τογιότα',
+    'Spotify': 'Σποτίφαϊ',
+    'Amazon': 'Αμαζόν',
+    'Shell': 'Shell',
+    'BMW': 'BMW',
+    'Adidas': 'Adidas',
+    'Audi': 'Audi',
+    'Mercedes-Benz': 'Mercedes-Benz',
+    'Netflix': 'Netflix',
+    'Instagram': 'Instagram',
+    'Pepsi': 'Pepsi',
+    'YouTube': 'YouTube',
+    "McDonald's": "McDonald's"
+};
+
+function localizeDuelOptionText(question, optionText) {
+    if (!question?.img) return optionText;
+    return DUEL_IMAGE_OPTION_TRANSLATIONS[optionText] || optionText;
+}
+
 function buildDuelOptionMarkup(question, optionIndex, effectState = {}) {
-    const optionText = question?.o?.[optionIndex] || '';
+    const optionText = localizeDuelOptionText(question, question?.o?.[optionIndex] || '');
     const audiencePct = Array.isArray(effectState.audiencePercents) ? effectState.audiencePercents[optionIndex] : null;
     const pctMarkup = Number.isFinite(audiencePct) ? `<span class="option-pct">${audiencePct}%</span>` : '';
     return `
@@ -1454,11 +1519,11 @@ function scheduleDuelAdvance(callback, delay = 2600) {
 }
 
 function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = false) {
-    const correctAnswer = question.o?.[question.a] || '';
+    const correctAnswer = localizeDuelOptionText(question, question.o?.[question.a] || '');
     const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
     const yourAnswer = selectedIndex === null || timedOut
         ? '<div style="margin-top:8px; color:#f59e0b">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
-        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(question.o?.[selectedIndex] || '')}</div>`;
+        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(localizeDuelOptionText(question, question.o?.[selectedIndex] || ''))}</div>`;
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
