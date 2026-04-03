@@ -920,10 +920,18 @@ const REACTION_OPTIONS = [
     { key: 'thumbs', emoji: '👍' }
 ];
 
+function normalizeQuestionEntry(question) {
+    if (!question || !Array.isArray(question.o)) return null;
+    return {
+        ...question,
+        img: question.img || question.image || question.imageUrl || ''
+    };
+}
+
 const QUESTION_POOL = [
     ...(Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : []),
     ...(Array.isArray(window.QUIZ12_AUTO_QUESTIONS) ? window.QUIZ12_AUTO_QUESTIONS : [])
-];
+].map(normalizeQuestionEntry).filter(Boolean);
 const DUEL_QUIZ_MODE_LABELS = {
     knowledge: 'Quiz Γνώσεων',
     image: 'Quiz με Εικόνες'
@@ -1060,7 +1068,7 @@ function getUniqueDuelQuestionMap() {
 function filterDuelQuestionMapByMode(questionMap, mode = 'knowledge') {
     const normalizedMode = mode === 'image' ? 'image' : 'knowledge';
     return new Map(Array.from(questionMap.entries()).filter(([, question]) => {
-        const hasImage = !!(question?.img && String(question.img).trim());
+        const hasImage = !!String(question?.img || question?.image || question?.imageUrl || '').trim();
         return normalizedMode === 'image' ? hasImage : !hasImage;
     }));
 }
@@ -1354,7 +1362,7 @@ function getDuelSwapCandidate(currentQuestion, mode = currentRoomData?.quizMode 
     if (currentQuestion?.q) usedTexts.add(currentQuestion.q);
     const available = QUESTION_POOL.filter(item => {
         if (!item?.q || usedTexts.has(item.q)) return false;
-        const hasImage = !!(item?.img && String(item.img).trim());
+        const hasImage = !!String(item?.img || item?.image || item?.imageUrl || '').trim();
         return mode === 'image' ? hasImage : !hasImage;
     });
     if (!available.length) return null;
