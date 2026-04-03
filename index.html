@@ -724,6 +724,10 @@
                 <div class="small">Πλήθος ερωτήσεων για νέο room</div>
                 <select id="room-question-count"></select>
             </div>
+            <div class="room-limit-row">
+                <div class="small">Τύπος quiz για νέο room</div>
+                <select id="room-quiz-mode"></select>
+            </div>
             <div class="join-row">
                 <input id="join-room-code" type="text" placeholder="Κωδικός room" maxlength="6">
                 <button style="width:auto; padding:12px 18px;" onclick="joinRoom()">Join</button>
@@ -881,6 +885,10 @@ const QUESTION_POOL = [
     ...(Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : []),
     ...(Array.isArray(window.QUIZ12_AUTO_QUESTIONS) ? window.QUIZ12_AUTO_QUESTIONS : [])
 ];
+const DUEL_QUIZ_MODE_LABELS = {
+    knowledge: 'Quiz Γνώσεων',
+    image: 'Quiz με Εικόνες'
+};
 let firebaseDb = null;
 let firebaseAuth = null;
 let firebaseApp = null;
@@ -1010,6 +1018,18 @@ function getUniqueDuelQuestionMap() {
     return questionMap;
 }
 
+function filterDuelQuestionMapByMode(questionMap, mode = 'knowledge') {
+    const normalizedMode = mode === 'image' ? 'image' : 'knowledge';
+    return new Map(Array.from(questionMap.entries()).filter(([, question]) => {
+        const hasImage = !!(question?.img && String(question.img).trim());
+        return normalizedMode === 'image' ? hasImage : !hasImage;
+    }));
+}
+
+function getDuelAvailableQuestionCount(mode = 'knowledge') {
+    return filterDuelQuestionMapByMode(getUniqueDuelQuestionMap(), mode).size;
+}
+
 function normalizeDuelQuestionIdList(ids, questionMap) {
     if (!Array.isArray(ids)) return [];
     const seen = new Set();
@@ -1046,8 +1066,8 @@ function getProfileQuestionMemory(profile, questionMap, count) {
     };
 }
 
-function buildDuelQuestionSelection(count = QUESTIONS_PER_DUEL, profiles = []) {
-    const questionMap = getUniqueDuelQuestionMap();
+function buildDuelQuestionSelection(count = QUESTIONS_PER_DUEL, profiles = [], mode = 'knowledge') {
+    const questionMap = filterDuelQuestionMapByMode(getUniqueDuelQuestionMap(), mode);
     const allIds = Array.from(questionMap.keys());
     const normalizedCount = Math.max(0, Math.min(allIds.length, count));
     if (!normalizedCount) {
@@ -1117,8 +1137,8 @@ function buildDuelQuestionSelection(count = QUESTIONS_PER_DUEL, profiles = []) {
     };
 }
 
-function pickDuelQuestions(count = QUESTIONS_PER_DUEL, profiles = []) {
-    return buildDuelQuestionSelection(count, profiles).questions;
+function pickDuelQuestions(count = QUESTIONS_PER_DUEL, profiles = [], mode = 'knowledge') {
+    return buildDuelQuestionSelection(count, profiles, mode).questions;
 }
 
 function shuffleQuestionOptions(question) {
@@ -1225,10 +1245,14 @@ function buildDuelAudiencePercents(question, hiddenOptions = []) {
     return percents;
 }
 
-function getDuelSwapCandidate(currentQuestion) {
+function getDuelSwapCandidate(currentQuestion, mode = currentRoomData?.quizMode || 'knowledge') {
     const usedTexts = new Set((currentRoomData?.questions || []).map(item => item?.q).filter(Boolean));
     if (currentQuestion?.q) usedTexts.add(currentQuestion.q);
-    const available = QUESTION_POOL.filter(item => item?.q && !usedTexts.has(item.q));
+    const available = QUESTION_POOL.filter(item => {
+        if (!item?.q || usedTexts.has(item.q)) return false;
+        const hasImage = !!(item?.img && String(item.img).trim());
+        return mode === 'image' ? hasImage : !hasImage;
+    });
     if (!available.length) return null;
     return shuffleQuestionOptions({ ...available[Math.floor(Math.random() * available.length)] });
 }
@@ -1238,9 +1262,10 @@ function updateDuelLifelineButtons(player, isAnswered) {
     const btn5050 = $('duel-btn-5050');
     const btnAudience = $('duel-btn-audience');
     const btnSwap = $('duel-btn-swap');
+    const modePoolSize = getDuelAvailableQuestionCount(currentRoomData?.quizMode || 'knowledge');
     if (btn5050) btn5050.disabled = !!(lifelines.fifty || isAnswered || duelAnswerLocked);
     if (btnAudience) btnAudience.disabled = !!(lifelines.audience || isAnswered || duelAnswerLocked);
-    if (btnSwap) btnSwap.disabled = !!(lifelines.swap || isAnswered || duelAnswerLocked || QUESTION_POOL.length <= (currentRoomData?.questions?.length || 0));
+    if (btnSwap) btnSwap.disabled = !!(lifelines.swap || isAnswered || duelAnswerLocked || modePoolSize <= (currentRoomData?.questions?.length || 0));
 }
 
 function patchCurrentPlayerState(updater) {
@@ -1981,12 +2006,26 @@ function populateRoomPlayerLimitOptions() {
 function populateRoomQuestionCountOptions() {
     const select = $('room-question-count');
     if (!select) return;
-    const maxQuestions = Math.max(10, Math.min(QUESTION_POOL.length || QUESTIONS_PER_DUEL, 50));
+    const mode = $('room-quiz-mode')?.value || 'knowledge';
+    const availableCount = getDuelAvailableQuestionCount(mode);
+    const maxQuestions = Math.max(1, Math.min(availableCount || QUESTIONS_PER_DUEL, 50));
     select.innerHTML = Array.from({ length: maxQuestions }, (_, index) => {
         const value = index + 1;
-        const selected = value === QUESTIONS_PER_DUEL ? 'selected' : '';
+        const selectedValue = Math.max(1, Math.min(maxQuestions, Number(select.value || QUESTIONS_PER_DUEL)));
+        const selected = value === selectedValue ? 'selected' : '';
         return `<option value="${value}" ${selected}>${value}</option>`;
     }).join('');
+}
+
+function populateRoomQuizModeOptions() {
+    const select = $('room-quiz-mode');
+    if (!select) return;
+    select.innerHTML = `
+        <option value="knowledge">${DUEL_QUIZ_MODE_LABELS.knowledge}</option>
+        <option value="image">${DUEL_QUIZ_MODE_LABELS.image}</option>
+    `;
+    select.value = 'knowledge';
+    select.onchange = () => populateRoomQuestionCountOptions();
 }
 
 window.createRoom = async function createRoom() {
@@ -1996,14 +2035,21 @@ window.createRoom = async function createRoom() {
     }
 
     const maxPlayers = Math.max(1, Math.min(MAX_ROOM_PLAYERS, Number($('room-player-limit')?.value || 10)));
-    const questionCount = Math.max(1, Math.min(QUESTION_POOL.length || QUESTIONS_PER_DUEL, Number($('room-question-count')?.value || QUESTIONS_PER_DUEL)));
+    const quizMode = ($('room-quiz-mode')?.value === 'image') ? 'image' : 'knowledge';
+    const availableCount = getDuelAvailableQuestionCount(quizMode);
+    if (!availableCount) {
+        alert(quizMode === 'image' ? 'Δεν υπάρχουν διαθέσιμες ερωτήσεις με εικόνες.' : 'Δεν υπάρχουν διαθέσιμες ερωτήσεις γνώσεων.');
+        return;
+    }
+    const questionCount = Math.max(1, Math.min(availableCount || QUESTIONS_PER_DUEL, Number($('room-question-count')?.value || QUESTIONS_PER_DUEL)));
     const code = await ensureRoomCodeFree();
-    const questions = pickDuelQuestions(questionCount, [currentProfile]);
+    const questions = pickDuelQuestions(questionCount, [currentProfile], quizMode);
     await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), {
         code,
         createdBy: currentProfile.id,
         maxPlayers,
         questionCount,
+        quizMode,
         status: maxPlayers === 1 ? 'active' : 'waiting',
         questions,
         players: {
@@ -2053,7 +2099,7 @@ window.joinRoom = async function joinRoom() {
             const participantIds = Object.keys({ ...players, [currentProfile.id]: true });
             const participantProfiles = await fetchProfilesByIds(participantIds);
             updates.startedAt = firestoreApi.serverTimestamp();
-            updates.questions = buildDuelQuestionSelection(roomData.questionCount || QUESTIONS_PER_DUEL, participantProfiles).questions;
+            updates.questions = buildDuelQuestionSelection(roomData.questionCount || QUESTIONS_PER_DUEL, participantProfiles, roomData.quizMode || 'knowledge').questions;
         }
     }
 
@@ -2224,10 +2270,11 @@ function renderRoom() {
     const roomCapacity = getRoomCapacity(currentRoomData);
 
     const totalQuestions = currentRoomData.questionCount || currentRoomData.questions?.length || QUESTIONS_PER_DUEL;
+    const quizModeLabel = DUEL_QUIZ_MODE_LABELS[currentRoomData.quizMode || 'knowledge'] || DUEL_QUIZ_MODE_LABELS.knowledge;
     $('room-status-text').textContent =
-        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${roomCapacity}) · ${totalQuestions} ερωτήσεις` :
-        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${roomCapacity} παίκτες · ${totalQuestions} ερωτήσεις` :
-        `Η μονομαχία ολοκληρώθηκε · ${totalQuestions} ερωτήσεις`;
+        status === 'waiting' ? `Αναμονή για παίκτες... (${playerCount}/${roomCapacity}) · ${totalQuestions} ερωτήσεις · ${quizModeLabel}` :
+        status === 'active' ? `Το room είναι ενεργό · ${playerCount}/${roomCapacity} παίκτες · ${totalQuestions} ερωτήσεις · ${quizModeLabel}` :
+        `Η μονομαχία ολοκληρώθηκε · ${totalQuestions} ερωτήσεις · ${quizModeLabel}`;
 
     renderRoomRoster();
     renderPlayerCard(currentProfile.id, 'you-card', 'Εσύ');
@@ -2369,7 +2416,7 @@ window.useDuelSwap = async function useDuelSwap() {
     if (!currentRoomData || !currentProfile || duelAnswerLocked) return;
     const me = currentRoomData.players?.[currentProfile.id];
     if (!me || me.finished || getDuelLifelines(me).swap) return;
-    const replacement = getDuelSwapCandidate(getActiveDuelQuestion(me));
+    const replacement = getDuelSwapCandidate(getActiveDuelQuestion(me), currentRoomData?.quizMode || 'knowledge');
     if (!replacement) return;
     const nextScore = (me.score || 0) - getDuelPenaltyPoints(DUEL_SWAP_PENALTY);
     const nextLifelines = { ...getDuelLifelines(me), swap: true };
@@ -2628,6 +2675,7 @@ $('chat-input').addEventListener('keydown', event => {
 });
 
 populateRoomPlayerLimitOptions();
+populateRoomQuizModeOptions();
 populateRoomQuestionCountOptions();
 start();
 renderDefaultAvatarPicker();
