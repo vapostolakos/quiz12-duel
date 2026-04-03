@@ -3344,7 +3344,7 @@
     },
     {
         q: "Ποιο Horcrux δημιούργησε άθελά του ο Voldemort;",
-        o: ["Το ημερολόγιο του Tom Riddle", "Το δαχτυλίδι του Marvolo Gaunt", "Ο Harry Potter", "Η Nagini"],
+        o: ["Το ημερολόγιο του Tom Riddle", "Το δαχτυλίδι του Marvolo Gaunt", "Τον Harry Potter", "Η Nagini"],
         a: 2,
         h: "Ήταν ζωντανός άνθρωπος.",
         r: "Ο Voldemort δημιούργησε άθελά του ως Horcrux τον ίδιο τον Harry Potter.",
