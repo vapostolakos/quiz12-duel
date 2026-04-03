@@ -803,6 +803,7 @@
 
 <script src="./firebase-config.js"></script>
 <script src="./Quiz12-questions.js"></script>
+<script src="./Quiz12-auto-questions.js"></script>
 <script type="module">
   const FIREBASE_SDK_VERSION = '12.7.0';
   const PROFILE_COLLECTION = 'quiz12_duel_profiles';
@@ -845,7 +846,10 @@ const REACTION_OPTIONS = [
     { key: 'thumbs', emoji: '👍' }
 ];
 
-const QUESTION_POOL = Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : [];
+const QUESTION_POOL = [
+    ...(Array.isArray(window.QUIZ12_QUESTIONS) ? window.QUIZ12_QUESTIONS : []),
+    ...(Array.isArray(window.QUIZ12_AUTO_QUESTIONS) ? window.QUIZ12_AUTO_QUESTIONS : [])
+];
 let firebaseDb = null;
 let firebaseAuth = null;
 let firebaseApp = null;

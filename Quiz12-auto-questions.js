@@ -1,0 +1,1 @@
+window.QUIZ12_AUTO_QUESTIONS = [];
