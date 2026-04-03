@@ -815,6 +815,7 @@
   const DUEL_AUDIENCE_PENALTY = 0.75;
   const DUEL_SWAP_PENALTY = 0.25;
   const DUEL_AUDIENCE_PATTERN_KEY = 'quiz12_duel_audience_pattern_count';
+  const DUEL_QUESTION_MEMORY_RECENT_LIMIT = 40;
 const DEFAULT_AVATAR_OPTIONS = [
     { key: 'man-1', emoji: '👨', bg: '#1d4ed8' },
     { key: 'man-2', emoji: '🧔', bg: '#0f766e' },
@@ -873,6 +874,7 @@ let openReactionPaletteFor = null;
 let duelTimerInterval = null;
 let duelTimerDeadline = 0;
 let duelRenderedQuestionKey = '';
+let duelQuestionMemorySignature = '';
 let duelAnswerLocked = false;
 let duelAdvanceTimeout = null;
 const HEART_REACTION_OPTIONS = [
@@ -962,29 +964,131 @@ function shuffleArray(items) {
     return copy;
 }
 
-function pickDuelQuestions(count = QUESTIONS_PER_DUEL) {
-    const normalizedCount = Math.max(1, Math.min(QUESTION_POOL.length, count));
-    const shuffledPool = shuffleArray(QUESTION_POOL);
-    const imageQuestions = shuffledPool.filter(question => !!(question?.img && String(question.img).trim()));
-    const nonImageQuestions = shuffledPool.filter(question => !(question?.img && String(question.img).trim()));
+function getDuelQuestionId(question) {
+    if (!question) return '';
+    return String(question.id || question.q || '').trim();
+}
+
+function getUniqueDuelQuestionMap() {
+    const questionMap = new Map();
+    QUESTION_POOL.forEach(question => {
+        const id = getDuelQuestionId(question);
+        if (id && !questionMap.has(id)) {
+            questionMap.set(id, question);
+        }
+    });
+    return questionMap;
+}
+
+function normalizeDuelQuestionIdList(ids, questionMap) {
+    if (!Array.isArray(ids)) return [];
+    const seen = new Set();
+    return ids.filter(id => {
+        if (!questionMap.has(id) || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+    });
+}
+
+function mergeDuelQuestionIds(baseIds, appendIds, limit) {
+    const seen = new Set();
+    const merged = [];
+    [...baseIds, ...appendIds].forEach(id => {
+        if (seen.has(id)) return;
+        seen.add(id);
+        merged.push(id);
+    });
+    return Number.isFinite(limit) ? merged.slice(-limit) : merged;
+}
+
+function getProfileQuestionMemory(profile, questionMap, count) {
+    const recentIds = normalizeDuelQuestionIdList(profile?.recentQuestionIds, questionMap);
+    let seenIds = normalizeDuelQuestionIdList(profile?.seenQuestionIds, questionMap);
+    if (questionMap.size && seenIds.length >= questionMap.size) {
+        seenIds = recentIds.slice(-Math.max(count * 3, DUEL_QUESTION_MEMORY_RECENT_LIMIT));
+    }
+    return {
+        id: profile?.id || profile?.uid || '',
+        seenIds,
+        seenSet: new Set(seenIds),
+        recentIds,
+        recentSet: new Set(recentIds)
+    };
+}
+
+function buildDuelQuestionSelection(count = QUESTIONS_PER_DUEL, profiles = []) {
+    const questionMap = getUniqueDuelQuestionMap();
+    const allIds = Array.from(questionMap.keys());
+    const normalizedCount = Math.max(0, Math.min(allIds.length, count));
+    if (!normalizedCount) {
+        return { questions: [], updatedMemories: {} };
+    }
+    const scopedProfiles = (Array.isArray(profiles) && profiles.length ? profiles : [currentProfile || { id: 'guest' }]).filter(Boolean);
+    const memories = scopedProfiles.map(profile => getProfileQuestionMemory(profile, questionMap, normalizedCount));
+    const imageSet = new Set(allIds.filter(id => {
+        const question = questionMap.get(id);
+        return !!(question?.img && String(question.img).trim());
+    }));
+
+    const scoredIds = shuffleArray(allIds)
+        .map(id => {
+            const unseenCount = memories.reduce((total, memory) => total + (memory.seenSet.has(id) ? 0 : 1), 0);
+            const recentCount = memories.reduce((total, memory) => total + (memory.recentSet.has(id) ? 1 : 0), 0);
+            const seenCount = memories.length - unseenCount;
+            return { id, unseenCount, recentCount, seenCount };
+        })
+        .sort((left, right) =>
+            (right.unseenCount - left.unseenCount) ||
+            (left.recentCount - right.recentCount) ||
+            (left.seenCount - right.seenCount)
+        );
+
     const targetImageCount = Math.min(
         Math.max(2, Math.ceil(normalizedCount * 0.3)),
         normalizedCount,
-        imageQuestions.length
+        imageSet.size
     );
 
-    const picked = [
-        ...imageQuestions.slice(0, targetImageCount),
-        ...nonImageQuestions.slice(0, Math.max(0, normalizedCount - targetImageCount))
-    ];
+    const selectedIds = [];
+    let selectedImageCount = 0;
 
-    if (picked.length < normalizedCount) {
-        const usedQuestions = new Set(picked.map(item => item?.q));
-        const fallback = shuffledPool.filter(question => !usedQuestions.has(question?.q));
-        picked.push(...fallback.slice(0, normalizedCount - picked.length));
+    function addRanked(source, requireImage = false) {
+        for (const item of source) {
+            if (selectedIds.length >= normalizedCount) break;
+            if (selectedIds.includes(item.id)) continue;
+            const isImage = imageSet.has(item.id);
+            if (requireImage && !isImage) continue;
+            selectedIds.push(item.id);
+            if (isImage) selectedImageCount += 1;
+        }
     }
 
-    return shuffleArray(picked).slice(0, normalizedCount);
+    addRanked(scoredIds, true);
+    if (selectedImageCount < targetImageCount) {
+        addRanked(scoredIds.filter(item => !selectedIds.includes(item.id)), true);
+    }
+    addRanked(scoredIds);
+
+    const updatedMemories = {};
+    memories.forEach(memory => {
+        updatedMemories[memory.id] = {
+            seenIds: mergeDuelQuestionIds(memory.seenIds, selectedIds, allIds.length),
+            recentIds: mergeDuelQuestionIds(
+                memory.recentIds.filter(id => !selectedIds.includes(id)),
+                selectedIds,
+                Math.max(normalizedCount * 4, DUEL_QUESTION_MEMORY_RECENT_LIMIT)
+            )
+        };
+    });
+
+    return {
+        questions: shuffleArray(selectedIds.map(id => questionMap.get(id)).filter(Boolean)).map(shuffleQuestionOptions),
+        updatedMemories
+    };
+}
+
+function pickDuelQuestions(count = QUESTIONS_PER_DUEL, profiles = []) {
+    return buildDuelQuestionSelection(count, profiles).questions;
 }
 
 function shuffleQuestionOptions(question) {
@@ -1543,6 +1647,57 @@ async function fetchProfile(uid) {
     return snap.exists() ? snap.data() : null;
 }
 
+async function fetchProfilesByIds(ids) {
+    const uniqueIds = Array.from(new Set((ids || []).filter(Boolean)));
+    const profiles = await Promise.all(uniqueIds.map(async id => {
+        if (currentProfile?.id === id) return currentProfile;
+        const profile = await fetchProfile(id);
+        return profile || { id };
+    }));
+    return profiles.filter(Boolean);
+}
+
+async function persistProfileQuestionMemory(profileId, seenIds, recentIds) {
+    if (!profileId || !firebaseReady || !firestoreApi || !firebaseDb) return;
+    if (currentProfile?.id === profileId) {
+        currentProfile = {
+            ...currentProfile,
+            seenQuestionIds: [...seenIds],
+            recentQuestionIds: [...recentIds]
+        };
+    }
+    try {
+        await firestoreApi.setDoc(
+            firestoreApi.doc(firebaseDb, PROFILE_COLLECTION, profileId),
+            {
+                seenQuestionIds: [...seenIds],
+                recentQuestionIds: [...recentIds],
+                updatedAt: new Date().toISOString()
+            },
+            { merge: true }
+        );
+    } catch {}
+}
+
+async function syncCurrentPlayerQuestionMemory(roomData = currentRoomData) {
+    if (!roomData?.questions?.length || !currentProfile?.id) return;
+    const questionMap = getUniqueDuelQuestionMap();
+    const selectedIds = roomData.questions.map(getDuelQuestionId).filter(id => questionMap.has(id));
+    if (!selectedIds.length) return;
+    const signature = `${roomData.code || currentRoomCode}:${selectedIds.join('|')}`;
+    if (duelQuestionMemorySignature === signature) return;
+
+    const memory = getProfileQuestionMemory(currentProfile, questionMap, roomData.questions.length);
+    const nextSeenIds = mergeDuelQuestionIds(memory.seenIds, selectedIds, questionMap.size);
+    const nextRecentIds = mergeDuelQuestionIds(
+        memory.recentIds.filter(id => !selectedIds.includes(id)),
+        selectedIds,
+        Math.max(roomData.questions.length * 4, DUEL_QUESTION_MEMORY_RECENT_LIMIT)
+    );
+    duelQuestionMemorySignature = signature;
+    await persistProfileQuestionMemory(currentProfile.id, nextSeenIds, nextRecentIds);
+}
+
 function fillProfileForm(profile) {
     $('profile-first-name').value = profile?.firstName || '';
     $('profile-last-name').value = profile?.lastName || '';
@@ -1591,6 +1746,7 @@ async function handleAuthUser(user) {
     stopSubscriptions();
     currentRoomCode = null;
     currentRoomData = null;
+    duelQuestionMemorySignature = '';
 
     if (!authUser) {
         currentProfile = null;
@@ -1692,6 +1848,8 @@ window.saveProfile = async function saveProfile() {
         lastName,
         nickname,
         photoUrl: avatarDataUrl || '',
+        seenQuestionIds: Array.isArray(currentProfile?.seenQuestionIds) ? currentProfile.seenQuestionIds : [],
+        recentQuestionIds: Array.isArray(currentProfile?.recentQuestionIds) ? currentProfile.recentQuestionIds : [],
         updatedAt: new Date().toISOString()
     };
 
@@ -1810,7 +1968,7 @@ window.createRoom = async function createRoom() {
     const maxPlayers = Math.max(1, Math.min(MAX_ROOM_PLAYERS, Number($('room-player-limit')?.value || 10)));
     const questionCount = Math.max(1, Math.min(QUESTION_POOL.length || QUESTIONS_PER_DUEL, Number($('room-question-count')?.value || QUESTIONS_PER_DUEL)));
     const code = await ensureRoomCodeFree();
-    const questions = pickDuelQuestions(questionCount);
+    const questions = pickDuelQuestions(questionCount, [currentProfile]);
     await firestoreApi.setDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, code), {
         code,
         createdBy: currentProfile.id,
@@ -1861,7 +2019,12 @@ window.joinRoom = async function joinRoom() {
     };
     if (Object.keys({ ...players, [currentProfile.id]: true }).length >= getRequiredPlayersToStart(roomData)) {
         updates.status = 'active';
-        if (!roomData.startedAt) updates.startedAt = firestoreApi.serverTimestamp();
+        if (!roomData.startedAt) {
+            const participantIds = Object.keys({ ...players, [currentProfile.id]: true });
+            const participantProfiles = await fetchProfilesByIds(participantIds);
+            updates.startedAt = firestoreApi.serverTimestamp();
+            updates.questions = buildDuelQuestionSelection(roomData.questionCount || QUESTIONS_PER_DUEL, participantProfiles).questions;
+        }
     }
 
     await firestoreApi.updateDoc(roomRef, updates);
@@ -1881,6 +2044,7 @@ window.leaveRoom = function leaveRoom() {
     stopDuelTimer();
     clearDuelAdvanceTimeout();
     duelRenderedQuestionKey = '';
+    duelQuestionMemorySignature = '';
     duelAnswerLocked = false;
     currentRoomCode = null;
     currentRoomData = null;
@@ -2051,6 +2215,7 @@ function renderRoom() {
 
     $('question-area-wait').classList.add('hidden');
     $('question-area-game').classList.remove('hidden');
+    syncCurrentPlayerQuestionMemory(currentRoomData);
 
     const me = players[currentProfile.id];
     const total = currentRoomData.questions.length;
