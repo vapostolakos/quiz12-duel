@@ -319,6 +319,27 @@
             border: 1px solid transparent;
             transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
+        .option-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+        }
+        .option-text {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .option-pct {
+            flex: 0 0 auto;
+            color: #cbd5e1;
+            font-weight: 800;
+            font-size: 0.88rem;
+        }
+        .option.hidden-by-5050 {
+            visibility: hidden;
+            pointer-events: none;
+        }
         .option:hover:not(:disabled) {
             transform: translateY(-1px);
             border-color: rgba(255,255,255,0.14);
@@ -340,6 +361,28 @@
             margin-top: 12px;
             font-weight: 700;
             color: var(--accent);
+        }
+        .duel-lifeline-container {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .duel-lifeline-btn {
+            width: 96px;
+            height: 96px;
+            border-radius: 999px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.18;
+            font-size: 0.88rem;
+            background: #c026d3;
+            box-shadow: 0 0 14px rgba(192, 38, 211, 0.18);
         }
         .answer-status.success-result { color: #10b981; }
         .answer-status.error-result { color: #ff5a5f; }
@@ -572,6 +615,21 @@
             .avatar-picker {
                 grid-template-columns: repeat(4, minmax(0, 1fr));
             }
+            .duel-lifeline-container {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .duel-lifeline-btn {
+                width: 78px;
+                height: 78px;
+                min-width: 0;
+                padding: 8px;
+                font-size: 0.72rem;
+                line-height: 1.15;
+            }
         }
     </style>
 </head>
@@ -677,6 +735,11 @@
                         <div id="duel-hint" class="hint"></div>
                         <div id="duel-question-text" class="question-text"></div>
                         <div id="duel-options" class="options"></div>
+                        <div class="duel-lifeline-container">
+                            <button id="duel-btn-5050" class="duel-lifeline-btn" onclick="useDuel5050()">50:50<br>(-50%)</button>
+                            <button id="duel-btn-audience" class="duel-lifeline-btn" onclick="useDuelAudience()">Κοινό<br>(-75%)</button>
+                            <button id="duel-btn-swap" class="duel-lifeline-btn" onclick="useDuelSwap()">Αλλαγή<br>(-25%)</button>
+                        </div>
                         <div id="duel-answer-status" class="answer-status hidden"></div>
                         <div id="duel-final-box" class="winner-box hidden" style="margin-top:14px;"></div>
                     </div>
@@ -864,6 +927,94 @@ function pickDuelQuestions(count = QUESTIONS_PER_DUEL) {
     return shuffleArray(QUESTION_POOL).slice(0, Math.max(1, Math.min(QUESTION_POOL.length, count)));
 }
 
+function shuffleQuestionOptions(question) {
+    if (!question || !Array.isArray(question.o)) return question;
+    const remapped = shuffleArray(question.o.map((option, index) => ({ option, index })));
+    return {
+        ...question,
+        o: remapped.map(item => item.option),
+        a: remapped.findIndex(item => item.index === question.a)
+    };
+}
+
+function getDuelLifelines(player) {
+    return {
+        fifty: false,
+        audience: false,
+        swap: false,
+        ...(player?.lifelines || {})
+    };
+}
+
+function getDuelQuestionEffects(player) {
+    return player?.questionEffects || {};
+}
+
+function getActiveDuelQuestion(player) {
+    const questionIndex = Number(player?.currentIndex || 0);
+    const questionEffects = getDuelQuestionEffects(player);
+    return questionEffects?.[questionIndex]?.overrideQuestion || currentRoomData?.questions?.[questionIndex] || null;
+}
+
+function buildDuelOptionMarkup(question, optionIndex, effectState = {}) {
+    const optionText = question?.o?.[optionIndex] || '';
+    const audiencePct = Array.isArray(effectState.audiencePercents) ? effectState.audiencePercents[optionIndex] : null;
+    const pctMarkup = Number.isFinite(audiencePct) ? `<span class="option-pct">${audiencePct}%</span>` : '';
+    return `
+        <span class="option-content">
+            <span class="option-text">${escapeHtml(optionText)}</span>
+            ${pctMarkup}
+        </span>
+    `;
+}
+
+function buildDuelAudiencePercents(question, hiddenOptions = []) {
+    const totalOptions = Array.isArray(question?.o) ? question.o.length : 0;
+    if (!totalOptions) return [];
+    const hiddenSet = new Set(hiddenOptions);
+    const visibleIndices = Array.from({ length: totalOptions }, (_, index) => index).filter(index => !hiddenSet.has(index));
+    const wrongVisible = visibleIndices.filter(index => index !== question.a);
+    const correctPct = Math.floor(Math.random() * 16) + 52;
+    let remaining = 100 - correctPct;
+    const percents = Array(totalOptions).fill(null);
+    percents[question.a] = correctPct;
+    wrongVisible.forEach((index, position) => {
+        const slotsLeft = wrongVisible.length - position;
+        const maxForThis = Math.max(6, remaining - (slotsLeft - 1) * 6);
+        const minForThis = 6;
+        const value = slotsLeft === 1 ? remaining : Math.floor(Math.random() * (maxForThis - minForThis + 1)) + minForThis;
+        percents[index] = value;
+        remaining -= value;
+    });
+    return percents;
+}
+
+function getDuelSwapCandidate(currentQuestion) {
+    const usedTexts = new Set((currentRoomData?.questions || []).map(item => item?.q).filter(Boolean));
+    if (currentQuestion?.q) usedTexts.add(currentQuestion.q);
+    const available = QUESTION_POOL.filter(item => item?.q && !usedTexts.has(item.q));
+    if (!available.length) return null;
+    return shuffleQuestionOptions({ ...available[Math.floor(Math.random() * available.length)] });
+}
+
+function updateDuelLifelineButtons(player, isAnswered) {
+    const lifelines = getDuelLifelines(player);
+    const btn5050 = $('duel-btn-5050');
+    const btnAudience = $('duel-btn-audience');
+    const btnSwap = $('duel-btn-swap');
+    if (btn5050) btn5050.disabled = !!(lifelines.fifty || isAnswered || duelAnswerLocked);
+    if (btnAudience) btnAudience.disabled = !!(lifelines.audience || isAnswered || duelAnswerLocked);
+    if (btnSwap) btnSwap.disabled = !!(lifelines.swap || isAnswered || duelAnswerLocked || QUESTION_POOL.length <= (currentRoomData?.questions?.length || 0));
+}
+
+function patchCurrentPlayerState(updater) {
+    if (!currentRoomData?.players?.[currentProfile?.id]) return null;
+    const currentPlayer = currentRoomData.players[currentProfile.id];
+    const nextPlayer = updater({ ...currentPlayer });
+    currentRoomData.players[currentProfile.id] = nextPlayer;
+    return nextPlayer;
+}
+
 function renderAvatar(imgEl, fallbackEl, photoUrl) {
     if (photoUrl) {
         imgEl.src = photoUrl;
@@ -1023,12 +1174,13 @@ async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
     if (!currentRoomData || !currentProfile) return;
     const me = currentRoomData.players?.[currentProfile.id];
     if (!me || me.finished || duelAnswerLocked) return;
-    const question = currentRoomData.questions[me.currentIndex];
+    const question = getActiveDuelQuestion(me);
     if (!question) return;
 
     duelAnswerLocked = true;
     stopDuelTimer();
     lockDuelOptions();
+    updateDuelLifelineButtons(me, true);
     markDuelOptionResults(question, selectedIndex, timedOut);
 
     const isCorrect = !timedOut && selectedIndex === question.a;
@@ -1041,7 +1193,8 @@ async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
         [`players.${currentProfile.id}.score`]: (me.score || 0) + (isCorrect ? 100 : 0),
         [`players.${currentProfile.id}.correct`]: (me.correct || 0) + (isCorrect ? 1 : 0),
         [`players.${currentProfile.id}.currentIndex`]: nextIndex,
-        [`players.${currentProfile.id}.finished`]: nextIndex >= currentRoomData.questions.length
+        [`players.${currentProfile.id}.finished`]: nextIndex >= currentRoomData.questions.length,
+        [`players.${currentProfile.id}.questionEffects.${me.currentIndex}`]: firestoreApi.deleteField()
     };
 
     const latestPlayers = {
@@ -1051,7 +1204,8 @@ async function commitDuelAnswer(selectedIndex = null, timedOut = false) {
             score: (me.score || 0) + (isCorrect ? 100 : 0),
             correct: (me.correct || 0) + (isCorrect ? 1 : 0),
             currentIndex: nextIndex,
-            finished: nextIndex >= currentRoomData.questions.length
+            finished: nextIndex >= currentRoomData.questions.length,
+            questionEffects: Object.fromEntries(Object.entries(getDuelQuestionEffects(me)).filter(([key]) => Number(key) !== me.currentIndex))
         }
     };
 
@@ -1494,7 +1648,13 @@ function playerStateFromProfile(profile) {
         score: 0,
         correct: 0,
         currentIndex: 0,
-        finished: false
+        finished: false,
+        lifelines: {
+            fifty: false,
+            audience: false,
+            swap: false
+        },
+        questionEffects: {}
     };
 }
 
@@ -1799,24 +1959,29 @@ function renderRoom() {
         $('duel-question-text').textContent = 'Ολοκλήρωσες τις ερωτήσεις σου.';
         $('duel-options').innerHTML = '';
         $('duel-answer-status').classList.add('hidden');
+        updateDuelLifelineButtons({ lifelines: { fifty: true, audience: true, swap: true } }, true);
         renderFinalBox();
         return;
     }
 
-    const question = currentRoomData.questions[me.currentIndex];
+    const question = getActiveDuelQuestion(me);
     const questionKey = `${currentProfile.id}:${me.currentIndex}`;
-    $('duel-hint').textContent = question.h ? `💡 Υπόδειξη: ${question.h}` : '';
+    const questionEffect = getDuelQuestionEffects(me)?.[me.currentIndex] || {};
+    $('duel-hint').textContent = '';
+    $('duel-hint').classList.add('hidden');
     $('duel-question-text').textContent = question.q;
     $('duel-answer-status').classList.add('hidden');
     $('duel-answer-status').classList.remove('success-result', 'error-result');
     $('duel-final-box').classList.add('hidden');
     $('duel-options').innerHTML = question.o.map((option, index) => `
-        <button class="option" onclick="answerDuelQuestion(${index})">${option}</button>
+        <button class="option ${questionEffect.hiddenOptions?.includes(index) ? 'hidden-by-5050' : ''}" onclick="answerDuelQuestion(${index})">${buildDuelOptionMarkup(question, index, questionEffect)}</button>
     `).join('');
+    updateDuelLifelineButtons(me, duelAnswerLocked);
     if (duelRenderedQuestionKey !== questionKey) {
         duelAnswerLocked = false;
         clearDuelAdvanceTimeout();
         startDuelTimer(questionKey);
+        updateDuelLifelineButtons(me, false);
     } else if (duelTimerDeadline) {
         updateDuelTimerLabel();
     }
@@ -1834,6 +1999,76 @@ async function maybeFinishRoom(updatedPlayers) {
 
 window.answerDuelQuestion = async function answerDuelQuestion(index) {
     await commitDuelAnswer(index, false);
+};
+
+window.useDuel5050 = async function useDuel5050() {
+    if (!currentRoomData || !currentProfile || duelAnswerLocked) return;
+    const me = currentRoomData.players?.[currentProfile.id];
+    if (!me || me.finished || getDuelLifelines(me).fifty) return;
+    const question = getActiveDuelQuestion(me);
+    if (!question) return;
+    const hiddenOptions = shuffleArray(question.o.map((_, index) => index).filter(index => index !== question.a)).slice(0, Math.max(0, question.o.length - 2));
+    const nextLifelines = { ...getDuelLifelines(me), fifty: true };
+    const nextEffects = {
+        ...getDuelQuestionEffects(me),
+        [me.currentIndex]: {
+            ...(getDuelQuestionEffects(me)[me.currentIndex] || {}),
+            hiddenOptions
+        }
+    };
+    patchCurrentPlayerState(player => ({ ...player, lifelines: nextLifelines, questionEffects: nextEffects }));
+    renderRoom();
+    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
+        [`players.${currentProfile.id}.lifelines`]: nextLifelines,
+        [`players.${currentProfile.id}.questionEffects.${me.currentIndex}.hiddenOptions`]: hiddenOptions
+    });
+};
+
+window.useDuelAudience = async function useDuelAudience() {
+    if (!currentRoomData || !currentProfile || duelAnswerLocked) return;
+    const me = currentRoomData.players?.[currentProfile.id];
+    if (!me || me.finished || getDuelLifelines(me).audience) return;
+    const question = getActiveDuelQuestion(me);
+    if (!question) return;
+    const currentEffect = getDuelQuestionEffects(me)[me.currentIndex] || {};
+    const audiencePercents = buildDuelAudiencePercents(question, currentEffect.hiddenOptions || []);
+    const nextLifelines = { ...getDuelLifelines(me), audience: true };
+    const nextEffects = {
+        ...getDuelQuestionEffects(me),
+        [me.currentIndex]: {
+            ...currentEffect,
+            audiencePercents
+        }
+    };
+    patchCurrentPlayerState(player => ({ ...player, lifelines: nextLifelines, questionEffects: nextEffects }));
+    renderRoom();
+    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
+        [`players.${currentProfile.id}.lifelines`]: nextLifelines,
+        [`players.${currentProfile.id}.questionEffects.${me.currentIndex}.audiencePercents`]: audiencePercents
+    });
+};
+
+window.useDuelSwap = async function useDuelSwap() {
+    if (!currentRoomData || !currentProfile || duelAnswerLocked) return;
+    const me = currentRoomData.players?.[currentProfile.id];
+    if (!me || me.finished || getDuelLifelines(me).swap) return;
+    const replacement = getDuelSwapCandidate(getActiveDuelQuestion(me));
+    if (!replacement) return;
+    const nextLifelines = { ...getDuelLifelines(me), swap: true };
+    const nextEffects = {
+        ...getDuelQuestionEffects(me),
+        [me.currentIndex]: {
+            overrideQuestion: replacement
+        }
+    };
+    patchCurrentPlayerState(player => ({ ...player, lifelines: nextLifelines, questionEffects: nextEffects }));
+    renderRoom();
+    await firestoreApi.updateDoc(firestoreApi.doc(firebaseDb, ROOM_COLLECTION, currentRoomCode), {
+        [`players.${currentProfile.id}.lifelines`]: nextLifelines,
+        [`players.${currentProfile.id}.questionEffects.${me.currentIndex}`]: {
+            overrideQuestion: replacement
+        }
+    });
 };
 
 function subscribeRoom(code) {
