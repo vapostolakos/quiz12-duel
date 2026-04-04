@@ -7,7 +7,7 @@ const statePath = path.join(root, 'automation-data', 'question-generator-state.j
 const outputPath = path.join(root, 'Quiz12-auto-questions.js');
 const userImageRoot = path.join(root, 'assets', 'images', 'questions');
 
-const RUN_GENERAL_COUNT = 12;
+const RUN_GENERAL_COUNT = 20;
 
 const DEFAULT_STATE = {
   generalOffset: 0,
@@ -17,12 +17,12 @@ const DEFAULT_STATE = {
 };
 
 const IMAGE_LABEL_ALIASES = {
-  'download': 'France',
-  'brazilian-flag-waving-stockcake': 'Brazil',
-  'flag-greece': 'Greece',
-  'flag_of_germany': 'Germany',
-  'flag_of_japan': 'Japan',
-  'italy-flag-wallpaper_1024x1024': 'Italy',
+  'download': 'Γαλλία',
+  'brazilian-flag-waving-stockcake': 'Βραζιλία',
+  'flag-greece': 'Ελλάδα',
+  'flag_of_germany': 'Γερμανία',
+  'flag_of_japan': 'Ιαπωνία',
+  'italy-flag-wallpaper_1024x1024': 'Ιταλία',
   'captain_america_shield': 'Captain America',
   'mouse-ears': 'Mickey Mouse',
   'ogre-ears': 'Shrek',
@@ -43,33 +43,50 @@ const IMAGE_LABEL_ALIASES = {
   'hammer-icon': 'Thor',
   'lantern-ring': 'Green Lantern',
   'spider-emblem': 'Spider-Man',
-  'south-africa': 'South Africa',
-  'uk': 'United Kingdom'
+  'south-africa': 'Νότια Αφρική',
+  'uk': 'Ηνωμένο Βασίλειο',
+  'elephant': 'Ελέφαντας',
+  'giraffe': 'Καμηλοπάρδαλη',
+  'lion': 'Λιοντάρι',
+  'octopus': 'Χταπόδι',
+  'owl': 'Κουκουβάγια',
+  'panda': 'Πάντα',
+  'penguin': 'Πιγκουίνος',
+  'shark': 'Καρχαρίας',
+  'argentina': 'Αργεντινή',
+  'australia': 'Αυστραλία',
+  'brazil': 'Βραζιλία',
+  'india': 'Ινδία',
+  'italy': 'Ιταλία',
+  'japan': 'Ιαπωνία',
+  'madagascar': 'Μαδαγασκάρη',
+  'norway': 'Νορβηγία'
 };
 
 const COUNTRY_CAPITALS = {
-  Argentina: 'Buenos Aires',
-  Australia: 'Canberra',
-  Brazil: 'Brasilia',
-  France: 'Paris',
-  Germany: 'Berlin',
-  Greece: 'Athens',
-  India: 'New Delhi',
-  Italy: 'Rome',
-  Japan: 'Tokyo',
-  Madagascar: 'Antananarivo',
-  Norway: 'Oslo',
-  'South Africa': 'Pretoria',
-  'United Kingdom': 'London'
+  'Αργεντινή': 'Μπουένος Άιρες',
+  'Αυστραλία': 'Καμπέρα',
+  'Βραζιλία': 'Μπραζίλια',
+  'Γαλλία': 'Παρίσι',
+  'Γερμανία': 'Βερολίνο',
+  'Ελλάδα': 'Αθήνα',
+  'Ινδία': 'Νέο Δελχί',
+  'Ιταλία': 'Ρώμη',
+  'Ιαπωνία': 'Τόκιο',
+  'Μαδαγασκάρη': 'Ανταναναρίβο',
+  'Νορβηγία': 'Όσλο',
+  'Νότια Αφρική': 'Πρετόρια',
+  'Ηνωμένο Βασίλειο': 'Λονδίνο'
 };
 
 const CATEGORY_FALLBACKS = {
-  animals: ['Wolf', 'Leopard', 'Tiger', 'Koala', 'Crocodile', 'Eagle'],
+  animals: ['Λύκος', 'Λεοπάρδαλη', 'Τίγρη', 'Κοάλα', 'Κροκόδειλος', 'Αετός'],
   cartoons: ['Bugs Bunny', 'Tom', 'Jerry', 'Scooby-Doo', 'Donald Duck', 'Patrick Star'],
-  flags: ['Bhutan', 'Palau', 'Laos', 'Brunei', 'Suriname', 'Comoros'],
+  flags: ['Μπουτάν', 'Παλάου', 'Λάος', 'Μπρουνέι', 'Σουρινάμ', 'Κομόρες'],
   heroes: ['Iron Man', 'Superman', 'Wonder Woman', 'Flash', 'Hulk', 'Wolverine'],
   logos: ['Adidas', 'Toyota', 'Spotify', 'Amazon', 'Shell', 'BMW'],
-  maps: ['Chile', 'Portugal', 'Iceland', 'Nepal', 'Vietnam', 'Morocco']
+  maps: ['Χιλή', 'Πορτογαλία', 'Ισλανδία', 'Νεπάλ', 'Βιετνάμ', 'Μαρόκο'],
+  misc: ['Επιλογή Α', 'Επιλογή Β', 'Επιλογή Γ', 'Επιλογή Δ']
 };
 
 function rotate(array, offset) {
@@ -212,7 +229,7 @@ function buildPrompt(category, answer) {
       return {
         q: 'Ποιος ήρωας ή χαρακτήρας συνδέεται με αυτό το σύμβολο;',
         h: 'Δώσε βάση στο έμβλημα ή στο αντικείμενο που φαίνεται.',
-        r: `Το σύμβολο/αντικείμενο ανήκει στον/στην ${answer}.`
+        r: `Το σύμβολο ή αντικείμενο ανήκει στον/στην ${answer}.`
       };
     case 'logos':
       return {
@@ -231,7 +248,7 @@ function buildPrompt(category, answer) {
       return {
         q: 'Ποια χώρα ή επικράτεια αντιστοιχεί σε αυτή τη σημαία;',
         h: 'Εστίασε στα χρώματα, στα σύμβολα και στη διάταξη.',
-        r: `Η σημαία ανήκει στη χώρα/επικράτεια ${answer}.`
+        r: `Η σημαία ανήκει στη χώρα ή επικράτεια ${answer}.`
       };
   }
 }
