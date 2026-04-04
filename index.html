@@ -892,6 +892,9 @@ const QUESTION_IMAGE_ALIASES = {
     'assets/images/questions/animals/giraffe.svg': 'assets/images/questions/animals/giraffe.jpg',
     'assets/images/questions/animals/shark.svg': 'assets/images/questions/animals/shark.jpg',
     'assets/images/questions/animals/panda.svg': 'assets/images/questions/animals/panda.jpg',
+    'assets/images/questions/cartoons/ogre-ears.svg': 'assets/images/questions/cartoons/ogre-ears.png',
+    'assets/images/questions/logos/apple-bite.svg': 'assets/images/questions/logos/apple-bite.png',
+    'assets/images/questions/logos/mercedes-star.svg': 'assets/images/questions/logos/mercedes-star.png',
     'assets/images/questions/logos/arches.svg': 'assets/images/questions/logos/arches.png',
     'assets/images/questions/logos/swoosh.svg': 'assets/images/questions/logos/swoosh.webp',
     'assets/images/questions/logos/starbucks-cup.svg': 'assets/images/questions/logos/starbucks-cup.png',
@@ -973,6 +976,7 @@ let duelAdvanceTimeout = null;
 let duelMusicEnabled = localStorage.getItem('quiz12_duel_music_enabled') === 'true';
 let duelRadioAudio = null;
 const DUEL_RADIO_STREAM_URL = 'https://i4.streams.ovh/sc/musicfactory/stream';
+let duelMusicResumeHooksBound = false;
 const HEART_REACTION_OPTIONS = [
     { key: 'heart-red', emoji: '❤️' },
     { key: 'heart-pink', emoji: '🩷' },
@@ -1061,10 +1065,26 @@ async function startDuelMusic() {
         await duelRadioAudio.play();
     } catch (error) {
         console.warn('Duel radio stream playback blocked or unavailable:', error);
-        duelMusicEnabled = false;
-        localStorage.setItem('quiz12_duel_music_enabled', 'false');
-        updateDuelMusicButtons();
+        return;
     }
+}
+
+function bindDuelMusicResumeHooks() {
+    if (duelMusicResumeHooksBound) return;
+    duelMusicResumeHooksBound = true;
+    const retryStart = () => {
+        if (duelMusicEnabled) {
+            startDuelMusic();
+        }
+    };
+    ['pointerdown', 'touchstart', 'keydown'].forEach(eventName => {
+        window.addEventListener(eventName, retryStart, { passive: true });
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && duelMusicEnabled) {
+            retryStart();
+        }
+    });
 }
 
 window.toggleDuelMusic = async function toggleDuelMusic() {
@@ -1323,7 +1343,7 @@ const DUEL_IMAGE_OPTION_TRANSLATIONS = {
     'Hulk': 'Χαλκ',
     'Wolverine': 'Γούλβεριν',
     'Spider-Man': 'Σπάιντερ-Μαν',
-    'Apple': 'Άπλ',
+    'Apple': 'Apple',
     'Samsung': 'Σάμσουνγκ',
     'Sony': 'Σόνι',
     'Toyota': 'Τογιότα',
@@ -1352,7 +1372,18 @@ const KEEP_DUEL_IMAGE_OPTION_NAMES_IN_ENGLISH = new Set([
     'Shrek',
     'Pikachu',
     'Sonic',
-    'SpongeBob SquarePants',
+    'Apple',
+    'Samsung',
+    'Sony',
+    'Toyota',
+    'Spotify',
+    'Amazon',
+    'Shell',
+    'BMW',
+    'Adidas',
+    'Audi',
+    'Mercedes-Benz',
+    "McDonald's",
     'Captain America',
     'Batman',
     'Thor',
@@ -1369,23 +1400,7 @@ const KEEP_DUEL_IMAGE_OPTION_NAMES_IN_ENGLISH = new Set([
     'Flash',
     'Hulk',
     'Wolverine',
-    'Spider-Man',
-    'Apple',
-    'Samsung',
-    'Sony',
-    'Toyota',
-    'Spotify',
-    'Amazon',
-    'Shell',
-    'BMW',
-    'Adidas',
-    'Audi',
-    'Mercedes-Benz',
-    'Netflix',
-    'Instagram',
-    'Pepsi',
-    'YouTube',
-    "McDonald's"
+    'Spider-Man'
 ]);
 
 function localizeDuelOptionText(question, optionText) {
@@ -2896,6 +2911,10 @@ populateRoomPlayerLimitOptions();
 populateRoomQuizModeOptions();
 populateRoomQuestionCountOptions();
 updateDuelMusicButtons();
+bindDuelMusicResumeHooks();
+if (duelMusicEnabled) {
+    startDuelMusic();
+}
 start();
 renderDefaultAvatarPicker();
 </script>
