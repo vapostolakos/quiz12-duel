@@ -876,6 +876,7 @@ const QUESTION_IMAGE_ALIASES = {
     'assets/images/questions/maps/brazil-map.svg': 'assets/images/questions/maps/brazil-map.jpg',
     'assets/images/questions/maps/argentina-map.svg': 'assets/images/questions/maps/argentina-map.png',
     'assets/images/questions/maps/madagascar-map.svg': 'assets/images/questions/maps/madagascar-map.png',
+    'assets/images/questions/cartoons/mouse-ears.svg': 'assets/images/questions/cartoons/mouse-ears.jpg',
     'assets/images/questions/cartoons/sponge-face.svg': 'assets/images/questions/cartoons/sponge.webp',
     'assets/images/questions/cartoons/blue-hedgehog.svg': 'assets/images/questions/cartoons/Sonic.webp',
     'assets/images/questions/cartoons/yellow-mouse.svg': 'assets/images/questions/cartoons/Pikachu.png',
@@ -892,7 +893,7 @@ const QUESTION_IMAGE_ALIASES = {
     'assets/images/questions/animals/giraffe.svg': 'assets/images/questions/animals/giraffe.jpg',
     'assets/images/questions/animals/shark.svg': 'assets/images/questions/animals/shark.jpg',
     'assets/images/questions/animals/panda.svg': 'assets/images/questions/animals/panda.jpg',
-    'assets/images/questions/cartoons/ogre-ears.svg': 'assets/images/questions/cartoons/ogre-ears.png',
+    'assets/images/questions/cartoons/ogre-ears.svg': 'assets/images/questions/cartoons/ogre-ears.webp',
     'assets/images/questions/logos/apple-bite.svg': 'assets/images/questions/logos/apple-bite.png',
     'assets/images/questions/logos/mercedes-star.svg': 'assets/images/questions/logos/mercedes-star.png',
     'assets/images/questions/logos/arches.svg': 'assets/images/questions/logos/arches.png',
@@ -1045,12 +1046,10 @@ function updateDuelMusicButtons() {
 function stopDuelMusic() {
     if (duelRadioAudio) {
         duelRadioAudio.pause();
-        duelRadioAudio.currentTime = 0;
     }
 }
 
-async function startDuelMusic() {
-    stopDuelMusic();
+async function startDuelMusic(forceRestart = false) {
     if (!duelMusicEnabled) return;
     if (!duelRadioAudio) {
         duelRadioAudio = new Audio(DUEL_RADIO_STREAM_URL);
@@ -1060,6 +1059,12 @@ async function startDuelMusic() {
         duelRadioAudio.setAttribute('playsinline', 'true');
     } else if (duelRadioAudio.src !== DUEL_RADIO_STREAM_URL) {
         duelRadioAudio.src = DUEL_RADIO_STREAM_URL;
+    }
+    if (!forceRestart && !duelRadioAudio.paused && !duelRadioAudio.ended) {
+        return;
+    }
+    if (forceRestart) {
+        duelRadioAudio.pause();
     }
     try {
         await duelRadioAudio.play();
@@ -1072,14 +1077,8 @@ async function startDuelMusic() {
 function bindDuelMusicResumeHooks() {
     if (duelMusicResumeHooksBound) return;
     duelMusicResumeHooksBound = true;
-    const retryStart = () => {
-        if (duelMusicEnabled) {
-            startDuelMusic();
-        }
-    };
-    ['pointerdown', 'touchstart', 'keydown'].forEach(eventName => {
-        window.addEventListener(eventName, retryStart, { passive: true });
-    });
+    const retryStart = () => { if (duelMusicEnabled) startDuelMusic(); };
+    window.addEventListener('pageshow', retryStart);
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && duelMusicEnabled) {
             retryStart();
