@@ -754,6 +754,7 @@
                 <button class="secondary" onclick="goToProfile()">Επεξεργασία Προφίλ</button>
                 <button class="secondary" onclick="logoutAccount()">Logout</button>
                 <button class="secondary" onclick="goToMainPage()">Back to Main Page</button>
+                <button class="secondary duel-music-toggle" onclick="toggleDuelMusic()">🎼 Μουσική Off</button>
             </div>
             <div class="room-limit-row">
                 <div class="small">Μέγιστος αριθμός παικτών για νέο room</div>
@@ -801,6 +802,9 @@
                         </div>
                         <div class="duel-timer-track">
                             <div id="duel-timer-fill" class="duel-timer-fill"></div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; margin:10px 0 6px;">
+                            <button class="secondary duel-music-toggle" style="width:auto; padding:8px 12px;" onclick="toggleDuelMusic()">🎼 Μουσική Off</button>
                         </div>
                         <div id="duel-hint" class="hint"></div>
                         <div id="duel-image-wrap" class="duel-image-wrap hidden">
@@ -966,6 +970,9 @@ let duelRenderedQuestionKey = '';
 let duelQuestionMemorySignature = '';
 let duelAnswerLocked = false;
 let duelAdvanceTimeout = null;
+let duelMusicEnabled = localStorage.getItem('quiz12_duel_music_enabled') === 'true';
+let duelRadioAudio = null;
+const DUEL_RADIO_STREAM_URL = 'https://i4.streams.ovh/sc/musicfactory/stream';
 const HEART_REACTION_OPTIONS = [
     { key: 'heart-red', emoji: '❤️' },
     { key: 'heart-pink', emoji: '🩷' },
@@ -1023,6 +1030,53 @@ function show(screenId) {
         $(id).classList.toggle('hidden', id !== screenId);
     });
 }
+
+function updateDuelMusicButtons() {
+    document.querySelectorAll('.duel-music-toggle').forEach(button => {
+        button.textContent = `${duelMusicEnabled ? '🎵' : '🎼'} Μουσική ${duelMusicEnabled ? 'On' : 'Off'}`;
+        button.classList.toggle('active', duelMusicEnabled);
+    });
+}
+
+function stopDuelMusic() {
+    if (duelRadioAudio) {
+        duelRadioAudio.pause();
+        duelRadioAudio.currentTime = 0;
+    }
+}
+
+async function startDuelMusic() {
+    stopDuelMusic();
+    if (!duelMusicEnabled) return;
+    if (!duelRadioAudio) {
+        duelRadioAudio = new Audio(DUEL_RADIO_STREAM_URL);
+        duelRadioAudio.crossOrigin = 'anonymous';
+        duelRadioAudio.preload = 'none';
+        duelRadioAudio.volume = 0.35;
+        duelRadioAudio.setAttribute('playsinline', 'true');
+    } else if (duelRadioAudio.src !== DUEL_RADIO_STREAM_URL) {
+        duelRadioAudio.src = DUEL_RADIO_STREAM_URL;
+    }
+    try {
+        await duelRadioAudio.play();
+    } catch (error) {
+        console.warn('Duel radio stream playback blocked or unavailable:', error);
+        duelMusicEnabled = false;
+        localStorage.setItem('quiz12_duel_music_enabled', 'false');
+        updateDuelMusicButtons();
+    }
+}
+
+window.toggleDuelMusic = async function toggleDuelMusic() {
+    duelMusicEnabled = !duelMusicEnabled;
+    localStorage.setItem('quiz12_duel_music_enabled', String(duelMusicEnabled));
+    updateDuelMusicButtons();
+    if (duelMusicEnabled) {
+        await startDuelMusic();
+    } else {
+        stopDuelMusic();
+    }
+};
 
 function hasFirebaseConfig() {
     const cfg = window.FIREBASE_CONFIG;
@@ -2841,6 +2895,7 @@ $('chat-input').addEventListener('keydown', event => {
 populateRoomPlayerLimitOptions();
 populateRoomQuizModeOptions();
 populateRoomQuestionCountOptions();
+updateDuelMusicButtons();
 start();
 renderDefaultAvatarPicker();
 </script>
