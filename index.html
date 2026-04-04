@@ -1060,6 +1060,7 @@ async function startDuelMusic(forceRestart = false) {
         duelRadioAudio = new Audio(DUEL_RADIO_STREAM_URL);
         duelRadioAudio.crossOrigin = 'anonymous';
         duelRadioAudio.preload = 'none';
+        duelRadioAudio.autoplay = true;
         duelRadioAudio.volume = 0.35;
         duelRadioAudio.setAttribute('playsinline', 'true');
     } else if (duelRadioAudio.src !== DUEL_RADIO_STREAM_URL) {
@@ -1083,6 +1084,7 @@ function bindDuelMusicResumeHooks() {
     if (duelMusicResumeHooksBound) return;
     duelMusicResumeHooksBound = true;
     const retryStart = () => { if (duelMusicEnabled) startDuelMusic(); };
+    window.addEventListener('load', retryStart);
     window.addEventListener('pageshow', retryStart);
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && duelMusicEnabled) {
