@@ -3958,800 +3958,7 @@
         r: "Η διάσημη ατάκα αποδίδεται στη Marilyn Monroe.",
         img: ""
     },
-    {
-        q: "Ποια χώρα αντιστοιχεί στη σημαία της εικόνας;",
-        o: ["Ιαπωνία", "Νότια Κορέα", "Κίνα", "Ινδονησία"],
-        a: 0,
-        h: "Η σημαία έχει λευκό φόντο και έναν κόκκινο δίσκο στο κέντρο.",
-        r: "Η σημαία της εικόνας ανήκει στην Ιαπωνία.",
-        img: "assets/images/questions/flags/japan.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που φαίνεται στη σημαία;",
-        o: ["Ρώμη", "Παρίσι", "Μαδρίτη", "Λισαβόνα"],
-        a: 1,
-        h: "Η σημαία έχει τρεις κάθετες λωρίδες: μπλε, λευκή, κόκκινη.",
-        r: "Η σημαία είναι της Γαλλίας, της οποίας πρωτεύουσα είναι το Παρίσι.",
-        img: "assets/images/questions/flags/france.svg"
-    },
-    {
-        q: "Ποια χώρα έχει αυτή τη σημαία;",
-        o: ["Μεξικό", "Ιταλία", "Ιρλανδία", "Ουγγαρία"],
-        a: 1,
-        h: "Έχει τρεις κάθετες λωρίδες: πράσινη, λευκή, κόκκινη.",
-        r: "Η σημαία της εικόνας είναι της Ιταλίας.",
-        img: "assets/images/questions/flags/italy.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που δείχνει η σημαία;",
-        o: ["Βιέννη", "Βερολίνο", "Βαρσοβία", "Πράγα"],
-        a: 1,
-        h: "Η σημαία έχει οριζόντιες λωρίδες: μαύρη, κόκκινη, κίτρινη.",
-        r: "Η σημαία ανήκει στη Γερμανία και πρωτεύουσά της είναι το Βερολίνο.",
-        img: "assets/images/questions/flags/germany.svg"
-    },
-    {
-        q: "Σε ποια χώρα ανήκει αυτή η σημαία;",
-        o: ["Κύπρος", "Ελλάδα", "Αργεντινή", "Ουρουγουάη"],
-        a: 1,
-        h: "Η σημαία έχει μπλε και λευκές λωρίδες και σταυρό στο πάνω αριστερά μέρος.",
-        r: "Η σημαία είναι της Ελλάδας.",
-        img: "assets/images/questions/flags/greece.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας της εικόνας;",
-        o: ["Μπραζίλια", "Ρίο ντε Τζανέιρο", "Σάο Πάολο", "Μπουένος Άιρες"],
-        a: 0,
-        h: "Η πράσινη σημαία με τον κίτρινο ρόμβο ανήκει στη μεγαλύτερη χώρα της Νότιας Αμερικής.",
-        r: "Η σημαία είναι της Βραζιλίας και πρωτεύουσά της είναι η Μπραζίλια.",
-        img: "assets/images/questions/flags/brazil.svg"
-    },
-    {
-        q: "Ποια χώρα δείχνει ο χάρτης της εικόνας;",
-        o: ["Ιαπωνία", "Φιλιππίνες", "Ινδονησία", "Νέα Ζηλανδία"],
-        a: 0,
-        h: "Πρόκειται για νησιωτικό κράτος της Ανατολικής Ασίας.",
-        r: "Ο χάρτης της εικόνας αντιστοιχεί στην Ιαπωνία.",
-        img: "assets/images/questions/maps/japan-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που φαίνεται στον χάρτη;",
-        o: ["Σεούλ", "Τόκιο", "Οσάκα", "Ταϊπέι"],
-        a: 1,
-        h: "Είναι η μεγαλύτερη μητροπολιτική περιοχή στον κόσμο.",
-        r: "Ο χάρτης είναι της Ιαπωνίας και πρωτεύουσά της είναι το Τόκιο.",
-        img: "assets/images/questions/maps/japan-map.svg"
-    },
-    {
-        q: "Ποια ευρωπαϊκή χώρα δείχνει η χαρακτηριστική «μπότα» της εικόνας;",
-        o: ["Ισπανία", "Πορτογαλία", "Ιταλία", "Ελλάδα"],
-        a: 2,
-        h: "Το σχήμα της χώρας είναι από τα πιο αναγνωρίσιμα στον κόσμο.",
-        r: "Η χώρα με το χαρακτηριστικό σχήμα «μπότας» είναι η Ιταλία.",
-        img: "assets/images/questions/maps/italy-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Μιλάνο", "Νάπολη", "Ρώμη", "Βενετία"],
-        a: 2,
-        h: "Εκεί βρίσκεται και το Βατικανό ως ανεξάρτητο κράτος-θύλακας.",
-        r: "Ο χάρτης είναι της Ιταλίας και πρωτεύουσά της είναι η Ρώμη.",
-        img: "assets/images/questions/maps/italy-map.svg"
-    },
-    {
-        q: "Σε ποια χώρα ανήκει ο χάρτης της εικόνας;",
-        o: ["Αυστραλία", "Νέα Ζηλανδία", "Παπούα Νέα Γουινέα", "Ινδία"],
-        a: 0,
-        h: "Είναι και ήπειρος και κράτος.",
-        r: "Ο χάρτης αυτός ανήκει στην Αυστραλία.",
-        img: "assets/images/questions/maps/australia-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που φαίνεται στον χάρτη;",
-        o: ["Σίδνεϊ", "Μελβούρνη", "Καμπέρα", "Περθ"],
-        a: 2,
-        h: "Δεν είναι ούτε το Σίδνεϊ ούτε η Μελβούρνη.",
-        r: "Η χώρα της εικόνας είναι η Αυστραλία και πρωτεύουσά της είναι η Καμπέρα.",
-        img: "assets/images/questions/maps/australia-map.svg"
-    },
-    {
-        q: "Ποια μεγάλη ασιατική χώρα δείχνει ο χάρτης;",
-        o: ["Πακιστάν", "Ινδία", "Μπαγκλαντές", "Ταϊλάνδη"],
-        a: 1,
-        h: "Η χώρα προεξέχει σαν τριγωνική χερσόνησος στον Ινδικό Ωκεανό.",
-        r: "Ο χάρτης της εικόνας είναι της Ινδίας.",
-        img: "assets/images/questions/maps/india-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Μουμπάι", "Νέο Δελχί", "Καράτσι", "Κατμαντού"],
-        a: 1,
-        h: "Είναι η διοικητική πρωτεύουσα, όχι το μεγαλύτερο οικονομικό κέντρο.",
-        r: "Η χώρα είναι η Ινδία και πρωτεύουσά της είναι το Νέο Δελχί.",
-        img: "assets/images/questions/maps/india-map.svg"
-    },
-    {
-        q: "Ποιο ευρωπαϊκό κράτος απεικονίζεται στον χάρτη με τα δύο μεγάλα νησιά;",
-        o: ["Ιρλανδία", "Ισλανδία", "Ηνωμένο Βασίλειο", "Δανία"],
-        a: 2,
-        h: "Περιλαμβάνει την Αγγλία, τη Σκωτία, την Ουαλία και τη Βόρεια Ιρλανδία.",
-        r: "Ο χάρτης ανήκει στο Ηνωμένο Βασίλειο.",
-        img: "assets/images/questions/maps/uk-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που δείχνει ο χάρτης;",
-        o: ["Δουβλίνο", "Λονδίνο", "Εδιμβούργο", "Κάρντιφ"],
-        a: 1,
-        h: "Είναι η πρωτεύουσα της Αγγλίας αλλά και ολόκληρου του κράτους.",
-        r: "Η χώρα του χάρτη είναι το Ηνωμένο Βασίλειο και πρωτεύουσά του είναι το Λονδίνο.",
-        img: "assets/images/questions/maps/uk-map.svg"
-    },
-    {
-        q: "Ποια χώρα της Νότιας Αμερικής δείχνει ο χάρτης;",
-        o: ["Περού", "Βραζιλία", "Κολομβία", "Βολιβία"],
-        a: 1,
-        h: "Είναι η μεγαλύτερη χώρα της ηπείρου σε έκταση.",
-        r: "Ο χάρτης της εικόνας ανήκει στη Βραζιλία.",
-        img: "assets/images/questions/maps/brazil-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Μπραζίλια", "Ρίο ντε Τζανέιρο", "Σαλβαδόρ", "Σάο Πάολο"],
-        a: 0,
-        h: "Είναι σχεδιασμένη πρωτεύουσα του 20ού αιώνα.",
-        r: "Η χώρα είναι η Βραζιλία και πρωτεύουσά της είναι η Μπραζίλια.",
-        img: "assets/images/questions/maps/brazil-map.svg"
-    },
-    {
-        q: "Ποια αφρικανική χώρα δείχνει ο χάρτης;",
-        o: ["Ναμίμπια", "Νότια Αφρική", "Μοζαμβίκη", "Κένυα"],
-        a: 1,
-        h: "Είναι η χώρα με τις τρεις πρωτεύουσες.",
-        r: "Ο χάρτης της εικόνας είναι της Νότιας Αφρικής.",
-        img: "assets/images/questions/maps/south-africa-map.svg"
-    },
-    {
-        q: "Ποια από τις παρακάτω πόλεις είναι επίσημη πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Γιοχάνεσμπουργκ", "Πρετόρια", "Ντέρμπαν", "Κέιπ Τάουν μόνο"],
-        a: 1,
-        h: "Η εκτελεστική εξουσία εδρεύει εκεί.",
-        r: "Η χώρα είναι η Νότια Αφρική και μία από τις επίσημες πρωτεύουσές της είναι η Πρετόρια.",
-        img: "assets/images/questions/maps/south-africa-map.svg"
-    },
-    {
-        q: "Ποια χώρα της Νότιας Αμερικής δείχνει ο μακρόστενος χάρτης;",
-        o: ["Χιλή", "Αργεντινή", "Ουρουγουάη", "Παραγουάη"],
-        a: 1,
-        h: "Είναι η δεύτερη μεγαλύτερη χώρα της Νότιας Αμερικής.",
-        r: "Ο χάρτης αυτός απεικονίζει την Αργεντινή.",
-        img: "assets/images/questions/maps/argentina-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Μοντεβιδέο", "Σαντιάγο", "Μπουένος Άιρες", "Λίμα"],
-        a: 2,
-        h: "Η πόλη βρίσκεται στις όχθες του Ρίο ντε λα Πλάτα.",
-        r: "Η χώρα της εικόνας είναι η Αργεντινή και πρωτεύουσά της είναι το Μπουένος Άιρες.",
-        img: "assets/images/questions/maps/argentina-map.svg"
-    },
-    {
-        q: "Ποια σκανδιναβική χώρα δείχνει ο μακρύς και στενός χάρτης;",
-        o: ["Σουηδία", "Φινλανδία", "Νορβηγία", "Δανία"],
-        a: 2,
-        h: "Φημίζεται για τα φιόρδ της.",
-        r: "Ο χάρτης της εικόνας απεικονίζει τη Νορβηγία.",
-        img: "assets/images/questions/maps/norway-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας του χάρτη;",
-        o: ["Όσλο", "Στοκχόλμη", "Κοπεγχάγη", "Ελσίνκι"],
-        a: 0,
-        h: "Είναι η παλαιότερη από τις σύγχρονες σκανδιναβικές πρωτεύουσες.",
-        r: "Η χώρα είναι η Νορβηγία και πρωτεύουσά της είναι το Όσλο.",
-        img: "assets/images/questions/maps/norway-map.svg"
-    },
-    {
-        q: "Ποιο μεγάλο νησιωτικό κράτος της Αφρικής δείχνει ο χάρτης;",
-        o: ["Σρι Λάνκα", "Μαυρίκιος", "Μαδαγασκάρη", "Ζανζιβάρη"],
-        a: 2,
-        h: "Βρίσκεται ανοιχτά της νοτιοανατολικής ακτής της Αφρικής.",
-        r: "Ο χάρτης της εικόνας δείχνει τη Μαδαγασκάρη.",
-        img: "assets/images/questions/maps/madagascar-map.svg"
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της χώρας που δείχνει ο χάρτης;",
-        o: ["Ανταναναρίβο", "Μαπούτο", "Μορόνι", "Λουσάκα"],
-        a: 0,
-        h: "Είναι γνωστή και ως Tana σε σύντομη μορφή.",
-        r: "Η χώρα είναι η Μαδαγασκάρη και πρωτεύουσά της είναι το Ανταναναρίβο.",
-        img: "assets/images/questions/maps/madagascar-map.svg"
-    },
-    {
-        q: "Ποιος εμβληματικός χαρακτήρας αναγνωρίζεται από τα στρογγυλά αυτιά της εικόνας;",
-        o: ["Mickey Mouse", "Bugs Bunny", "Tom", "Snoopy"],
-        a: 0,
-        h: "Είναι η πιο αναγνωρίσιμη μασκότ της Disney.",
-        r: "Η εικόνα παραπέμπει ξεκάθαρα στον Mickey Mouse.",
-        img: "assets/images/questions/cartoons/mouse-ears.svg"
-    },
-    {
-        q: "Σε ποιο στούντιο/σύμπαν ανήκει ο χαρακτήρας της εικόνας;",
-        o: ["Warner Bros.", "Disney", "Nickelodeon", "DreamWorks"],
-        a: 1,
-        h: "Είναι η ιστορική μασκότ του συγκεκριμένου στούντιο.",
-        r: "Ο χαρακτήρας της εικόνας ανήκει στο σύμπαν της Disney.",
-        img: "assets/images/questions/cartoons/mouse-ears.svg"
-    },
-    {
-        q: "Ποιο καρτούν παραπέμπει στο κίτρινο τετράγωνο πρόσωπο της εικόνας;",
-        o: ["Adventure Time", "SpongeBob SquarePants", "The Simpsons", "Minions"],
-        a: 1,
-        h: "Ζει σε έναν ανανά κάτω από τη θάλασσα.",
-        r: "Η εικόνα παραπέμπει στον SpongeBob SquarePants.",
-        img: "assets/images/questions/cartoons/sponge-face.svg"
-    },
-    {
-        q: "Σε ποιο δίκτυο προβλήθηκε και έγινε διάσημος ο χαρακτήρας της εικόνας;",
-        o: ["Cartoon Network", "Nickelodeon", "Fox Kids", "Disney Channel"],
-        a: 1,
-        h: "Το πορτοκαλί χρώμα του καναλιού είναι εξίσου χαρακτηριστικό.",
-        r: "Ο SpongeBob έγινε παγκόσμιο φαινόμενο μέσω του Nickelodeon.",
-        img: "assets/images/questions/cartoons/sponge-face.svg"
-    },
-    {
-        q: "Ποιος γρήγορος ήρωας των video games και cartoons παραπέμπει στην μπλε μορφή της εικόνας;",
-        o: ["Crash Bandicoot", "Sonic", "Tails", "Mega Man"],
-        a: 1,
-        h: "Είναι το μεγάλο αντίπαλο δέος του Mario για τη Sega.",
-        r: "Η εικόνα παραπέμπει στον Sonic.",
-        img: "assets/images/questions/cartoons/blue-hedgehog.svg"
-    },
-    {
-        q: "Με ποια εταιρεία ταυτίστηκε περισσότερο ο χαρακτήρας της εικόνας;",
-        o: ["Nintendo", "Sony", "Sega", "Capcom"],
-        a: 2,
-        h: "Ήταν η κεντρική μασκότ της εταιρείας στα 90s.",
-        r: "Ο χαρακτήρας της εικόνας ταυτίστηκε με τη Sega.",
-        img: "assets/images/questions/cartoons/blue-hedgehog.svg"
-    },
-    {
-        q: "Ποιο δημοφιλές πλάσμα των Pokémon παραπέμπει στη μορφή της εικόνας;",
-        o: ["Pichu", "Pikachu", "Raichu", "Eevee"],
-        a: 1,
-        h: "Είναι η επίσημη μασκότ του franchise.",
-        r: "Η εικόνα παραπέμπει στον Pikachu.",
-        img: "assets/images/questions/cartoons/yellow-mouse.svg"
-    },
-    {
-        q: "Σε ποιο franchise ανήκει ο χαρακτήρας της εικόνας;",
-        o: ["Digimon", "Pokémon", "Yu-Gi-Oh!", "Dragon Ball"],
-        a: 1,
-        h: "Το franchise ξεκίνησε ως video game της Nintendo.",
-        r: "Ο χαρακτήρας της εικόνας ανήκει στο σύμπαν των Pokémon.",
-        img: "assets/images/questions/cartoons/yellow-mouse.svg"
-    },
-    {
-        q: "Ποιος πράσινος ήρωας παραπέμπει στη μορφή με τα χαρακτηριστικά αυτιά της εικόνας;",
-        o: ["Shrek", "Hulk", "Yoda", "Grinch"],
-        a: 0,
-        h: "Ζει σε βάλτο και πρωταγωνιστεί σε ταινίες της DreamWorks.",
-        r: "Η εικόνα παραπέμπει στον Shrek.",
-        img: "assets/images/questions/cartoons/ogre-ears.svg"
-    },
-    {
-        q: "Ποιο στούντιο animation βρίσκεται πίσω από τον χαρακτήρα της εικόνας;",
-        o: ["Pixar", "Disney", "DreamWorks", "Illumination"],
-        a: 2,
-        h: "Το ίδιο στούντιο έχει και το Kung Fu Panda.",
-        r: "Ο Shrek είναι ήρωας της DreamWorks.",
-        img: "assets/images/questions/cartoons/ogre-ears.svg"
-    },
-    {
-        q: "Ποιος υπερήρωας παραπέμπει στο έμβλημα της εικόνας;",
-        o: ["Batman", "Black Panther", "Daredevil", "Moon Knight"],
-        a: 0,
-        h: "Είναι ο Σκοτεινός Ιππότης της Gotham.",
-        r: "Το έμβλημα της εικόνας παραπέμπει στον Batman.",
-        img: "assets/images/questions/heroes/bat-emblem.svg"
-    },
-    {
-        q: "Σε ποιο comic universe ανήκει ο ήρωας της εικόνας;",
-        o: ["Marvel", "DC", "Image Comics", "Dark Horse"],
-        a: 1,
-        h: "Μοιράζεται σύμπαν με τον Superman και τη Wonder Woman.",
-        r: "Ο Batman ανήκει στο σύμπαν της DC.",
-        img: "assets/images/questions/heroes/bat-emblem.svg"
-    },
-    {
-        q: "Ποιος ήρωας παραπέμπει στο αραχνοειδές σύμβολο της εικόνας;",
-        o: ["Ant-Man", "Spider-Man", "Black Widow", "Venom"],
-        a: 1,
-        h: "Ο alter ego του είναι ο Peter Parker.",
-        r: "Το έμβλημα της εικόνας παραπέμπει στον Spider-Man.",
-        img: "assets/images/questions/heroes/spider-emblem.svg"
-    },
-    {
-        q: "Σε ποιο comic universe ανήκει ο ήρωας της εικόνας;",
-        o: ["DC", "Marvel", "Valiant", "Invincible Universe"],
-        a: 1,
-        h: "Ανήκει στην ίδια εταιρεία με τον Iron Man και τον Thor.",
-        r: "Ο Spider-Man ανήκει στο σύμπαν της Marvel.",
-        img: "assets/images/questions/heroes/spider-emblem.svg"
-    },
-    {
-        q: "Ποιος υπερήρωας συνδέεται περισσότερο με την ασπίδα της εικόνας;",
-        o: ["Captain America", "Wonder Woman", "The Flash", "Peacemaker"],
-        a: 0,
-        h: "Το πραγματικό του όνομα είναι Steve Rogers.",
-        r: "Η ασπίδα της εικόνας παραπέμπει στον Captain America.",
-        img: "assets/images/questions/heroes/shield-star.svg"
-    },
-    {
-        q: "Ποιο αντικείμενο κρατά ο ήρωας που συμβολίζει η εικόνα;",
-        o: ["Σφυρί", "Λάσο", "Ασπίδα", "Τρίαινα"],
-        a: 2,
-        h: "Είναι από vibranium.",
-        r: "Ο ήρωας της εικόνας είναι γνωστός για την ασπίδα του.",
-        img: "assets/images/questions/heroes/shield-star.svg"
-    },
-    {
-        q: "Ποιος ήρωας συνδέεται με το σφυρί της εικόνας;",
-        o: ["Loki", "Thor", "Hercules", "Odin"],
-        a: 1,
-        h: "Είναι ο θεός του κεραυνού στη Marvel.",
-        r: "Το σφυρί της εικόνας παραπέμπει στον Thor.",
-        img: "assets/images/questions/heroes/hammer-icon.svg"
-    },
-    {
-        q: "Πώς ονομάζεται το όπλο που θυμίζει η εικόνα;",
-        o: ["Stormbreaker", "Mjolnir", "Gungnir", "Excalibur"],
-        a: 1,
-        h: "Το μπορούν να το σηκώσουν μόνο οι «άξιοι».",
-        r: "Το σφυρί της εικόνας παραπέμπει στο Mjolnir.",
-        img: "assets/images/questions/heroes/hammer-icon.svg"
-    },
-    {
-        q: "Ποιος ήρωας παραπέμπει στο σύμβολο της εικόνας;",
-        o: ["Doctor Strange", "Green Lantern", "Iron Fist", "Vision"],
-        a: 1,
-        h: "Η δύναμή του προέρχεται από ένα δαχτυλίδι ισχύος.",
-        r: "Το σύμβολο της εικόνας παραπέμπει στον Green Lantern.",
-        img: "assets/images/questions/heroes/lantern-ring.svg"
-    },
-    {
-        q: "Σε ποιο comic universe ανήκει ο ήρωας της εικόνας;",
-        o: ["Marvel", "DC", "WildStorm", "Image Comics"],
-        a: 1,
-        h: "Ανήκει στην ίδια εταιρεία με τον Batman.",
-        r: "Ο Green Lantern ανήκει στο σύμπαν της DC.",
-        img: "assets/images/questions/heroes/lantern-ring.svg"
-    },
-    {
-        q: "Ποια εταιρεία τεχνολογίας παραπέμπει στο logo της εικόνας;",
-        o: ["Apple", "Samsung", "Dell", "Sony"],
-        a: 0,
-        h: "Είναι γνωστή για το iPhone και το MacBook.",
-        r: "Το logo της εικόνας παραπέμπει στην Apple.",
-        img: "assets/images/questions/logos/apple-bite.svg"
-    },
-    {
-        q: "Ποια από τις παρακάτω κατηγορίες προϊόντων συνδέεται πιο πολύ με το logo της εικόνας;",
-        o: ["Αθλητικά παπούτσια", "Smartphones και υπολογιστές", "Καφές", "Αυτοκίνητα"],
-        a: 1,
-        h: "Η εταιρεία είναι από τις ισχυρότερες στον χώρο της consumer tech.",
-        r: "Το logo της εικόνας ανήκει σε εταιρεία smartphones και υπολογιστών.",
-        img: "assets/images/questions/logos/apple-bite.svg"
-    },
-    {
-        q: "Ποια αλυσίδα fast food παραπέμπει στο logo της εικόνας;",
-        o: ["Burger King", "Subway", "McDonald's", "KFC"],
-        a: 2,
-        h: "Το σύμβολο είναι γνωστό ως Golden Arches.",
-        r: "Τα χρυσά τόξα της εικόνας παραπέμπουν στα McDonald's.",
-        img: "assets/images/questions/logos/arches.svg"
-    },
-    {
-        q: "Ποιο προϊόν συνδέεται περισσότερο με το logo της εικόνας;",
-        o: ["Καφέδες τρίτου κύματος", "Burger και fries", "Αθλητικά παπούτσια", "Αυτοκίνητα πόλης"],
-        a: 1,
-        h: "Είναι ίσως η πιο διάσημη αλυσίδα burger στον κόσμο.",
-        r: "Το logo της εικόνας συνδέεται κυρίως με burger και fries.",
-        img: "assets/images/questions/logos/arches.svg"
-    },
-    {
-        q: "Ποια αθλητική εταιρεία παραπέμπει στο σήμα της εικόνας;",
-        o: ["Adidas", "Puma", "Nike", "Reebok"],
-        a: 2,
-        h: "Το σήμα είναι γνωστό ως swoosh.",
-        r: "Το σήμα της εικόνας παραπέμπει στη Nike.",
-        img: "assets/images/questions/logos/swoosh.svg"
-    },
-    {
-        q: "Ποιο σύνθημα έχει συνδεθεί πιο εμβληματικά με την εταιρεία της εικόνας;",
-        o: ["Impossible is Nothing", "Just Do It", "Think Different", "Forever Faster"],
-        a: 1,
-        h: "Ένα από τα διασημότερα slogans στην ιστορία της διαφήμισης.",
-        r: "Η εταιρεία της εικόνας ταυτίζεται με το slogan «Just Do It».",
-        img: "assets/images/questions/logos/swoosh.svg"
-    },
-    {
-        q: "Ποια αυτοκινητοβιομηχανία παραπέμπει στο σύμβολο με τους τέσσερις δακτυλίους;",
-        o: ["BMW", "Mercedes-Benz", "Audi", "Volkswagen"],
-        a: 2,
-        h: "Η εταιρεία ανήκει σήμερα στον όμιλο Volkswagen.",
-        r: "Οι τέσσερις δακτύλιοι της εικόνας παραπέμπουν στην Audi.",
-        img: "assets/images/questions/logos/rings.svg"
-    },
-    {
-        q: "Το logo της εικόνας ανήκει σε εταιρεία που κατασκευάζει κυρίως τι προϊόντα;",
-        o: ["Ηλεκτρικές κιθάρες", "Αυτοκίνητα", "Κινητά τηλέφωνα", "Ρολόγια πολυτελείας"],
-        a: 1,
-        h: "Είναι γερμανικό brand premium αυτοκινήτων.",
-        r: "Το logo της εικόνας ανήκει σε εταιρεία κατασκευής αυτοκινήτων.",
-        img: "assets/images/questions/logos/rings.svg"
-    },
-    {
-        q: "Ποια πλατφόρμα βίντεο παραπέμπει στο logo της εικόνας;",
-        o: ["Netflix", "YouTube", "TikTok", "Twitch"],
-        a: 1,
-        h: "Το εικονίδιο είναι συνδεδεμένο με βίντεο on demand και creators.",
-        r: "Το κουμπί αναπαραγωγής της εικόνας παραπέμπει στο YouTube.",
-        img: "assets/images/questions/logos/play-button.svg"
-    },
-    {
-        q: "Ποιο είδος περιεχομένου συνδέεται κυρίως με την πλατφόρμα της εικόνας;",
-        o: ["Σύντομα εξαφανιζόμενα stories", "Αγορές μόνο", "Streaming και ανέβασμα βίντεο", "Χάρτες και πλοήγηση"],
-        a: 2,
-        h: "Είναι η μεγαλύτερη πλατφόρμα βίντεο στον κόσμο.",
-        r: "Η πλατφόρμα της εικόνας συνδέεται κυρίως με streaming και ανέβασμα βίντεο.",
-        img: "assets/images/questions/logos/play-button.svg"
-    },
 ];
-
-const VISUAL_COUNTRY_BANK = [
-    { code: 'fo', country: 'Νήσοι Φερόες', capital: 'Τόρσχαβν', region: 'eu' },
-    { code: 'gg', country: 'Γκέρνζι', capital: 'Σεντ Πίτερ Πορτ', region: 'eu' },
-    { code: 'je', country: 'Τζέρζι', capital: 'Σεντ Χέλιερ', region: 'eu' },
-    { code: 'im', country: 'Νήσος του Μαν', capital: 'Ντάγκλας', region: 'eu' },
-    { code: 'gi', country: 'Γιβραλτάρ', capital: 'Γιβραλτάρ', region: 'eu' },
-    { code: 'gl', country: 'Γροιλανδία', capital: 'Νουούκ', region: 'eu' },
-    { code: 'xk', country: 'Κόσοβο', capital: 'Πρίστινα', region: 'eu' },
-    { code: 'ad', country: 'Ανδόρα', capital: 'Ανδόρα λα Βέγια', region: 'eu' },
-    { code: 'li', country: 'Λιχτενστάιν', capital: 'Βαντούζ', region: 'eu' },
-    { code: 'sm', country: 'Άγιος Μαρίνος', capital: 'Άγιος Μαρίνος', region: 'eu' },
-    { code: 'md', country: 'Μολδαβία', capital: 'Κισινάου', region: 'eu' },
-    { code: 'me', country: 'Μαυροβούνιο', capital: 'Ποντγκόριτσα', region: 'eu' },
-    { code: 'mk', country: 'Βόρεια Μακεδονία', capital: 'Σκόπια', region: 'eu' },
-    { code: 'ba', country: 'Βοσνία και Ερζεγοβίνη', capital: 'Σαράγεβο', region: 'eu' },
-    { code: 'al', country: 'Αλβανία', capital: 'Τίρανα', region: 'eu' },
-    { code: 'ee', country: 'Εσθονία', capital: 'Ταλίν', region: 'eu' },
-    { code: 'lv', country: 'Λετονία', capital: 'Ρίγα', region: 'eu' },
-    { code: 'si', country: 'Σλοβενία', capital: 'Λιουμπλιάνα', region: 'eu' },
-    { code: 'sk', country: 'Σλοβακία', capital: 'Μπρατισλάβα', region: 'eu' },
-    { code: 'am', country: 'Αρμενία', capital: 'Ερεβάν', region: 'eu' },
-    { code: 'ge', country: 'Γεωργία', capital: 'Τιφλίδα', region: 'eu' },
-    { code: 'az', country: 'Αζερμπαϊτζάν', capital: 'Μπακού', region: 'eu' },
-    { code: 'bt', country: 'Μπουτάν', capital: 'Τίμπου', region: 'asia' },
-    { code: 'bn', country: 'Μπρουνέι', capital: 'Μπαντάρ Σερί Μπεγκαβάν', region: 'asia' },
-    { code: 'la', country: 'Λάος', capital: 'Βιεντιάν', region: 'asia' },
-    { code: 'kg', country: 'Κιργιστάν', capital: 'Μπισκέκ', region: 'asia' },
-    { code: 'tj', country: 'Τατζικιστάν', capital: 'Ντουσάνμπε', region: 'asia' },
-    { code: 'tm', country: 'Τουρκμενιστάν', capital: 'Ασγκαμπάτ', region: 'asia' },
-    { code: 'mn', country: 'Μογγολία', capital: 'Ουλάν Μπατόρ', region: 'asia' },
-    { code: 'lk', country: 'Σρι Λάνκα', capital: 'Σρι Τζαγιαγουαρντενεπούρα Κότε', region: 'asia' },
-    { code: 'mv', country: 'Μαλδίβες', capital: 'Μαλέ', region: 'asia' },
-    { code: 'np', country: 'Νεπάλ', capital: 'Κατμαντού', region: 'asia' },
-    { code: 'tl', country: 'Ανατολικό Τιμόρ', capital: 'Ντίλι', region: 'asia' },
-    { code: 'ps', country: 'Παλαιστίνη', capital: 'Ανατολική Ιερουσαλήμ', region: 'asia' },
-    { code: 'tw', country: 'Ταϊβάν', capital: 'Ταϊπέι', region: 'asia' },
-    { code: 'hk', country: 'Χονγκ Κονγκ', capital: 'Χονγκ Κονγκ', region: 'asia' },
-    { code: 'mo', country: 'Μακάο', capital: 'Μακάο', region: 'asia' },
-    { code: 'kh', country: 'Καμπότζη', capital: 'Πνομ Πενχ', region: 'asia' },
-    { code: 'mm', country: 'Μιανμάρ', capital: 'Νέπιντο', region: 'asia' },
-    { code: 'qa', country: 'Κατάρ', capital: 'Ντόχα', region: 'asia' },
-    { code: 'bh', country: 'Μπαχρέιν', capital: 'Μανάμα', region: 'asia' },
-    { code: 'ky', country: 'Νήσοι Κέιμαν', capital: 'Τζορτζ Τάουν', region: 'americas' },
-    { code: 'bm', country: 'Βερμούδες', capital: 'Χάμιλτον', region: 'americas' },
-    { code: 'aw', country: 'Αρούμπα', capital: 'Οράνιεσταντ', region: 'americas' },
-    { code: 'cw', country: 'Κουρασάο', capital: 'Βίλεμσταντ', region: 'americas' },
-    { code: 'sx', country: 'Σιντ Μάρτεν', capital: 'Philipsburg', region: 'americas' },
-    { code: 'bq', country: 'Καραϊβική Ολλανδία', capital: 'Kralendijk', region: 'americas' },
-    { code: 'sr', country: 'Σουρινάμ', capital: 'Παραμαρίμπο', region: 'americas' },
-    { code: 'gy', country: 'Γουιάνα', capital: 'Τζόρτζταουν', region: 'americas' },
-    { code: 'bz', country: 'Μπελίζ', capital: 'Μπελμοπάν', region: 'americas' },
-    { code: 'bb', country: 'Μπαρμπάντος', capital: 'Μπρίτζταουν', region: 'americas' },
-    { code: 'dm', country: 'Δομίνικα', capital: 'Ροζό', region: 'americas' },
-    { code: 'ag', country: 'Αντίγκουα και Μπαρμπούντα', capital: 'Σεντ Τζονς', region: 'americas' },
-    { code: 'lc', country: 'Αγία Λουκία', capital: 'Κάστρις', region: 'americas' },
-    { code: 'vc', country: 'Άγιος Βικέντιος και Γρεναδίνες', capital: 'Κίνγκσταουν', region: 'americas' },
-    { code: 'gd', country: 'Γρενάδα', capital: 'Σεντ Τζορτζς', region: 'americas' },
-    { code: 'kn', country: 'Άγιος Χριστόφορος και Νέβις', capital: 'Μπαστέρ', region: 'americas' },
-    { code: 'pr', country: 'Πουέρτο Ρίκο', capital: 'Σαν Χουάν', region: 'americas' },
-    { code: 'cv', country: 'Πράσινο Ακρωτήριο', capital: 'Πράια', region: 'africa' },
-    { code: 'km', country: 'Κομόρες', capital: 'Μορόνι', region: 'africa' },
-    { code: 'sc', country: 'Σεϋχέλλες', capital: 'Βικτώρια', region: 'africa' },
-    { code: 'sz', country: 'Εσουατίνι', capital: 'Μπαμπάνε', region: 'africa' },
-    { code: 'ls', country: 'Λεσότο', capital: 'Μασέρου', region: 'africa' },
-    { code: 'bw', country: 'Μποτσουάνα', capital: 'Γκαμπορόνε', region: 'africa' },
-    { code: 'na', country: 'Ναμίμπια', capital: 'Βίντχουκ', region: 'africa' },
-    { code: 'ga', country: 'Γκαμπόν', capital: 'Λιμπρεβίλ', region: 'africa' },
-    { code: 'bj', country: 'Μπενίν', capital: 'Πόρτο Νόβο', region: 'africa' },
-    { code: 'tg', country: 'Τόγκο', capital: 'Λομέ', region: 'africa' },
-    { code: 'gm', country: 'Γκάμπια', capital: 'Μπανζούλ', region: 'africa' },
-    { code: 'rw', country: 'Ρουάντα', capital: 'Κιγκάλι', region: 'africa' },
-    { code: 'bi', country: 'Μπουρούντι', capital: 'Γκιτέγκα', region: 'africa' },
-    { code: 'fj', country: 'Φίτζι', capital: 'Σούβα', region: 'oceania' },
-    { code: 'vu', country: 'Βανουάτου', capital: 'Πορτ Βίλα', region: 'oceania' },
-    { code: 'ws', country: 'Σαμόα', capital: 'Άπια', region: 'oceania' },
-    { code: 'to', country: 'Τόνγκα', capital: 'Νουκουαλόφα', region: 'oceania' },
-    { code: 'tv', country: 'Τουβαλού', capital: 'Φουναφούτι', region: 'oceania' },
-    { code: 'ki', country: 'Κιριμπάτι', capital: 'Νότια Ταράουα', region: 'oceania' },
-    { code: 'nr', country: 'Ναουρού', capital: 'Γιαρέν', region: 'oceania' },
-    { code: 'pw', country: 'Παλάου', capital: 'Νγκερουλμούντ', region: 'oceania' },
-    { code: 'fm', country: 'Μικρονησία', capital: 'Παλίκιρ', region: 'oceania' },
-    { code: 'mh', country: 'Νήσοι Μάρσαλ', capital: 'Ματζούρο', region: 'oceania' },
-    { code: 'sb', country: 'Νήσοι Σολομώντα', capital: 'Χονιάρα', region: 'oceania' },
-    { code: 'nc', country: 'Νέα Καληδονία', capital: 'Νουμέα', region: 'oceania' },
-    { code: 'pf', country: 'Γαλλική Πολυνησία', capital: 'Παπεέτε', region: 'oceania' }
-];
-
-function buildDeterministicDistractors(entry, field) {
-    const sameRegion = VISUAL_COUNTRY_BANK.filter(item => item.region === entry.region && item[field] !== entry[field]);
-    const pool = sameRegion.length >= 3 ? sameRegion : VISUAL_COUNTRY_BANK.filter(item => item[field] !== entry[field]);
-    const seed = entry.code.split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0) + field.length;
-    const rotated = pool.slice(seed % pool.length).concat(pool.slice(0, seed % pool.length));
-    return rotated.slice(0, 3).map(item => item[field]);
-}
-
-function shuffleVisualOptions(correctAnswer, distractors) {
-    const options = [correctAnswer, ...distractors];
-    for (let i = options.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [options[i], options[j]] = [options[j], options[i]];
-    }
-    return { options, answerIndex: options.indexOf(correctAnswer) };
-}
-
-VISUAL_COUNTRY_BANK.forEach(entry => {
-    const flagUrl = `https://flagcdn.com/${entry.code}.svg`;
-    const countryOptions = shuffleVisualOptions(entry.country, buildDeterministicDistractors(entry, 'country'));
-    window.QUIZ12_QUESTIONS.push({
-        q: `Ποια χώρα αντιστοιχεί στη σημαία της εικόνας;`,
-        o: countryOptions.options,
-        a: countryOptions.answerIndex,
-        h: `Η σωστή χώρα ανήκει στην περιοχή: ${entry.region}.`,
-        r: `Η σημαία της εικόνας ανήκει στην ${entry.country}.`,
-        img: flagUrl
-    });
-
-    const capitalOptions = shuffleVisualOptions(entry.capital, buildDeterministicDistractors(entry, 'capital'));
-    window.QUIZ12_QUESTIONS.push({
-        q: `Ποια είναι η πρωτεύουσα της χώρας που δείχνει η σημαία;`,
-        o: capitalOptions.options,
-        a: capitalOptions.answerIndex,
-        h: `Η σωστή πόλη είναι πρωτεύουσα της ${entry.country}.`,
-        r: `Η σημαία της εικόνας ανήκει στην ${entry.country} και πρωτεύουσά της είναι η ${entry.capital}.`,
-        img: flagUrl
-    });
-});
-
-const VISUAL_ANIMAL_QUESTIONS = [
-    {
-        q: "Ποιο ζώο δείχνει η εικόνα;",
-        o: ["Λιοντάρι", "Τίγρη", "Λεοπάρδαλη", "Γατόπαρδος"],
-        a: 0,
-        h: "Θεωρείται ο «βασιλιάς των ζώων».",
-        r: "Η εικόνα δείχνει λιοντάρι.",
-        img: "assets/images/questions/animals/lion.svg"
-    },
-    {
-        q: "Σε ποια ήπειρο ζει κυρίως το ζώο της εικόνας στην άγρια φύση;",
-        o: ["Αφρική", "Ευρώπη", "Ωκεανία", "Βόρεια Αμερική"],
-        a: 0,
-        h: "Συνδέεται έντονα με τη σαβάνα.",
-        r: "Το λιοντάρι ζει κυρίως στην Αφρική.",
-        img: "assets/images/questions/animals/lion.svg"
-    },
-    {
-        q: "Ποιο ζώο δείχνει η εικόνα;",
-        o: ["Ρινόκερος", "Ελέφαντας", "Ιπποπόταμος", "Μαμούθ"],
-        a: 1,
-        h: "Είναι το μεγαλύτερο χερσαίο θηλαστικό.",
-        r: "Η εικόνα δείχνει ελέφαντα.",
-        img: "assets/images/questions/animals/elephant.svg"
-    },
-    {
-        q: "Τι χαρακτηριστικό έχει το ζώο της εικόνας;",
-        o: ["Προβοσκίδα", "Καμπούρα", "Κέρατο", "Πτερύγιο"],
-        a: 0,
-        h: "Τη χρησιμοποιεί και σαν «χέρι».",
-        r: "Ο ελέφαντας ξεχωρίζει για την προβοσκίδα του.",
-        img: "assets/images/questions/animals/elephant.svg"
-    },
-    {
-        q: "Ποιο ζώο δείχνει η εικόνα;",
-        o: ["Πιγκουίνος", "Πάπια", "Γλάρος", "Φλαμίνγκο"],
-        a: 0,
-        h: "Είναι πτηνό που δεν πετά, αλλά κολυμπά εξαιρετικά.",
-        r: "Η εικόνα δείχνει πιγκουίνο.",
-        img: "assets/images/questions/animals/penguin.svg"
-    },
-    {
-        q: "Σε ποιο περιβάλλον συνδέεται περισσότερο το ζώο της εικόνας;",
-        o: ["Έρημος", "Πολικές περιοχές", "Τροπικό δάσος", "Σαβάνα"],
-        a: 1,
-        h: "Το συναντάμε συχνά στην Ανταρκτική.",
-        r: "Ο πιγκουίνος συνδέεται περισσότερο με τις πολικές περιοχές.",
-        img: "assets/images/questions/animals/penguin.svg"
-    },
-    {
-        q: "Ποιο νυκτόβιο πτηνό δείχνει η εικόνα;",
-        o: ["Αετός", "Κουκουβάγια", "Γεράκι", "Πέρδικα"],
-        a: 1,
-        h: "Στην ελληνική παράδοση συνδέεται με τη σοφία.",
-        r: "Η εικόνα δείχνει κουκουβάγια.",
-        img: "assets/images/questions/animals/owl.svg"
-    },
-    {
-        q: "Με ποια έννοια συνδέεται παραδοσιακά το ζώο της εικόνας;",
-        o: ["Ταχύτητα", "Σοφία", "Αδεξιότητα", "Επιθετικότητα"],
-        a: 1,
-        h: "Ήταν και σύμβολο της θεάς Αθηνάς.",
-        r: "Η κουκουβάγια συνδέεται παραδοσιακά με τη σοφία.",
-        img: "assets/images/questions/animals/owl.svg"
-    },
-    {
-        q: "Ποιο θαλάσσιο ζώο δείχνει η εικόνα;",
-        o: ["Μέδουσα", "Χταπόδι", "Καλαμάρι", "Σουπιά"],
-        a: 1,
-        h: "Έχει οκτώ πλοκάμια.",
-        r: "Η εικόνα δείχνει χταπόδι.",
-        img: "assets/images/questions/animals/octopus.svg"
-    },
-    {
-        q: "Τι χρώμα έχει το αίμα του ζώου της εικόνας;",
-        o: ["Κόκκινο", "Μπλε", "Πράσινο", "Διάφανο"],
-        a: 1,
-        h: "Οφείλεται στην αιμοκυανίνη.",
-        r: "Το χταπόδι έχει μπλε αίμα.",
-        img: "assets/images/questions/animals/octopus.svg"
-    },
-    {
-        q: "Ποιο ζώο με τον πολύ μακρύ λαιμό δείχνει η εικόνα;",
-        o: ["Καμήλα", "Καμηλοπάρδαλη", "Λάμα", "Άλκη"],
-        a: 1,
-        h: "Είναι από τα ψηλότερα ζώα του κόσμου.",
-        r: "Η εικόνα δείχνει καμηλοπάρδαλη.",
-        img: "assets/images/questions/animals/giraffe.svg"
-    },
-    {
-        q: "Σε ποιο περιβάλλον ζει κυρίως το ζώο της εικόνας;",
-        o: ["Ζούγκλα", "Σαβάνα", "Τούνδρα", "Ωκεανός"],
-        a: 1,
-        h: "Συναντάται συχνά στην Αφρική μαζί με ζέβρες και αντιλόπες.",
-        r: "Η καμηλοπάρδαλη ζει κυρίως στη σαβάνα.",
-        img: "assets/images/questions/animals/giraffe.svg"
-    },
-    {
-        q: "Ποιο ζώο της θάλασσας δείχνει η εικόνα;",
-        o: ["Δελφίνι", "Φάλαινα", "Καρχαρίας", "Ξιφίας"],
-        a: 2,
-        h: "Θεωρείται από τους κορυφαίους θηρευτές των ωκεανών.",
-        r: "Η εικόνα δείχνει καρχαρία.",
-        img: "assets/images/questions/animals/shark.svg"
-    },
-    {
-        q: "Σε ποια κατηγορία ανήκει το ζώο της εικόνας;",
-        o: ["Θηλαστικό", "Αμφίβιο", "Ψάρι", "Ερπετό"],
-        a: 2,
-        h: "Αναπνέει με βράγχια.",
-        r: "Ο καρχαρίας ανήκει στα ψάρια.",
-        img: "assets/images/questions/animals/shark.svg"
-    },
-    {
-        q: "Ποιο ζώο δείχνει η εικόνα;",
-        o: ["Κοάλα", "Πάντα", "Αρκούδα", "Ρακούν"],
-        a: 1,
-        h: "Είναι ασπρόμαυρο και τρώει πολύ μπαμπού.",
-        r: "Η εικόνα δείχνει πάντα.",
-        img: "assets/images/questions/animals/panda.svg"
-    },
-    {
-        q: "Ποια είναι η βασική τροφή του ζώου της εικόνας;",
-        o: ["Φρούτα", "Ψάρια", "Μπαμπού", "Έντομα"],
-        a: 2,
-        h: "Περνά πολλές ώρες της ημέρας τρώγοντας το ίδιο φυτό.",
-        r: "Το πάντα τρέφεται κυρίως με μπαμπού.",
-        img: "assets/images/questions/animals/panda.svg"
-    }
-];
-
-window.QUIZ12_QUESTIONS.push(...VISUAL_ANIMAL_QUESTIONS);
-
-const EXTRA_LOGO_QUESTIONS = [
-    {
-        q: "Ποια γνωστή αλυσίδα καφέ παραπέμπει στο logo της εικόνας;",
-        o: ["Costa Coffee", "Starbucks", "Pret A Manger", "Dunkin'"],
-        a: 1,
-        h: "Είναι το πιο αναγνωρίσιμο green coffee brand στον κόσμο.",
-        r: "Η εικόνα παραπέμπει στη Starbucks.",
-        img: "assets/images/questions/logos/starbucks-cup.svg"
-    },
-    {
-        q: "Με ποιο προϊόν συνδέεται περισσότερο η εταιρεία της εικόνας;",
-        o: ["Καφές", "Αθλητικά", "Αυτοκίνητα", "Τηλέφωνα"],
-        a: 0,
-        h: "Η εταιρεία ξεκίνησε από το Seattle.",
-        r: "Η εταιρεία της εικόνας συνδέεται κυρίως με τον καφέ.",
-        img: "assets/images/questions/logos/starbucks-cup.svg"
-    },
-    {
-        q: "Ποια αυτοκινητοβιομηχανία παραπέμπει στο σύμβολο της εικόνας;",
-        o: ["BMW", "Audi", "Mercedes-Benz", "Volvo"],
-        a: 2,
-        h: "Το λογότυπο είναι ένα αστέρι μέσα σε κύκλο.",
-        r: "Το σύμβολο της εικόνας παραπέμπει στη Mercedes-Benz.",
-        img: "assets/images/questions/logos/mercedes-star.svg"
-    },
-    {
-        q: "Ποια χώρα συνδέεται ιστορικά με την εταιρεία του logo της εικόνας;",
-        o: ["Ιταλία", "Γαλλία", "Γερμανία", "ΗΠΑ"],
-        a: 2,
-        h: "Η εταιρεία ανήκει στις πιο ιστορικές premium μάρκες της Ευρώπης.",
-        r: "Η Mercedes-Benz είναι γερμανική εταιρεία.",
-        img: "assets/images/questions/logos/mercedes-star.svg"
-    },
-    {
-        q: "Ποια streaming πλατφόρμα παραπέμπει στο logo της εικόνας;",
-        o: ["HBO Max", "Prime Video", "Netflix", "Disney+"],
-        a: 2,
-        h: "Είναι γνωστή για σειρές όπως το Stranger Things.",
-        r: "Το logo της εικόνας παραπέμπει στο Netflix.",
-        img: "assets/images/questions/logos/netflix-n.svg"
-    },
-    {
-        q: "Με ποιο είδος υπηρεσίας συνδέεται κυρίως το brand της εικόνας;",
-        o: ["Music streaming", "Video streaming", "Food delivery", "Gaming consoles"],
-        a: 1,
-        h: "Η πλατφόρμα έγινε διάσημη για σειρές και ταινίες on demand.",
-        r: "Το Netflix συνδέεται κυρίως με video streaming.",
-        img: "assets/images/questions/logos/netflix-n.svg"
-    },
-    {
-        q: "Ποια εφαρμογή social media παραπέμπει στο logo της εικόνας;",
-        o: ["TikTok", "Instagram", "Snapchat", "Pinterest"],
-        a: 1,
-        h: "Ξεκίνησε ως εφαρμογή φωτογραφιών και stories.",
-        r: "Το logo της εικόνας παραπέμπει στο Instagram.",
-        img: "assets/images/questions/logos/instagram-camera.svg"
-    },
-    {
-        q: "Με ποιο είδος περιεχομένου συνδέεται κυρίως το brand της εικόνας;",
-        o: ["Stories και φωτογραφίες", "Email", "Χάρτες", "Online auctions"],
-        a: 0,
-        h: "Ανήκει σήμερα στη Meta.",
-        r: "Το Instagram συνδέεται κυρίως με stories και φωτογραφίες.",
-        img: "assets/images/questions/logos/instagram-camera.svg"
-    },
-    {
-        q: "Ποιο brand αναψυκτικών παραπέμπει στο στρογγυλό logo της εικόνας;",
-        o: ["Coca-Cola", "Pepsi", "Fanta", "Sprite"],
-        a: 1,
-        h: "Είναι ο διαχρονικός μεγάλος αντίπαλος της Coca-Cola.",
-        r: "Το logo της εικόνας παραπέμπει στην Pepsi.",
-        img: "assets/images/questions/logos/pepsi-circle.svg"
-    },
-    {
-        q: "Σε ποια κατηγορία προϊόντων ανήκει το brand της εικόνας;",
-        o: ["Αθλητικά είδη", "Αναψυκτικά", "Καλλυντικά", "Αυτοκίνητα"],
-        a: 1,
-        h: "Το brand είναι διάσημο για cola και άλλα soft drinks.",
-        r: "Η Pepsi ανήκει στην κατηγορία των αναψυκτικών.",
-        img: "assets/images/questions/logos/pepsi-circle.svg"
-    }
-];
-
-window.QUIZ12_QUESTIONS.push(...EXTRA_LOGO_QUESTIONS);
 
 const EXTRA_HIGH_LEVEL_QUESTIONS = [
     {
@@ -4759,525 +3966,160 @@ const EXTRA_HIGH_LEVEL_QUESTIONS = [
         o: ["Λονδίνο", "Παρίσι", "Ρώμη", "Μαδρίτη"],
         a: 1,
         h: "Συνδέεται τόσο με τον Διαφωτισμό όσο και με τον πρώιμο αστικό φωτισμό των δρόμων της.",
-        r: "Το Παρίσι είναι γνωστό ως «Πόλη του Φωτός» και φιλοξενεί το Λούβρο."
+        r: "Το Παρίσι είναι γνωστό ως «Πόλη του Φωτός» και φιλοξενεί το Λούβρο.",
+        img: ""
     },
     {
         q: "Ποια είναι η βορειότερη πρωτεύουσα κυρίαρχου κράτους στον κόσμο, γνωστή για τη γεωθερμική της ενέργεια και το Blue Lagoon;",
         o: ["Όσλο", "Ελσίνκι", "Ρέικιαβικ", "Στοκχόλμη"],
         a: 2,
         h: "Το όνομά της σημαίνει «Κόλπος του Καπνού».",
-        r: "Η Ρέικιαβικ είναι η βορειότερη πρωτεύουσα κυρίαρχου κράτους."
+        r: "Η Ρέικιαβικ είναι η βορειότερη πρωτεύουσα κυρίαρχου κράτους.",
+        img: ""
     },
     {
         q: "Ποια πρωτεύουσα της Ολλανδίας είναι χτισμένη πάνω σε εκατομμύρια ξύλινους πασσάλους και διαθέτει περισσότερα κανάλια από τη Βενετία;",
         o: ["Βρυξέλλες", "Άμστερνταμ", "Κοπεγχάγη", "Βιέννη"],
         a: 1,
         h: "Η πλατεία Dam είναι από τα πιο χαρακτηριστικά σημεία της.",
-        r: "Το Άμστερνταμ είναι χτισμένο σε πασσάλους και φημίζεται για τα κανάλια του."
+        r: "Το Άμστερνταμ είναι χτισμένο σε πασσάλους και φημίζεται για τα κανάλια του.",
+        img: ""
     },
     {
         q: "Ποια ασιατική πρωτεύουσα έχει το μεγαλύτερο επίσημο όνομα στον κόσμο, αλλά οι περισσότεροι τη γνωρίζουν απλώς ως Μπανγκόκ;",
         o: ["Σεούλ", "Μπανγκόκ", "Τζακάρτα", "Μανίλα"],
         a: 1,
         h: "Στα ταϊλανδικά αρχίζει ως Krung Thep Mahanakhon...",
-        r: "Η πόλη αυτή είναι η Μπανγκόκ."
-    },
-    {
-        q: "Ποια πρωτεύουσα θεωρείται η «πρωτεύουσα του gaming και του K-Pop», με συνοικίες όπως το Gangnam να έχουν γίνει παγκόσμιο trend;",
-        o: ["Τόκιο", "Πεκίνο", "Σεούλ", "Ταϊπέι"],
-        a: 2,
-        h: "Είναι η πρωτεύουσα της Νότιας Κορέας.",
-        r: "Η Σεούλ θεωρείται κέντρο του K-Pop, του gaming και της κορεατικής ποπ κουλτούρας."
-    },
-    {
-        q: "Ποια πρωτεύουσα άλλαξε το όνομά της σε Νουρ-Σουλτάν το 2019 και επέστρεψε στο παλιό της όνομα το 2022;",
-        o: ["Τασκένδη", "Αλμάτι", "Αστάνα", "Μπακού"],
-        a: 2,
-        h: "Είναι η πρωτεύουσα του Καζακστάν.",
-        r: "Η πόλη είναι η Αστάνα."
+        r: "Η πόλη αυτή είναι η Μπανγκόκ.",
+        img: ""
     },
     {
         q: "Ποια είναι η μοναδική πρωτεύουσα στον κόσμο που αποτελεί ολόκληρο κράτος και έχει πληθυσμό κάτω από 1.000 άτομα;",
         o: ["Άγιος Μαρίνος", "Βατικανό", "Μονακό", "Λουξεμβούργο"],
         a: 1,
         h: "Ο ηγέτης της εκλέγεται με λευκό καπνό.",
-        r: "Το Βατικανό είναι και πόλη και κράτος ταυτόχρονα."
+        r: "Το Βατικανό είναι και πόλη και κράτος ταυτόχρονα.",
+        img: ""
     },
     {
-        q: "Ποια βαλκανική πρωτεύουσα ονομάζεται «Λευκή Πόλη» και είναι γνωστή για τη νυχτερινή ζωή στα πλωτά splavovi;",
-        o: ["Σεράγεβο", "Βελιγράδι", "Σόφια", "Σκόπια"],
-        a: 1,
-        h: "Το όνομά της κυριολεκτικά σημαίνει λευκή πόλη.",
-        r: "Το Βελιγράδι είναι γνωστό ως «Λευκή Πόλη»."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα των ΗΑΕ, που φιλοξενεί το Louvre Abu Dhabi και θεωρείται πλουσιότερη από το Ντουμπάι;",
+        q: "Ποια είναι η πρωτεύουσα των ΗΑΕ;",
         o: ["Ντουμπάι", "Άμπου Ντάμπι", "Ντόχα", "Μουσκάτ"],
         a: 1,
         h: "Είναι η πολιτική πρωτεύουσα των Ηνωμένων Αραβικών Εμιράτων.",
-        r: "Η πρωτεύουσα των ΗΑΕ είναι το Άμπου Ντάμπι."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα του Ιράν, μια μεγαλούπολη που φημίζεται για την κίνηση και τα πολύ υψηλά ποσοστά ρινοπλαστικής;",
-        o: ["Τεχεράνη", "Ισφαχάν", "Βαγδάτη", "Καμπούλ"],
-        a: 0,
-        h: "Είναι το πολιτικό και οικονομικό κέντρο του Ιράν.",
-        r: "Η πρωτεύουσα του Ιράν είναι η Τεχεράνη."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της Κίνας, γνωστή για την Απαγορευμένη Πόλη και το όνομα «Βόρεια Πρωτεύουσα»;",
-        o: ["Σαγκάη", "Πεκίνο", "Χονγκ Κονγκ", "Γκουαντζού"],
-        a: 1,
-        h: "Στα αγγλικά αποδίδεται ως Beijing.",
-        r: "Το Πεκίνο είναι η πρωτεύουσα της Κίνας."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της Αυστραλίας, που επιλέχθηκε ως συμβιβασμός ανάμεσα στο Σίδνεϊ και τη Μελβούρνη;",
-        o: ["Σίδνεϊ", "Μελβούρνη", "Καμπέρα", "Πέρθ"],
-        a: 2,
-        h: "Είναι τεχνητά σχεδιασμένη πόλη με έντονη πολεοδομική γεωμετρία.",
-        r: "Η πρωτεύουσα της Αυστραλίας είναι η Καμπέρα."
-    },
-    {
-        q: "Ποια από τις παρακάτω πρωτεύουσες βρίσκεται πιο κοντά στον Ισημερινό;",
-        o: ["Κίτο", "Μπογκοτά", "Ναϊρόμπι", "Τζακάρτα"],
-        a: 0,
-        h: "Βρίσκεται σχεδόν πάνω στον Ισημερινό, στον Εκουαδόρ.",
-        r: "Το Κίτο είναι η πρωτεύουσα που βρίσκεται πιο κοντά στον Ισημερινό."
+        r: "Η πρωτεύουσα των ΗΑΕ είναι το Άμπου Ντάμπι. Φιλοξενεί το Louvre Abu Dhabi και θεωρείται πλουσιότερη από το Ντουμπάι",
+        img: ""
     },
     {
         q: "Ποιο από τα παρακάτω έργα του Σαίξπηρ θεωρείται ότι περιέχει σημαντική συνεργασία και δεν γράφτηκε αποκλειστικά από τον ίδιο;",
         o: ["Μάκβεθ", "Τρικυμία", "Ερρίκος Η΄", "Οθέλλος"],
         a: 2,
         h: "Συνδέεται συχνά και με τον John Fletcher.",
-        r: "Ο «Ερρίκος Η΄» αποδίδεται συνήθως στον Σαίξπηρ σε συνεργασία με τον John Fletcher."
+        r: "Ο «Ερρίκος Η΄» αποδίδεται συνήθως στον Σαίξπηρ σε συνεργασία με τον John Fletcher.",
+        img: ""
     },
     {
         q: "Αν ένας άνθρωπος βρίσκεται σε σημείο της Γης ακριβώς απέναντι από το μηδενικό μεσημβρινό, σε ποιο γεωγραφικό μήκος βρίσκεται;",
         o: ["90° Ανατολικά", "90° Δυτικά", "180°", "270°"],
         a: 2,
         h: "Σκέψου το σημείο ακριβώς απέναντι από τον 0° μεσημβρινό.",
-        r: "Το σημείο ακριβώς απέναντι από τον μηδενικό μεσημβρινό βρίσκεται στον 180ό μεσημβρινό."
+        r: "Το σημείο ακριβώς απέναντι από τον μηδενικό μεσημβρινό βρίσκεται στον 180ό μεσημβρινό.",
+        img: ""
     },
     {
         q: "Ποια από τις παρακάτω μονάδες είναι παράγωγη και όχι θεμελιώδης στο Διεθνές Σύστημα Μονάδων (SI);",
         o: ["Κέλβιν", "Αμπέρ", "Μολ", "Νιούτον"],
         a: 3,
         h: "Η μονάδα αυτή ισούται με kg·m/s².",
-        r: "Το νιούτον είναι παράγωγη μονάδα δύναμης."
-    },
-    {
-        q: "Ποιο από τα παρακάτω ιστορικά γεγονότα συνέβη πρώτο;",
-        o: ["Η πτώση της Κωνσταντινούπολης", "Η ανακάλυψη της Αμερικής από τον Κολόμβο", "Η έναρξη της Μεταρρύθμισης του Λούθηρου", "Η Μάχη του Λεπάντο"],
-        a: 0,
-        h: "Σκέψου τις χρονολογίες 1453, 1492, 1517 και 1571.",
-        r: "Πρώτη χρονικά ήταν η πτώση της Κωνσταντινούπολης το 1453."
+        r: "Το νιούτον είναι παράγωγη μονάδα δύναμης.",
+        img: ""
     },
     {
         q: "Ποιο από τα παρακάτω ζεύγη καλλιτέχνη και έργου είναι λανθασμένο;",
         o: ["Βελάσκεθ — Las Meninas", "Γκόγια — Η 3η Μαΐου 1808", "Ελ Γκρέκο — Η Σχολή των Αθηνών", "Μποτιτσέλι — Η Γέννηση της Αφροδίτης"],
         a: 2,
         h: "Η «Σχολή των Αθηνών» είναι έργο μεγάλου ζωγράφου της Ύστερης Αναγέννησης, αλλά όχι του Ελ Γκρέκο.",
-        r: "Η «Σχολή των Αθηνών» είναι έργο του Ραφαήλ, άρα το λανθασμένο ζεύγος είναι του Ελ Γκρέκο."
+        r: "Η «Σχολή των Αθηνών» είναι έργο του Ραφαήλ, άρα το λανθασμένο ζεύγος είναι του Ελ Γκρέκο.",
+        img: ""
     },
     {
         q: "Αν όλες οι γάτες είναι θηλαστικά και μερικά θηλαστικά ζουν στο νερό, ποιο συμπέρασμα προκύπτει λογικά;",
         o: ["Όλες οι γάτες ζουν στο νερό", "Μερικές γάτες ζουν στο νερό", "Καμία γάτα δεν ζει στο νερό", "Δεν μπορούμε να συμπεράνουμε αν κάποια γάτα ζει στο νερό"],
         a: 3,
         h: "Το ότι μερικά θηλαστικά ζουν στο νερό δεν σημαίνει ότι αυτά τα θηλαστικά είναι γάτες.",
-        r: "Δεν μπορούμε να συμπεράνουμε λογικά αν κάποια γάτα ζει στο νερό."
+        r: "Δεν μπορούμε να συμπεράνουμε λογικά αν κάποια γάτα ζει στο νερό.",
+        img: ""
     },
     {
         q: "Ποια γλώσσα ανήκει στην ίδια γλωσσική οικογένεια με τα φινλανδικά αλλά δεν είναι ινδοευρωπαϊκή;",
         o: ["Ουγγρικά", "Λιθουανικά", "Αλβανικά", "Αρμενικά"],
         a: 0,
         h: "Ανήκει στην ουραλική οικογένεια.",
-        r: "Τα ουγγρικά, όπως και τα φινλανδικά, ανήκουν στην ουραλική οικογένεια."
+        r: "Τα ουγγρικά, όπως και τα φινλανδικά, ανήκουν στην ουραλική οικογένεια.",
+        img: ""
     },
     {
         q: "Ποιος από τους παρακάτω αριθμούς είναι πρώτος;",
         o: ["221", "247", "251", "253"],
         a: 2,
         h: "Έλεγξε τους πρώτους διαιρέτες μέχρι τη ρίζα του αριθμού.",
-        r: "Ο 251 είναι πρώτος, ενώ οι άλλοι παραγοντοποιούνται."
+        r: "Ο 251 είναι πρώτος, ενώ οι άλλοι παραγοντοποιούνται.",
+        img: ""
     },
     {
         q: "Ποια από τις παρακάτω χημικές ουσίες είναι στοιχείο και όχι ένωση;",
         o: ["Αμμωνία", "Όζον", "Μεθάνιο", "Υδροξείδιο του νατρίου"],
         a: 1,
         h: "Αποτελεί αλλοτροπική μορφή ενός μόνο στοιχείου.",
-        r: "Το όζον είναι αλλοτροπική μορφή του οξυγόνου, άρα στοιχείο και όχι ένωση."
-    },
-    {
-        q: "Ποια είναι η μεγαλύτερη πόλη της Αφρικής και πρωτεύουσα της Αιγύπτου, γνωστή ως «Πόλη των Χιλίων Μιναρέδων»;",
-        o: ["Αλεξάνδρεια", "Κάιρο", "Λούξορ", "Γκίζα"],
-        a: 1,
-        h: "Είναι το μεγαλύτερο αστικό κέντρο της Αιγύπτου.",
-        r: "Το Κάιρο είναι η πρωτεύουσα της Αιγύπτου και η μεγαλύτερη πόλη της Αφρικής."
-    },
-    {
-        q: "Ποιο είναι το παράδοξο της Νότιας Αφρικής όσον αφορά τις πρωτεύουσές της;",
-        o: ["Δεν έχει καμία επίσημη", "Έχει τρεις διαφορετικές", "Η πρωτεύουσα αλλάζει κάθε χρόνο", "Πρωτεύουσα είναι το Γιοχάνεσμπουργκ"],
-        a: 1,
-        h: "Μία είναι διοικητική, μία νομοθετική και μία δικαστική.",
-        r: "Η Νότια Αφρική έχει τρεις πρωτεύουσες: Πρετόρια, Κέιπ Τάουν και Μπλουμφοντέιν."
-    },
-    {
-        q: "Ποια πρωτεύουσα της Αφρικής θεωρείται η «Διπλωματική Πρωτεύουσα» της ηπείρου, επειδή φιλοξενεί την έδρα της Αφρικανικής Ένωσης;",
-        o: ["Ναϊρόμπι", "Αντίς Αμπέμπα", "Λάγος", "Ντακάρ"],
-        a: 1,
-        h: "Το όνομά της σημαίνει «Νέο Λουλούδι».",
-        r: "Η Αντίς Αμπέμπα φιλοξενεί την έδρα της Αφρικανικής Ένωσης."
+        r: "Το όζον είναι αλλοτροπική μορφή του οξυγόνου, άρα στοιχείο και όχι ένωση.",
+        img: ""
     },
     {
         q: "Ποια είναι η πρωτεύουσα της Βραζιλίας, η οποία χτίστηκε από το μηδέν για να αντικαταστήσει το Ρίο ντε Τζανέιρο;",
         o: ["Σάο Πάολο", "Μπραζίλια", "Σαλβαδόρ", "Μανάους"],
         a: 1,
         h: "Θεωρείται μνημείο μοντέρνας πολεοδομίας και αρχιτεκτονικής.",
-        r: "Η πρωτεύουσα της Βραζιλίας είναι η Μπραζίλια."
-    },
-    {
-        q: "Ποια πρωτεύουσα ονομάζεται το «Παρίσι της Νότιας Αμερικής» και θεωρείται γενέτειρα του τάνγκο;",
-        o: ["Σαντιάγο", "Μπουένος Άιρες", "Μοντεβιδέο", "Λίμα"],
-        a: 1,
-        h: "Οι κάτοικοί της αποκαλούνται Porteños.",
-        r: "Το Μπουένος Άιρες θεωρείται το «Παρίσι της Νότιας Αμερικής»."
+        r: "Η πρωτεύουσα της Βραζιλίας είναι η Μπραζίλια.",
+        img: ""
     },
     {
         q: "Ποια είναι η ψηλότερη διοικητική πρωτεύουσα του κόσμου, όπου το υψόμετρο επηρεάζει ακόμη και τους αθλητές;",
         o: ["Κίτο", "Λα Πας", "Μπογκοτά", "Ασουνσιόν"],
         a: 1,
         h: "Η χώρα της έχει και δεύτερη συνταγματική πρωτεύουσα, τη Σούκρε.",
-        r: "Η Λα Πας είναι η ψηλότερη διοικητική πρωτεύουσα του κόσμου."
+        r: "Η Λα Πας είναι η ψηλότερη διοικητική πρωτεύουσα του κόσμου.",
+        img: ""
     },
     {
         q: "Ποια πρωτεύουσα χτίστηκε πάνω στα ερείπια της Tenochtitlan και σήμερα βυθίζεται σταδιακά κάθε χρόνο;",
         o: ["Πόλη του Μεξικού", "Κανκούν", "Γουαδαλαχάρα", "Τιχουάνα"],
         a: 0,
         h: "Χτίστηκε πάνω σε αποξηραμένη λίμνη.",
-        r: "Η Πόλη του Μεξικού χτίστηκε πάνω στην αρχαία Tenochtitlan."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα των Ηνωμένων Πολιτειών, η οποία δεν ανήκει σε καμία πολιτεία αλλά αποτελεί ομοσπονδιακή περιφέρεια;",
-        o: ["Νέα Υόρκη", "Λος Άντζελες", "Ουάσινγκτον D.C.", "Σικάγο"],
-        a: 2,
-        h: "Το D.C. σημαίνει District of Columbia.",
-        r: "Η ομοσπονδιακή πρωτεύουσα των ΗΠΑ είναι η Ουάσινγκτον D.C."
-    },
-    {
-        q: "Ποιος από τους παρακάτω αριθμούς έχει άθροισμα ψηφίων που είναι επίσης πρώτος αριθμός;",
-        o: ["58", "77", "86", "95"],
-        a: 0,
-        h: "Μόνο μία επιλογή δίνει άθροισμα ψηφίων που είναι πρώτος αριθμός.",
-        r: "Το 58 έχει άθροισμα ψηφίων 13, που είναι πρώτος αριθμός."
-    },
-    {
-        q: "Ποια χώρα έχει πρωτεύουσα που δεν είναι η μεγαλύτερη πόλη της;",
-        o: ["Γαλλία", "Ελλάδα", "Αυστραλία", "Ιαπωνία"],
-        a: 2,
-        h: "Η πρωτεύουσα της χώρας αυτής επιλέχθηκε ως συμβιβασμός.",
-        r: "Η Αυστραλία έχει πρωτεύουσα την Καμπέρα, όχι το Σίδνεϊ."
-    },
-    {
-        q: "Ποιο από τα παρακάτω στοιχεία έχει το υψηλότερο ατομικό αριθμό;",
-        o: ["Άργο", "Κάλιο", "Ασβέστιο", "Σκάνδιο"],
-        a: 3,
-        h: "Σκέψου τη σειρά των στοιχείων μετά το αργό στον περιοδικό πίνακα.",
-        r: "Το σκάνδιο έχει ατομικό αριθμό 21, τον υψηλότερο από τις επιλογές."
-    },
-    {
-        q: "Ποιο από τα παρακάτω δεν είναι έργο του Ντοστογιέφσκι;",
-        o: ["Οι Δαιμονισμένοι", "Ο Ηλίθιος", "Πατέρες και Γιοι", "Έγκλημα και Τιμωρία"],
-        a: 2,
-        h: "Είναι έργο του Τουργκένιεφ.",
-        r: "Οι «Πατέρες και Γιοι» δεν είναι έργο του Ντοστογιέφσκι αλλά του Τουργκένιεφ."
-    },
-    {
-        q: "Αν διπλασιάσουμε την ακτίνα ενός κύκλου, τι συμβαίνει στο εμβαδόν του;",
-        o: ["Διπλασιάζεται", "Τριπλασιάζεται", "Τετραπλασιάζεται", "Παραμένει ίδιο"],
-        a: 2,
-        h: "Το εμβαδόν κύκλου δίνεται από τον τύπο πr².",
-        r: "Αν η ακτίνα διπλασιαστεί, το εμβαδόν τετραπλασιάζεται."
-    },
-    {
-        q: "Ποια από τις παρακάτω μάχες έγινε νωρίτερα;",
-        o: ["Βατερλώ", "Αούστερλιτς", "Στάλινγκραντ", "Χέιστινγκς"],
-        a: 3,
-        h: "Η σωστή απάντηση είναι μεσαιωνική και χρονολογείται στο 1066.",
-        r: "Η Μάχη του Χέιστινγκς έγινε πρώτη, το 1066."
-    },
-    {
-        q: "Ποια από τις παρακάτω γλώσσες χρησιμοποιεί το λατινικό αλφάβητο αλλά δεν είναι ινδοευρωπαϊκή;",
-        o: ["Τουρκικά", "Ισπανικά", "Αγγλικά", "Ολλανδικά"],
-        a: 0,
-        h: "Ανήκει στην τουρκική γλωσσική οικογένεια.",
-        r: "Τα τουρκικά δεν είναι ινδοευρωπαϊκή γλώσσα."
-    },
-    {
-        q: "Ποιο από τα παρακάτω όργανα παράγει ήχο χωρίς χορδές ή μεμβράνη;",
-        o: ["Βιολί", "Τύμπανο", "Φλάουτο", "Κιθάρα"],
-        a: 2,
-        h: "Είναι αερόφωνο όργανο.",
-        r: "Το φλάουτο παράγει ήχο μέσω του αέρα."
-    },
-    {
-        q: "Ποια από τις παρακάτω χώρες δεν έχει καμία ακτογραμμή;",
-        o: ["Ουγγαρία", "Ρουμανία", "Βουλγαρία", "Τουρκία"],
-        a: 0,
-        h: "Βρίσκεται στην Κεντρική Ευρώπη και είναι περίκλειστη χώρα.",
-        r: "Η Ουγγαρία δεν έχει καμία ακτογραμμή."
-    },
-    {
-        q: "Ποιος από τους παρακάτω αριθμούς είναι τέλειο τετράγωνο;",
-        o: ["196", "198", "200", "202"],
-        a: 0,
-        h: "Είναι το τετράγωνο του 14.",
-        r: "Το 196 είναι τέλειο τετράγωνο, αφού 14² = 196."
-    },
-    {
-        q: "Ποιο από τα παρακάτω στοιχεία είναι ευγενές αέριο;",
-        o: ["Άζωτο", "Οξυγόνο", "Νέον", "Υδρογόνο"],
-        a: 2,
-        h: "Ανήκει στην ομάδα 18 του περιοδικού πίνακα.",
-        r: "Το νέον είναι ευγενές αέριο."
-    },
-    {
-        q: "Ποια από τις παρακάτω φράσεις είναι λογικά έγκυρη;",
-        o: ["Όλοι οι άνθρωποι είναι θνητοί, άρα κάποιοι θνητοί δεν είναι άνθρωποι", "Κάποιοι μαθητές είναι αθλητές, άρα όλοι οι αθλητές είναι μαθητές", "Όλοι οι σκύλοι είναι ζώα, άρα όλα τα ζώα είναι σκύλοι", "Όλοι οι άνθρωποι είναι θνητοί, ο Σωκράτης είναι άνθρωπος, άρα ο Σωκράτης είναι θνητός"],
-        a: 3,
-        h: "Μόνο μία επιλογή ακολουθεί έγκυρο κατηγορικό συλλογισμό.",
-        r: "Ο έγκυρος συλλογισμός είναι: Όλοι οι άνθρωποι είναι θνητοί, ο Σωκράτης είναι άνθρωπος, άρα ο Σωκράτης είναι θνητός."
+        r: "Η Πόλη του Μεξικού χτίστηκε πάνω στην αρχαία Tenochtitlan.",
+        img: ""
     },
     {
         q: "Ποιος αριθμός συμπληρώνει σωστά τη σειρά 2, 6, 7, 21, 22, ...;",
         o: ["44", "66", "23", "46"],
         a: 1,
         h: "Η σειρά εναλλάσσει πράξεις ×3 και +1.",
-        r: "Η σωστή συνέχεια είναι το 66."
-    },
-    {
-        q: "Ποιο από τα παρακάτω δεν ταιριάζει στην ίδια κατηγορία;",
-        o: ["Σαχάρα", "Γκόμπι", "Ανταρκτική", "Αμαζόνιος"],
-        a: 3,
-        h: "Οι τρεις πρώτες θεωρούνται έρημοι, έστω και αν μία είναι παγωμένη.",
-        r: "Ο Αμαζόνιος δεν είναι έρημος, άρα δεν ταιριάζει με τις άλλες επιλογές."
+        r: "Η σωστή συνέχεια είναι το 66.",
+        img: ""
     },
     {
         q: "Αν σήμερα είναι Τετάρτη, τι μέρα θα είναι σε 100 ημέρες;",
         o: ["Πέμπτη", "Παρασκευή", "Σάββατο", "Κυριακή"],
         a: 1,
         h: "Υπολόγισε το 100 mod 7.",
-        r: "100 mod 7 = 2, άρα από Τετάρτη πηγαίνουμε στην Παρασκευή."
-    },
-    {
-        q: "Ποια λέξη είναι ακριβής αναγραμματισμός της λέξης «ΑΚΡΟΣ»;",
-        o: ["ΣΚΟΡΑ", "ΚΟΡΑΣ", "ΡΟΚΑΣ", "ΣΟΚΑΡ"],
-        a: 1,
-        h: "Πρέπει να χρησιμοποιούνται ακριβώς τα ίδια γράμματα και μόνο αυτά.",
-        r: "Η λέξη «ΚΟΡΑΣ» είναι ακριβής αναγραμματισμός της λέξης «ΑΚΡΟΣ»."
-    },
-    {
-        q: "Ποιο από τα παρακάτω είναι μεγαλύτερο;",
-        o: ["1/3", "0.333", "33%", "Όλα είναι ίσα"],
-        a: 0,
-        h: "Το 1/3 έχει άπειρα τριάρια ως δεκαδική παράσταση.",
-        r: "Το 1/3 είναι ελαφρώς μεγαλύτερο από 0.333 και από το 33%."
-    },
-    {
-        q: "Πόσα λεπτά είναι το 1/10 της ημέρας;",
-        o: ["120", "144", "160", "180"],
-        a: 1,
-        h: "Μία ημέρα έχει 24 ώρες, δηλαδή 1440 λεπτά.",
-        r: "Το 1/10 των 1440 λεπτών είναι 144 λεπτά."
-    },
-    {
-        q: "Ποιο γράμμα συνεχίζει τη σειρά Α, Γ, Ζ, Λ, Σ, ...;",
-        o: ["Υ", "Φ", "Χ", "Ω"],
-        a: 0,
-        h: "Οι μετατοπίσεις στο ελληνικό αλφάβητο αυξάνονται: +2, +3, +4, +5, +6.",
-        r: "Το επόμενο γράμμα είναι το Υ."
-    },
-    {
-        q: "Αν 5 μηχανές παράγουν 5 αντικείμενα σε 5 λεπτά, πόσος χρόνος χρειάζεται για 100 μηχανές να παράγουν 100 αντικείμενα;",
-        o: ["5 λεπτά", "20 λεπτά", "100 λεπτά", "1 λεπτό"],
-        a: 0,
-        h: "Κάθε μηχανή φτιάχνει 1 αντικείμενο σε 5 λεπτά.",
-        r: "Οι 100 μηχανές θα φτιάξουν 100 αντικείμενα επίσης σε 5 λεπτά."
-    },
-    {
-        q: "Ποιο από τα παρακάτω είναι πιο κοντά στο 1;",
-        o: ["0.91", "0.99", "0.999", "0.909"],
-        a: 2,
-        h: "Όσο περισσότερα 9 μετά την υποδιαστολή, τόσο πιο κοντά πλησιάζουμε στο 1.",
-        r: "Το 0.999 είναι το πιο κοντινό στο 1."
-    },
-    {
-        q: "Ένα ρολόι δείχνει 3:15. Ποια είναι η μικρότερη γωνία μεταξύ των δεικτών;",
-        o: ["0°", "7.5°", "15°", "30°"],
-        a: 1,
-        h: "Ο ωροδείκτης δεν βρίσκεται ακριβώς στο 3, αλλά έχει ήδη προχωρήσει.",
-        r: "Στις 3:15 η μικρότερη γωνία μεταξύ των δεικτών είναι 7.5°."
-    },
-    {
-        q: "Ποια από τις παρακάτω λέξεις δεν ανήκει στην ίδια κατηγορία;",
-        o: ["Μάτι", "Αυτί", "Μύτη", "Καρδιά"],
-        a: 3,
-        h: "Οι τρεις πρώτες συνδέονται άμεσα με αισθήσεις.",
-        r: "Η καρδιά δεν είναι αισθητήριο όργανο, άρα είναι η διαφορετική επιλογή."
+        r: "100 mod 7 = 2, άρα από Τετάρτη πηγαίνουμε στην Παρασκευή.",
+        img: ""
     },
     {
         q: "Αν ένα βιβλίο και ένα στυλό κοστίζουν συνολικά 1,10€ και το βιβλίο κοστίζει 1€ περισσότερο από το στυλό, πόσο κοστίζει το στυλό;",
         o: ["0,10€", "0,05€", "0,15€", "0,01€"],
         a: 1,
         h: "Θέσε το κόστος του στυλό ίσο με x και λύσε την εξίσωση.",
-        r: "Το στυλό κοστίζει 0,05€."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα των Φίτζι, μιας νησιωτικής χώρας 333 νησιών κοντά στη Διεθνή Γραμμή Ημερομηνίας;",
-        o: ["Σούβα", "Πάγκο Πάγκο", "Απία", "Ματζούρο"],
-        a: 0,
-        h: "Είναι η μεγαλύτερη πόλη και η πρωτεύουσα των Φίτζι.",
-        r: "Η πρωτεύουσα των Φίτζι είναι η Σούβα."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα των Μπαχαμών, που υπήρξε κάποτε «Δημοκρατία των Πειρατών»;",
-        o: ["Κίνγκστον", "Νασάου", "Αβάνα", "Μπριτζτάουν"],
-        a: 1,
-        h: "Βρίσκεται στο νησί New Providence.",
-        r: "Η πρωτεύουσα των Μπαχαμών είναι το Νασάου."
-    },
-    {
-        q: "Ποια κίνηση της Μαρίνας Σάττι κατά τη Eurovision 2024 προκάλεσε έντονο σχολιασμό στα social media;",
-        o: ["Έφυγε από την αίθουσα", "Χασμουρήθηκε επανειλημμένα", "Φόρεσε ακουστικά", "Άρχισε να τραγουδάει το «Ζάρι»"],
-        a: 1,
-        h: "Ερμηνεύτηκε από πολλούς ως ειρωνική ή πολιτική χειρονομία.",
-        r: "Η κίνηση που προκάλεσε θύελλα αντιδράσεων ήταν τα επανειλημμένα χασμουρητά."
-    },
-    {
-        q: "Ποια χώρα εκπροσώπησε η Conchita Wurst, που κέρδισε τη Eurovision του 2014 με το «Rise Like a Phoenix»;",
-        o: ["Γερμανία", "Αυστρία", "Ελβετία", "Βέλγιο"],
-        a: 1,
-        h: "Η νίκη της θεωρήθηκε σύμβολο αποδοχής και ελευθερίας.",
-        r: "Η Conchita Wurst εκπροσώπησε την Αυστρία."
-    },
-    {
-        q: "Ποια cult τηλεοπτική προσωπικότητα παρουσίαζε το «Ερωτοδικείο» τη δεκαετία του '90;",
-        o: ["Αννίτα Πάνια", "Βίκυ Μιχαλονάκου", "Έφη Θώδη", "Πέτρος Κωστόπουλος"],
-        a: 1,
-        h: "Η εκπομπή συνδέθηκε με φιγούρες όπως ο Εθνικός Σταρ.",
-        r: "Το «Ερωτοδικείο» παρουσίαζε η Βίκυ Μιχαλονάκου."
-    },
-    {
-        q: "Σε ποιο ιστορικό τηλεοπτικό show της Ρούλας Κορομηλά εμφανίστηκε ο Valentino σε μια από τις πιο αξέχαστες στιγμές της καριέρας της;",
-        o: ["Ciao ANT1", "Bravo", "Μπράβο Ρούλα", "Πρωινός Καφές"],
-        a: 1,
-        h: "Ήταν η μεγάλη βραδινή της εκπομπή στα '90s.",
-        r: "Το περιστατικό με τον Valentino συνδέθηκε με το «Bravo»."
-    },
-    {
-        q: "Ποια ηθοποιός φημολογήθηκε το 2015 ότι «έκοψε» απότομα τον Sean Penn, δίνοντας αφορμή για τον όρο «Charlize-ing»;",
-        o: ["Charlize Theron", "Scarlett Johansson", "Angelina Jolie", "Jennifer Lawrence"],
-        a: 0,
-        h: "Η ίδια αργότερα διέψευσε ότι επρόκειτο ακριβώς για «ghosting».",
-        r: "Η ηθοποιός αυτή ήταν η Charlize Theron."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα του Τζιμπουτί, που έχει το ίδιο όνομα με τη χώρα;",
-        o: ["Μογκαντίσου", "Τζιμπουτί", "Ασμάρα", "Χαρτούμ"],
-        a: 1,
-        h: "Βρίσκεται σε στρατηγικό σημείο κοντά στην Ερυθρά Θάλασσα.",
-        r: "Η πρωτεύουσα του Τζιμπουτί είναι η πόλη Τζιμπουτί."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα των Νήσων Σολομώντα, που συνδέεται ιστορικά με τις μάχες του Γκουανταλκανάλ;",
-        o: ["Χονιάρα", "Πορτ Βίλα", "Νουκουαλόφα", "Παλικίρ"],
-        a: 0,
-        h: "Χτίστηκε μεταπολεμικά πάνω σε προηγούμενες στρατιωτικές υποδομές.",
-        r: "Η πρωτεύουσα των Νήσων Σολομώντα είναι η Χονιάρα."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα του Τουρκμενιστάν, γνωστή για τη μεγάλη συγκέντρωση λευκού μαρμάρου;",
-        o: ["Ασγκαμπάτ", "Μπισκέκ", "Ντουσανμπέ", "Τασκένδη"],
-        a: 0,
-        h: "Η πόλη συνδέεται με φουτουριστική και επιδεικτική αρχιτεκτονική.",
-        r: "Η πρωτεύουσα του Τουρκμενιστάν είναι η Ασγκαμπάτ."
-    },
-    {
-        q: "Ποιος ηθοποιός χαστούκισε τον Chris Rock στη σκηνή των Oscar το 2022;",
-        o: ["Denzel Washington", "Will Smith", "Brad Pitt", "Tom Hanks"],
-        a: 1,
-        h: "Κέρδισε μάλιστα Oscar Α' Ανδρικού Ρόλου λίγο αργότερα την ίδια βραδιά.",
-        r: "Ο ηθοποιός ήταν ο Will Smith."
-    },
-    {
-        q: "Ποια ταινία ανακοινώθηκε κατά λάθος ως νικήτρια του Oscar Καλύτερης Ταινίας το 2017, πριν αποκαλυφθεί ότι το πραγματικό βραβείο ανήκε στο Moonlight;",
-        o: ["La La Land", "The Shape of Water", "Green Book", "Parasite"],
-        a: 0,
-        h: "Ο Warren Beatty και η Faye Dunaway είχαν στα χέρια τους λάθος φάκελο.",
-        r: "Η ταινία που ανακοινώθηκε κατά λάθος ήταν το La La Land."
-    },
-    {
-        q: "Ποια αυτοκράτειρα του Βυζαντίου, σύζυγος του Ιουστινιανού, είχε πριν ανέβει στην εξουσία παρελθόν ως χορεύτρια και ηθοποιός;",
-        o: ["Ειρήνη η Αθηναία", "Θεοδώρα", "Ευδοκία", "Ζωή η Πορφυρογέννητη"],
-        a: 1,
-        h: "Ο Προκόπιος έγραψε πολλά εχθρικά σχόλια για το παρελθόν της.",
-        r: "Η αυτοκράτειρα αυτή ήταν η Θεοδώρα."
-    },
-    {
-        q: "Ποια αυτοκράτειρα του 11ου αιώνα παντρεύτηκε τρεις φορές και είναι γνωστή για τη ματαιοδοξία και τη λατρεία της στα καλλυντικά;",
-        o: ["Θεοφανώ", "Ζωή η Πορφυρογέννητη", "Άννα Κομνηνή", "Ελένη Παλαιολογίνα"],
-        a: 1,
-        h: "Τρεις σύζυγοί της έγιναν αυτοκράτορες.",
-        r: "Η αυτοκράτειρα ήταν η Ζωή η Πορφυρογέννητη."
-    },
-    {
-        q: "Ποιο είναι το μοναδικό κράτος μέλος του ΟΗΕ του οποίου η σημαία δεν είναι τετράπλευρη;",
-        o: ["Μπουτάν", "Νεπάλ", "Καμπότζη", "Σρι Λάνκα"],
-        a: 1,
-        h: "Η σημαία του αποτελείται από δύο επικαλυπτόμενα τρίγωνα.",
-        r: "Το μοναδικό κράτος μέλος του ΟΗΕ με μη τετράπλευρη σημαία είναι το Νεπάλ."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα του Καζακστάν;",
-        o: ["Αλμάτι", "Αστάνα", "Τασκένδη", "Μπισκέκ"],
-        a: 1,
-        h: "Για ένα διάστημα ονομαζόταν Νουρ-Σουλτάν.",
-        r: "Η πρωτεύουσα του Καζακστάν είναι η Αστάνα."
-    },
-    {
-        q: "Ποια χώρα έχει πρωτεύουσα το Μοντεβιδέο;",
-        o: ["Παραγουάη", "Ουρουγουάη", "Βολιβία", "Εκουαδόρ"],
-        a: 1,
-        h: "Η σωστή χώρα συχνά μπερδεύεται με την Παραγουάη λόγω ονομασίας.",
-        r: "Το Μοντεβιδέο είναι πρωτεύουσα της Ουρουγουάης."
-    },
-    {
-        q: "Ποια χώρα έχει δύο επίσημες πρωτεύουσες, το Άμστερνταμ και τη Χάγη;",
-        o: ["Ολλανδία", "Ισπανία", "Πορτογαλία", "Σουηδία"],
-        a: 0,
-        h: "Η μία είναι συνταγματική και η άλλη διοικητική.",
-        r: "Η Ολλανδία έχει Άμστερνταμ ως συνταγματική και Χάγη ως διοικητική πρωτεύουσα."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα της Νέας Ζηλανδίας;",
-        o: ["Όκλαντ", "Κράιστσερτς", "Ουέλινγκτον", "Ντούνεντιν"],
-        a: 2,
-        h: "Δεν είναι η μεγαλύτερη πόλη της χώρας.",
-        r: "Η πρωτεύουσα της Νέας Ζηλανδίας είναι το Ουέλινγκτον."
-    },
-    {
-        q: "Ποια χώρα έχει πρωτεύουσα το Γιαουντέ;",
-        o: ["Καμερούν", "Γκαμπόν", "Κονγκό", "Τσαντ"],
-        a: 0,
-        h: "Είναι συχνή παγίδα στις αφρικανικές πρωτεύουσες.",
-        r: "Το Γιαουντέ είναι η πρωτεύουσα του Καμερούν."
-    },
-    {
-        q: "Ποια είναι η πρωτεύουσα του Καναδά;",
-        o: ["Τορόντο", "Βανκούβερ", "Οτάβα", "Μόντρεαλ"],
-        a: 2,
-        h: "Δεν είναι ούτε η μεγαλύτερη ούτε η πιο διάσημη πόλη της χώρας.",
-        r: "Η πρωτεύουσα του Καναδά είναι η Οτάβα."
+        r: "Το στυλό κοστίζει 0,05€.",
+        img: ""
     }
 ];
 
