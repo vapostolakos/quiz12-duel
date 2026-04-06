@@ -383,9 +383,29 @@
             gap: 10px;
             width: 100%;
         }
+        .option.image-option .option-content {
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
         .option-text {
             min-width: 0;
             flex: 1 1 auto;
+        }
+        .option-image-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: block;
+        }
+        .option-image-caption {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text);
+            min-height: 1.25rem;
         }
         .option-pct {
             flex: 0 0 auto;
@@ -1415,13 +1435,48 @@ function localizeDuelOptionText(question, optionText) {
     return DUEL_IMAGE_OPTION_TRANSLATIONS[optionText] || optionText;
 }
 
+function normalizeDuelQuestionOption(question, option) {
+    if (option && typeof option === 'object' && !Array.isArray(option)) {
+        const src = String(option.src || option.img || option.image || '').trim();
+        const rawLabel = String(option.label || option.text || option.name || '').trim();
+        const localizedLabel = rawLabel ? localizeDuelOptionText(question, rawLabel) : '';
+        if (src) {
+            return { type: 'image', src, label: localizedLabel };
+        }
+        return { type: 'text', text: localizedLabel || rawLabel || '' };
+    }
+
+    if (question?.optionType === 'image') {
+        return { type: 'image', src: String(option || '').trim(), label: '' };
+    }
+
+    return { type: 'text', text: localizeDuelOptionText(question, String(option || '')) };
+}
+
+function getDuelQuestionOptionDisplayText(question, option) {
+    const normalized = normalizeDuelQuestionOption(question, option);
+    if (normalized.type === 'image') {
+        return normalized.label || 'Εικόνα επιλογής';
+    }
+    return normalized.text;
+}
+
 function buildDuelOptionMarkup(question, optionIndex, effectState = {}) {
-    const optionText = localizeDuelOptionText(question, question?.o?.[optionIndex] || '');
+    const optionData = normalizeDuelQuestionOption(question, question?.o?.[optionIndex]);
     const audiencePct = Array.isArray(effectState.audiencePercents) ? effectState.audiencePercents[optionIndex] : null;
     const pctMarkup = Number.isFinite(audiencePct) ? `<span class="option-pct">${audiencePct}%</span>` : '';
+    if (optionData.type === 'image') {
+        return `
+            <span class="option-content">
+                <img class="option-image-thumb" src="${escapeHtml(optionData.src)}" alt="${escapeHtml(optionData.label || `Επιλογή ${optionIndex + 1}`)}" />
+                <span class="option-image-caption">${escapeHtml(optionData.label || '')}</span>
+                ${pctMarkup}
+            </span>
+        `;
+    }
     return `
         <span class="option-content">
-            <span class="option-text">${escapeHtml(optionText)}</span>
+            <span class="option-text">${escapeHtml(optionData.text)}</span>
             ${pctMarkup}
         </span>
     `;
@@ -1654,11 +1709,11 @@ function scheduleDuelAdvance(callback, delay = 2600) {
 }
 
 function formatDuelResult(question, isCorrect, selectedIndex = null, timedOut = false) {
-    const correctAnswer = localizeDuelOptionText(question, question.o?.[question.a] || '');
+    const correctAnswer = getDuelQuestionOptionDisplayText(question, question.o?.[question.a] || '');
     const explanation = question.r ? `<div style="margin-top:8px; color:#cbd5e1; line-height:1.55;">${escapeHtml(question.r)}</div>` : '';
     const yourAnswer = selectedIndex === null || timedOut
         ? '<div style="margin-top:8px; color:#f59e0b">Η απάντησή σου: Δεν απάντησες εγκαίρως.</div>'
-        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(localizeDuelOptionText(question, question.o?.[selectedIndex] || ''))}</div>`;
+        : `<div style="margin-top:8px; color:#f59e0b;">Η απάντησή σου: ${escapeHtml(getDuelQuestionOptionDisplayText(question, question.o?.[selectedIndex] || ''))}</div>`;
     if (isCorrect) {
         return `
             <div style="color:#10b981;">Σωστό! Κέρδισες 100 πόντους.</div>
@@ -2573,7 +2628,7 @@ function renderRoom() {
     $('duel-answer-status').classList.remove('success-result', 'error-result');
     $('duel-final-box').classList.add('hidden');
     $('duel-options').innerHTML = question.o.map((option, index) => `
-        <button class="option ${questionEffect.hiddenOptions?.includes(index) ? 'hidden-by-5050' : ''}" onclick="answerDuelQuestion(${index})">${buildDuelOptionMarkup(question, index, questionEffect)}</button>
+        <button class="option ${normalizeDuelQuestionOption(question, option).type === 'image' ? 'image-option' : ''} ${questionEffect.hiddenOptions?.includes(index) ? 'hidden-by-5050' : ''}" onclick="answerDuelQuestion(${index})">${buildDuelOptionMarkup(question, index, questionEffect)}</button>
     `).join('');
     updateDuelLifelineButtons(me, duelAnswerLocked);
     if (duelRenderedQuestionKey !== questionKey) {
