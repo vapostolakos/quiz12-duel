@@ -1165,7 +1165,7 @@ function fadeDuelAudioTo(audio, targetVolume, { duration = 350, pauseOnEnd = fal
 
 updateDuelMusicButtons = function updateDuelMusicButtons() {
     document.querySelectorAll('.duel-music-toggle').forEach(button => {
-        button.textContent = `${duelMusicEnabled ? '🔊' : '🔇'} Music ${duelMusicEnabled ? 'ON' : 'OFF'}`;
+        button.textContent = `${duelMusicEnabled ? '🎵' : '🎼'} Μουσική ${duelMusicEnabled ? 'ON' : 'OFF'}`;
         button.classList.toggle('active', duelMusicEnabled);
     });
 };
@@ -1216,9 +1216,10 @@ bindDuelMusicResumeHooks = function bindDuelMusicResumeHooks() {
 window.toggleDuelMusic = async function toggleDuelMusic() {
     duelMusicEnabled = !duelMusicEnabled;
     localStorage.setItem(GLOBAL_MUSIC_STORAGE_KEY, String(duelMusicEnabled));
+    localStorage.setItem('quiz12_duel_music_enabled', String(duelMusicEnabled));
     updateDuelMusicButtons();
     if (duelMusicEnabled) {
-        await startDuelMusic();
+        await startDuelMusic(true);
     } else {
         stopDuelMusic();
     }
