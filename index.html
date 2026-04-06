@@ -1173,9 +1173,22 @@ function getUniqueDuelQuestionMap() {
 function filterDuelQuestionMapByMode(questionMap, mode = 'knowledge') {
     const normalizedMode = mode === 'image' ? 'image' : 'knowledge';
     return new Map(Array.from(questionMap.entries()).filter(([, question]) => {
-        const hasImage = !!String(question?.img || question?.image || question?.imageUrl || '').trim();
+        const hasImage = questionHasDuelImageContent(question);
         return normalizedMode === 'image' ? hasImage : !hasImage;
     }));
+}
+
+function questionHasDuelImageContent(question) {
+    if (!question) return false;
+    const directImage = !!String(question.img || question.image || question.imageUrl || '').trim();
+    if (directImage) return true;
+    if (question.optionType === 'image' && Array.isArray(question.o)) {
+        return question.o.some(option => {
+            if (typeof option === 'string') return !!String(option).trim();
+            return !!String(option?.src || option?.img || option?.image || '').trim();
+        });
+    }
+    return false;
 }
 
 function getDuelAvailableQuestionCount(mode = 'knowledge') {
@@ -1545,7 +1558,7 @@ function getDuelSwapCandidate(currentQuestion, mode = currentRoomData?.quizMode 
     if (currentQuestion?.q) usedTexts.add(currentQuestion.q);
     const available = QUESTION_POOL.filter(item => {
         if (!item?.q || usedTexts.has(item.q)) return false;
-        const hasImage = !!String(item?.img || item?.image || item?.imageUrl || '').trim();
+        const hasImage = questionHasDuelImageContent(item);
         return mode === 'image' ? hasImage : !hasImage;
     });
     if (!available.length) return null;
