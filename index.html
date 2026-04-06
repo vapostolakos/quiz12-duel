@@ -979,10 +979,23 @@ let duelRenderedQuestionKey = '';
 let duelQuestionMemorySignature = '';
 let duelAnswerLocked = false;
 let duelAdvanceTimeout = null;
-let duelMusicEnabled = localStorage.getItem('quiz12_duel_music_enabled') === 'true';
-let duelRadioAudio = null;
+const GLOBAL_MUSIC_STORAGE_KEY = 'musicEnabled';
+const legacyDuelMusicValue = localStorage.getItem('quiz12_duel_music_enabled');
+const storedGlobalMusicValue = localStorage.getItem(GLOBAL_MUSIC_STORAGE_KEY);
+if (storedGlobalMusicValue === null && legacyDuelMusicValue !== null) {
+    localStorage.setItem(GLOBAL_MUSIC_STORAGE_KEY, legacyDuelMusicValue);
+} else if (storedGlobalMusicValue === null) {
+    localStorage.setItem(GLOBAL_MUSIC_STORAGE_KEY, 'false');
+}
+let duelMusicEnabled = localStorage.getItem(GLOBAL_MUSIC_STORAGE_KEY) === 'true';
 const DUEL_RADIO_STREAM_URL = 'https://i4.streams.ovh/sc/musicfactory/stream';
 let duelMusicResumeHooksBound = false;
+const duelMusicController = window.__quizGlobalMusicController || (window.__quizGlobalMusicController = {
+    audio: null,
+    targetVolume: 0.35,
+    fadeTimer: null,
+    streamUrl: DUEL_RADIO_STREAM_URL
+});
 const HEART_REACTION_OPTIONS = [
     { key: 'heart-red', emoji: '❤️' },
     { key: 'heart-pink', emoji: '🩷' },
@@ -1096,6 +1109,113 @@ function bindDuelMusicResumeHooks() {
 window.toggleDuelMusic = async function toggleDuelMusic() {
     duelMusicEnabled = !duelMusicEnabled;
     localStorage.setItem('quiz12_duel_music_enabled', String(duelMusicEnabled));
+    updateDuelMusicButtons();
+    if (duelMusicEnabled) {
+        await startDuelMusic();
+    } else {
+        stopDuelMusic();
+    }
+};
+
+function clearDuelMusicFadeTimer() {
+    if (duelMusicController.fadeTimer) {
+        clearInterval(duelMusicController.fadeTimer);
+        duelMusicController.fadeTimer = null;
+    }
+}
+
+function ensureDuelRadioAudio() {
+    if (!duelMusicController.audio) {
+        duelMusicController.audio = new Audio(duelMusicController.streamUrl);
+        duelMusicController.audio.crossOrigin = 'anonymous';
+        duelMusicController.audio.preload = 'none';
+        duelMusicController.audio.autoplay = true;
+        duelMusicController.audio.volume = 0;
+        duelMusicController.audio.setAttribute('playsinline', 'true');
+    } else if (duelMusicController.audio.src !== duelMusicController.streamUrl) {
+        duelMusicController.audio.src = duelMusicController.streamUrl;
+    }
+    return duelMusicController.audio;
+}
+
+function fadeDuelAudioTo(audio, targetVolume, { duration = 350, pauseOnEnd = false } = {}) {
+    if (!audio) return;
+    clearDuelMusicFadeTimer();
+    const startVolume = Number.isFinite(audio.volume) ? audio.volume : 0;
+    const delta = targetVolume - startVolume;
+    if (Math.abs(delta) < 0.01) {
+        audio.volume = Math.max(0, Math.min(1, targetVolume));
+        if (pauseOnEnd && targetVolume <= 0.001) audio.pause();
+        return;
+    }
+    const stepMs = 40;
+    const steps = Math.max(1, Math.round(duration / stepMs));
+    let currentStep = 0;
+    duelMusicController.fadeTimer = setInterval(() => {
+        currentStep += 1;
+        const nextVolume = startVolume + (delta * (currentStep / steps));
+        audio.volume = Math.max(0, Math.min(1, nextVolume));
+        if (currentStep >= steps) {
+            clearDuelMusicFadeTimer();
+            audio.volume = Math.max(0, Math.min(1, targetVolume));
+            if (pauseOnEnd && targetVolume <= 0.001) audio.pause();
+        }
+    }, stepMs);
+}
+
+updateDuelMusicButtons = function updateDuelMusicButtons() {
+    document.querySelectorAll('.duel-music-toggle').forEach(button => {
+        button.textContent = `${duelMusicEnabled ? '🔊' : '🔇'} Music ${duelMusicEnabled ? 'ON' : 'OFF'}`;
+        button.classList.toggle('active', duelMusicEnabled);
+    });
+};
+
+stopDuelMusic = function stopDuelMusic() {
+    const duelAudio = duelMusicController.audio;
+    if (!duelAudio) return;
+    fadeDuelAudioTo(duelAudio, 0, { duration: 260, pauseOnEnd: true });
+};
+
+startDuelMusic = async function startDuelMusic(forceRestart = false) {
+    if (!duelMusicEnabled) return;
+    const duelAudio = ensureDuelRadioAudio();
+    if (!forceRestart && !duelAudio.paused && !duelAudio.ended) return;
+    if (forceRestart) duelAudio.pause();
+    try {
+        duelAudio.volume = 0;
+        await duelAudio.play();
+        fadeDuelAudioTo(duelAudio, duelMusicController.targetVolume, { duration: 420 });
+    } catch (error) {
+        console.warn('Duel radio stream playback blocked or unavailable:', error);
+    }
+};
+
+bindDuelMusicResumeHooks = function bindDuelMusicResumeHooks() {
+    if (duelMusicResumeHooksBound) return;
+    duelMusicResumeHooksBound = true;
+    const retryStart = () => { if (duelMusicEnabled) startDuelMusic(); };
+    window.addEventListener('load', retryStart);
+    window.addEventListener('pageshow', retryStart);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && duelMusicEnabled) {
+            retryStart();
+        }
+    });
+    window.addEventListener('storage', event => {
+        if (event.key !== GLOBAL_MUSIC_STORAGE_KEY) return;
+        duelMusicEnabled = event.newValue === 'true';
+        updateDuelMusicButtons();
+        if (duelMusicEnabled) {
+            startDuelMusic();
+        } else {
+            stopDuelMusic();
+        }
+    });
+};
+
+window.toggleDuelMusic = async function toggleDuelMusic() {
+    duelMusicEnabled = !duelMusicEnabled;
+    localStorage.setItem(GLOBAL_MUSIC_STORAGE_KEY, String(duelMusicEnabled));
     updateDuelMusicButtons();
     if (duelMusicEnabled) {
         await startDuelMusic();
